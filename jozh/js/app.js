@@ -11,7 +11,7 @@ import { registerServiceWorker } from './pwa.js';
 import { startSync, onSyncStatus, describeStatus } from './firebase/sync-manager.js';
 import { scheduleWeeklyCleanup } from './storage/image-storage.js';
 
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.1.1';
 
 const root = document.documentElement;
 let activityStarted = false;
