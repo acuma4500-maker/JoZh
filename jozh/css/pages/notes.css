@@ -1,0 +1,6 @@
+/* Hızlı notlar */
+.note-card { display: flex; flex-direction: column; gap: 8px; }
+.note-card.is-pinned { border-color: var(--accent); }
+.note-open .item-title { gap: 6px; flex-wrap: nowrap; }
+.note-open .item-title .icon { color: var(--accent); }
+.note-card .item-excerpt { -webkit-line-clamp: 6; white-space: pre-line; }

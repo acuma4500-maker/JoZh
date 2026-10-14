@@ -1,0 +1,163 @@
+rules_version = '2';
+
+// JOZH Firestore kuralları. Authentication YOK: erişim, 26 karakterlik rastgele senkronizasyon
+// anahtarıyla (jozh/{anahtar}/...) sağlanır. Kök belge ve kök listeleme kapalıdır (anahtarlar görülemez).
+// Alan sınırları js/storage/schemas.js ile birebir aynıdır.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function validKey(key) {
+      return key.matches('^[a-z2-7]{26}$');
+    }
+
+    function knownCollection(c) {
+      return c in ['profile', 'settings', 'partner', 'memories', 'notes', 'diary', 'dreams', 'plans', 'transactions'];
+    }
+
+    function validId(c, docId) {
+      return c in ['profile', 'settings', 'partner']
+        ? docId == 'main'
+        : docId.matches('^[a-z][a-z0-9]{0,15}_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+    }
+
+    function isIso(v) {
+      return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]{1,3})?Z$');
+    }
+
+    function isDate(v) {
+      return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    // --- Alan yardımcıları (alan yoksa geçerli sayılır) ---
+    function optStr(d, f, max) { return !(f in d) || (d[f] is string && d[f].size() <= max); }
+    function reqStr(d, f, max) { return f in d && d[f] is string && d[f].size() > 0 && d[f].size() <= max; }
+    function optDate(d, f) { return !(f in d) || d[f] == '' || isDate(d[f]); }
+    function reqDate(d, f) { return f in d && isDate(d[f]); }
+    function optTime(d, f) { return !(f in d) || d[f] == '' || (d[f] is string && d[f].matches('^([01][0-9]|2[0-3]):[0-5][0-9]$')); }
+    function optNum(d, f, lo, hi) { return !(f in d) || d[f] == null || (d[f] is number && d[f] >= lo && d[f] <= hi); }
+    function optInt(d, f, lo, hi) { return !(f in d) || d[f] == null || (d[f] is int && d[f] >= lo && d[f] <= hi); }
+    function optBool(d, f) { return !(f in d) || d[f] is bool; }
+    function optEnum(d, f, values) { return !(f in d) || d[f] in values; }
+    function optList(d, f, max) { return !(f in d) || (d[f] is list && d[f].size() <= max); }
+    function optPhoto(d, f) { return !(f in d) || d[f] == null || (d[f] is string && d[f].matches('^img_[0-9a-f-]{36}$')); }
+    function optTags(d) { return optList(d, 'tags', 20); }
+
+    function baseKeys() {
+      return ['id', 'createdAt', 'updatedAt', 'version', 'deleted', 'syncedAt'];
+    }
+
+    function hasBaseFields(docId) {
+      let d = request.resource.data;
+      return d.keys().hasAll(['id', 'createdAt', 'updatedAt', 'syncedAt'])
+        && d.id == docId
+        && isIso(d.createdAt)
+        && isIso(d.updatedAt)
+        && d.syncedAt == request.time
+        && d.keys().size() <= 60
+        && optInt(d, 'version', 1, 1000000000)
+        && optBool(d, 'deleted');
+    }
+
+    // --- Koleksiyonlara özel doğrulama (hasOnly ile izinli alanlar) ---
+    function validProfile(d) {
+      return d.keys().hasOnly(baseKeys().concat(['firstName', 'lastName', 'birthDate', 'bloodType', 'height', 'weight', 'phone', 'about', 'photoId']))
+        && optStr(d, 'firstName', 60) && optStr(d, 'lastName', 60) && optDate(d, 'birthDate')
+        && optEnum(d, 'bloodType', ['', 'A Rh+', 'A Rh−', 'B Rh+', 'B Rh−', 'AB Rh+', 'AB Rh−', '0 Rh+', '0 Rh−'])
+        && optInt(d, 'height', 50, 250) && optNum(d, 'weight', 20, 400)
+        && optStr(d, 'phone', 30) && optStr(d, 'about', 2000) && optPhoto(d, 'photoId');
+    }
+
+    function validSettings(d) {
+      return d.keys().hasOnly(baseKeys().concat(['calendarView']))
+        && optEnum(d, 'calendarView', ['month', 'agenda']);
+    }
+
+    function validNote(d) {
+      return d.keys().hasOnly(baseKeys().concat(['title', 'body', 'tags', 'pinned']))
+        && optStr(d, 'title', 200) && optStr(d, 'body', 20000) && optTags(d) && optBool(d, 'pinned');
+    }
+
+    function validDiary(d) {
+      return d.keys().hasOnly(baseKeys().concat(['title', 'date', 'body', 'tags', 'photoIds']))
+        && reqStr(d, 'title', 200) && reqDate(d, 'date') && optStr(d, 'body', 100000)
+        && optTags(d) && optList(d, 'photoIds', 20);
+    }
+
+    function validDream(d) {
+      return d.keys().hasOnly(baseKeys().concat(['title', 'description', 'category', 'targetDate', 'priority', 'progress', 'status', 'notes', 'photoId']))
+        && reqStr(d, 'title', 200) && optStr(d, 'description', 2000) && optStr(d, 'category', 60)
+        && optDate(d, 'targetDate') && optEnum(d, 'priority', ['low', 'medium', 'high'])
+        && optInt(d, 'progress', 0, 100)
+        && optEnum(d, 'status', ['notStarted', 'inProgress', 'completed', 'postponed'])
+        && optStr(d, 'notes', 5000) && optPhoto(d, 'photoId');
+    }
+
+    function validPlan(d) {
+      return d.keys().hasOnly(baseKeys().concat(['name', 'type', 'status', 'startDate', 'startTime', 'endDate', 'endTime', 'location', 'description', 'budget', 'spent', 'checklist', 'notes', 'trip']))
+        && reqStr(d, 'name', 200)
+        && optEnum(d, 'type', ['trip', 'date', 'work', 'personal', 'special', 'other'])
+        && optEnum(d, 'status', ['planned', 'completed', 'cancelled'])
+        && reqDate(d, 'startDate') && optDate(d, 'endDate') && optTime(d, 'startTime') && optTime(d, 'endTime')
+        && (!('endDate' in d) || d.endDate == '' || d.endDate >= d.startDate)
+        && (!('endDate' in d) || d.endDate != d.startDate || !('startTime' in d) || !('endTime' in d)
+            || d.startTime == '' || d.endTime == '' || d.endTime >= d.startTime)
+        && optStr(d, 'location', 200) && optStr(d, 'description', 5000)
+        && optNum(d, 'budget', 0, 100000000) && optNum(d, 'spent', 0, 100000000)
+        && optList(d, 'checklist', 200) && optStr(d, 'notes', 5000)
+        && (!('trip' in d) || d.trip == null || d.trip is map);
+    }
+
+    function validMemory(d) {
+      return d.keys().hasOnly(baseKeys().concat(['title', 'date', 'description', 'tags', 'photoIds']))
+        && reqStr(d, 'title', 200) && optDate(d, 'date') && optStr(d, 'description', 5000)
+        && optTags(d) && optList(d, 'photoIds', 10);
+    }
+
+    function validPartner(d) {
+      return d.keys().hasOnly(baseKeys().concat(['name', 'nickname', 'birthDate', 'togetherSince', 'summary', 'photoId',
+          'traits', 'likes', 'dislikes', 'foods', 'colors', 'perfumes', 'hobbies', 'importantDates', 'todos', 'surprises', 'privateNotes']))
+        && optStr(d, 'name', 100) && optStr(d, 'nickname', 100) && optDate(d, 'birthDate') && optDate(d, 'togetherSince')
+        && optStr(d, 'summary', 1000) && optPhoto(d, 'photoId')
+        && optList(d, 'traits', 100) && optList(d, 'likes', 100) && optList(d, 'dislikes', 100) && optList(d, 'foods', 100)
+        && optList(d, 'colors', 100) && optList(d, 'perfumes', 100) && optList(d, 'hobbies', 100)
+        && optList(d, 'importantDates', 100) && optList(d, 'todos', 200) && optList(d, 'surprises', 200)
+        && optStr(d, 'privateNotes', 10000);
+    }
+
+    function validTransaction(d) {
+      return d.keys().hasOnly(baseKeys().concat(['type', 'amount', 'category', 'date', 'account', 'note']))
+        && d.type in ['income', 'expense']
+        && d.amount is number && d.amount >= 0.01 && d.amount <= 100000000
+        && reqStr(d, 'category', 60) && reqDate(d, 'date')
+        && optEnum(d, 'account', ['cash', 'bank', 'card'])
+        && optStr(d, 'note', 500);
+    }
+
+    function validFor(c, d) {
+      return (c == 'profile' && validProfile(d))
+        || (c == 'settings' && validSettings(d))
+        || (c == 'notes' && validNote(d))
+        || (c == 'diary' && validDiary(d))
+        || (c == 'dreams' && validDream(d))
+        || (c == 'plans' && validPlan(d))
+        || (c == 'memories' && validMemory(d))
+        || (c == 'partner' && validPartner(d))
+        || (c == 'transactions' && validTransaction(d));
+    }
+
+    // Kök belge ve kök listeleme kapalı.
+    match /jozh/{key} {
+      allow read, write: if false;
+    }
+
+    match /jozh/{key}/{collection}/{docId} {
+      allow get, list: if validKey(key) && knownCollection(collection);
+      allow create: if validKey(key) && knownCollection(collection) && validId(collection, docId)
+        && hasBaseFields(docId) && validFor(collection, request.resource.data);
+      allow update: if validKey(key) && knownCollection(collection) && validId(collection, docId)
+        && hasBaseFields(docId) && validFor(collection, request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+    }
+  }
+}

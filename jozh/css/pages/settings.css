@@ -1,0 +1,8 @@
+/* Ayarlar */
+.settings-layout { display: flex; flex-direction: column; gap: 16px; max-width: 900px; }
+.settings-section { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: calc(var(--header-h) + 16px); }
+.settings-title { font-size: 1.05rem; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.settings-label { color: var(--text2); }
+.sync-key { font-family: var(--mono); font-size: 1rem; letter-spacing: 0.04em; background: var(--bg3); padding: 8px 12px; border-radius: var(--radius); overflow-wrap: anywhere; }
+.conflict-item .table td { font-size: 0.85rem; }

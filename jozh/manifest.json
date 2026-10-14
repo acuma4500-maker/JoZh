@@ -1,0 +1,19 @@
+{
+  "name": "JOZH — Kişisel Yaşam Paneli",
+  "short_name": "JOZH",
+  "description": "Profil, sevdiğim kadın, günlük, hedefler, planlar, takvim, notlar, gelir-gider ve Gizli Kasa; internet olmadan da çalışır.",
+  "id": "./",
+  "scope": "./",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d0f14",
+  "theme_color": "#0d0f14",
+  "lang": "tr",
+  "dir": "ltr",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

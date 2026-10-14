@@ -1,0 +1,30 @@
+/* Gelir ve gider */
+.fin-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.fin-month { min-width: 130px; text-align: center; font-size: 1.1rem; }
+.fin-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.fin-stat { gap: 4px; }
+.fin-stat .stat-value { font-size: 1.5rem; }
+.fin-stat.is-positive .stat-value { color: var(--green); }
+.fin-stat.is-negative .stat-value { color: var(--red); }
+.fin-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.wallet-rows { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; margin: 0; }
+.wallet-rows dt { color: var(--text2); }
+.wallet-rows dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.wallet-rows .is-total { border-top: 1px solid var(--border); padding-top: 8px; color: var(--text); font-size: 1.1rem; }
+.cat-bars { display: flex; flex-direction: column; gap: 10px; }
+.cat-row { display: flex; flex-direction: column; gap: 4px; }
+.cat-label { display: flex; align-items: baseline; gap: 8px; font-size: 0.9rem; }
+.cat-amount { font-variant-numeric: tabular-nums; }
+.cat-pct { min-width: 46px; text-align: right; }
+.cat-track { display: block; height: 8px; background: var(--bg3); border-radius: 999px; overflow: hidden; }
+.cat-fill { display: block; height: 100%; border-radius: inherit; }
+.cat-fill.expense { background: var(--red); }
+.cat-fill.income { background: var(--green); }
+.txn-open { display: flex !important; align-items: center; gap: 12px; }
+.txn-icon { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bg3); }
+.txn-icon.income { color: var(--green); }
+.txn-icon.expense { color: var(--red); }
+.txn-amount { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.txn-item { padding: 10px 14px; }
+@media (max-width: 1000px) { .fin-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 699px) { .fin-summary { grid-template-columns: minmax(0, 1fr); } .fin-stat .stat-value { font-size: 1.25rem; } }

@@ -1,0 +1,57 @@
+/* Menü modları ve ekran boyutları. Mod html[data-nav-mode] ile belirlenir. */
+
+/* rail: yalnızca simgeli dar menü (iPhone yatay ya da kullanıcı daralttıysa) */
+html[data-nav-mode="rail"] .app-shell { grid-template-columns: calc(var(--nav-rail) + var(--safe-left)) minmax(0, 1fr); }
+html[data-nav-mode="rail"] .app-nav { padding-left: calc(8px + var(--safe-left)); padding-right: 8px; align-items: center; }
+html[data-nav-mode="rail"] .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html[data-nav-mode="rail"] .nav-link { justify-content: center; padding: 0; width: 48px; }
+html[data-nav-mode="rail"] .nav-brand { padding: 4px 0 12px; justify-content: center; }
+html[data-nav-mode="rail"] .nav-list { align-items: center; width: 100%; }
+html[data-nav-mode="rail"] .nav-link.is-active { box-shadow: inset 0 -3px 0 var(--accent); }
+
+/* drawer: çekmece */
+html[data-nav-mode="drawer"] .app-shell { grid-template-columns: minmax(0, 1fr); }
+html[data-nav-mode="drawer"] .app-nav {
+  position: fixed; left: 0; top: 0; bottom: 0; width: min(280px, 86vw);
+  transform: translateX(-105%); transition: transform 0.2s ease; box-shadow: var(--shadow);
+}
+html[data-nav-mode="drawer"][data-nav-open="true"] .app-nav { transform: none; }
+html[data-nav-mode="drawer"] .nav-toggle { display: inline-flex; }
+html[data-nav-mode="drawer"] .nav-close { display: inline-flex; }
+html[data-nav-mode="drawer"] .collapse-item { display: none; }
+html:not([data-nav-mode="drawer"]) .nav-backdrop { display: none; }
+
+/* Yatay telefon: daraltma düğmesi gizli (rail zorunlu) */
+@media (max-height: 500px) {
+  .collapse-item { display: none; }
+  .app-header { min-height: calc(52px + var(--safe-top)); }
+  .app-content { padding-top: 14px; }
+  .pin-key, .pin-spacer { width: 56px; height: 56px; font-size: 1.35rem; }
+  .pin-pad { grid-template-columns: repeat(3, 56px); gap: 10px; }
+  .pin-layout { gap: 32px; }
+  .pin-title { font-size: 1.15rem; }
+  .pin-info { gap: 8px; }
+}
+
+/* Dikey dar ekran */
+@media (max-width: 699px) {
+  .app-header { padding-left: 12px; padding-right: calc(12px + var(--safe-right)); gap: 8px; }
+  .app-content { padding: 14px calc(14px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(14px + var(--safe-left)); }
+  .sync-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .sync-indicator { padding: 0 10px; min-width: 40px; justify-content: center; }
+  .card-grid { grid-template-columns: minmax(0, 1fr); }
+  .dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px - var(--safe-top) - var(--safe-bottom)); }
+  .dialog-body { padding: 14px; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Dikey ekranda PIN: yuvarlaklar üstte, tuşlar altta */
+@media (max-width: 699px), (orientation: portrait) and (max-width: 900px) {
+  .pin-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; justify-items: center; }
+  .pin-info { align-items: center; text-align: center; }
+  .pin-links { justify-content: center; }
+}
+
+@media (min-width: 1400px) {
+  .app-content { padding-left: 32px; padding-right: 32px; }
+}

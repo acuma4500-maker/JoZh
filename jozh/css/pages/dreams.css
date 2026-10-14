@@ -1,0 +1,4 @@
+/* Hayaller ve hedefler */
+.dream-card { display: flex; flex-direction: column; }
+.dream-head { flex-wrap: nowrap; }
+.progress-out { color: var(--text); font-weight: 600; margin-left: 6px; }
