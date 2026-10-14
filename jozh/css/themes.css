@@ -1,0 +1,16 @@
+/* Açık tema yalnızca değişkenleri değiştirir. Tema js/boot.js ile ilk boyamadan önce uygulanır. */
+html[data-theme="light"] {
+  --bg: #f4f6fa;  --bg2: #ffffff;  --bg3: #e9edf4;  --border: #d6dce8;
+  --text: #161a24;  --text2: #4d566d;  --text3: #7a8399;
+  --accent: #2f6fe0;  --accent2: #2559b8;
+  --green: #1e9e57;  --red: #c7392b;  --yellow: #b8730a;
+  --warm: #9c6b78;
+  --focus: #2f6fe0;
+  --shadow: 0 8px 28px rgba(20, 30, 60, 0.14);
+  --type-plan-date: #9c6b78;
+  --type-plan-work: #b8730a;
+  --type-plan-personal: #1e9e57;
+  --type-plan-special: #7a5bd6;
+  --type-plan-other: #6b7590;
+  color-scheme: light;
+}

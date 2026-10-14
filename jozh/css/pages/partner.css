@@ -1,0 +1,19 @@
+/* Sevdiğim kadın: ana tema korunur; yalnızca küçük vurgularda soluk sıcak ton */
+.partner-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; align-items: start; }
+#sec-general, #sec-memories, #sec-gallery { grid-column: 1 / -1; }
+.partner-section .card-header h2 { border-left: 3px solid var(--warm); padding-left: 10px; }
+.partner-name { font-size: 1.2rem; font-weight: 600; }
+.partner-head { align-items: flex-start; }
+.text-list { gap: 6px; }
+.date-list { display: flex; flex-direction: column; gap: 8px; }
+.date-item { display: flex; align-items: center; gap: 10px; }
+.date-item .item-title, .date-item .item-meta { display: block; }
+.date-item.is-past { opacity: 0.6; }
+.date-row { display: grid; grid-template-columns: minmax(0, 1fr) 160px auto auto; gap: 8px; align-items: center; }
+.date-row .span-row { grid-column: 1 / -1; }
+.timeline { position: relative; display: flex; flex-direction: column; gap: 14px; padding-left: 18px; border-left: 2px solid var(--border); margin-left: 6px; }
+.timeline-item { position: relative; display: flex; gap: 10px; }
+.timeline-dot { position: absolute; left: -25px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--warm); border: 2px solid var(--bg2); }
+.timeline .thumb-strip { margin-top: 8px; }
+.chip-warm { border: 1px solid var(--warm); }
+@media (max-width: 699px) { .date-row { grid-template-columns: minmax(0, 1fr) auto; } .date-row .input.date-value { grid-column: 1 / 2; } }

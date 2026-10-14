@@ -1,0 +1,22 @@
+/* Ana panel */
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; align-items: start; }
+.dash-card { display: flex; flex-direction: column; min-height: 140px; }
+.dash-card.span-2 { grid-column: span 2; }
+.warm-card { border-top: 2px solid var(--warm); }
+.warm-accent { color: var(--warm); }
+.vault-card .btn { align-self: flex-start; }
+.mini-cal-head { justify-content: space-between; }
+.mini-cal-title { font-weight: 600; }
+.mini-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.mini-wd { text-align: center; font-size: 0.72rem; color: var(--text3); padding: 4px 0; }
+.mini-day-btn { min-height: 40px; border: 1px solid transparent; border-radius: 8px; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 0.85rem; padding: 2px; }
+.mini-day-btn:hover { background: var(--bg3); }
+.mini-day-btn.is-other { color: var(--text3); }
+.mini-day-btn.is-today { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.mini-day-btn.is-selected { background: var(--bg3); }
+.mini-marks { display: flex; align-items: center; gap: 2px; height: 5px; }
+.mini-line { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--accent); vertical-align: middle; }
+.mini-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--yellow); vertical-align: middle; }
+.mini-legend { margin-top: 8px; }
+.mini-day .card-header h3 { font-size: 0.9rem; }
+@media (max-width: 760px) { .dash-card.span-2 { grid-column: auto; } }

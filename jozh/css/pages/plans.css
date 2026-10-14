@@ -1,0 +1,6 @@
+/* Planlar ve seyahatler */
+.plan-card.is-cancelled { opacity: 0.65; }
+.plan-checklist summary { min-height: 40px; }
+.expense-table .input { min-width: 90px; }
+.expense-table td:first-child .input { min-width: 140px; }
+.trip-totals { margin-top: 4px; }

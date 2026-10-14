@@ -1,0 +1,5 @@
+/* Profilim */
+.profile-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.profile-summary { position: sticky; top: calc(var(--header-h) + 16px); }
+.summary-head { display: flex; align-items: center; gap: 14px; }
+@media (max-width: 900px) { .profile-layout { grid-template-columns: minmax(0, 1fr); } .profile-summary { position: static; order: -1; } }

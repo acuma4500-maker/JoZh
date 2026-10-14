@@ -1,0 +1,4 @@
+/* Günlük */
+.reader { display: flex; flex-direction: column; gap: 14px; }
+.reader-body { font-size: 1rem; }
+.diary-list .item-excerpt { white-space: pre-line; }
