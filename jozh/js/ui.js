@@ -142,7 +142,7 @@ export function openDialog({ title, content, actions = [], onClose, isDirty, siz
   const titleId = uid('dlg-title');
   const body = el('div', { class: 'dialog-body' }, content);
   const footer = el('div', { class: 'dialog-footer' });
-  const dialog = el('dialog', { class: `dialog dialog-${size}${className ? ` ${className}` : ''}`, 'aria-labelledby': titleId },
+  const dialog = el('dialog', { class: `dialog dialog-${size}${className ? ` ${className}` : ''}`, 'aria-labelledby': titleId, tabindex: '-1' },
     el('div', { class: 'dialog-header' },
       el('h2', { id: titleId, class: 'dialog-title' }, title),
       iconButton('close', 'Pencereyi kapat', () => api.close())),
@@ -187,7 +187,9 @@ export function openDialog({ title, content, actions = [], onClose, isDirty, siz
   dialog.showModal();
   openDialogs.push(api);
   const focusable = body.querySelector('input:not([type=hidden]), textarea, select');
+  // Dokunmatik ekranda klavye kendiliğinden açılmasın; odak pencerenin kendisine verilir.
   if (focusable && window.matchMedia('(hover: hover)').matches) focusable.focus();
+  else dialog.focus();
   return api;
 }
 
