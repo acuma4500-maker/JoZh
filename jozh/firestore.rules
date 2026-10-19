@@ -11,7 +11,7 @@ service cloud.firestore {
     }
 
     function knownCollection(c) {
-      return c in ['profile', 'settings', 'partner', 'memories', 'notes', 'diary', 'dreams', 'plans', 'transactions'];
+      return c in ['profile', 'settings', 'partner', 'memories', 'notes', 'diary', 'dreams', 'plans', 'transactions', 'savings'];
     }
 
     function validId(c, docId) {
@@ -133,6 +133,14 @@ service cloud.firestore {
         && optStr(d, 'note', 500);
     }
 
+    function validSavings(d) {
+      return d.keys().hasOnly(baseKeys().concat(['title', 'targetAmount', 'targetDate', 'note', 'contributions']))
+        && reqStr(d, 'title', 100)
+        && d.targetAmount is number && d.targetAmount >= 0.01 && d.targetAmount <= 100000000
+        && optDate(d, 'targetDate') && optStr(d, 'note', 500)
+        && optList(d, 'contributions', 500);
+    }
+
     function validFor(c, d) {
       return (c == 'profile' && validProfile(d))
         || (c == 'settings' && validSettings(d))
@@ -142,7 +150,8 @@ service cloud.firestore {
         || (c == 'plans' && validPlan(d))
         || (c == 'memories' && validMemory(d))
         || (c == 'partner' && validPartner(d))
-        || (c == 'transactions' && validTransaction(d));
+        || (c == 'transactions' && validTransaction(d))
+        || (c == 'savings' && validSavings(d));
     }
 
     // Kök belge ve kök listeleme kapalı.

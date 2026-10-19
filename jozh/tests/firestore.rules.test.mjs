@@ -139,3 +139,13 @@ test('gelir-gider sınırları', async () => {
   await assertFails(setDoc(ref('transactions', id), t({ category: '' })));
   await assertFails(setDoc(ref('transactions', id), t({ account: 'altin' })));
 });
+
+test('birikim hedefi sınırları', async () => {
+  const id = `save_${UUID}`;
+  const g = (extra) => ({ ...base(id), title: 'Araba', targetAmount: 200000, targetDate: '2027-06-01', note: '', contributions: [{ id: 'a1', date: '2026-10-19', amount: 2500, note: '', txnId: '' }], ...extra });
+  await assertSucceeds(setDoc(ref('savings', id), g({})));
+  await assertFails(setDoc(ref('savings', id), g({ title: '' })));
+  await assertFails(setDoc(ref('savings', id), g({ targetAmount: 0 })));
+  await assertFails(setDoc(ref('savings', id), g({ targetDate: '01.06.2027' })));
+  await assertFails(setDoc(ref('savings', id), g({ extra: 1 })));
+});

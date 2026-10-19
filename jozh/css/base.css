@@ -25,6 +25,9 @@
   --type-plan-personal: #2ecc71;
   --type-plan-special: #a58cf0;
   --type-plan-other: #8891aa;
+  /* Grafik serileri (renk körlüğü denetiminden geçti) */
+  --series-income: #3987e5;
+  --series-expense: #d95926;
   color-scheme: dark;
 }
 

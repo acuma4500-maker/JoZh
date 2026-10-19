@@ -18,8 +18,8 @@
 .cat-pct { min-width: 46px; text-align: right; }
 .cat-track { display: block; height: 8px; background: var(--bg3); border-radius: 999px; overflow: hidden; }
 .cat-fill { display: block; height: 100%; border-radius: inherit; }
-.cat-fill.expense { background: var(--red); }
-.cat-fill.income { background: var(--green); }
+.cat-fill.expense { background: var(--series-expense); }
+.cat-fill.income { background: var(--series-income); }
 .txn-open { display: flex !important; align-items: center; gap: 12px; }
 .txn-icon { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bg3); }
 .txn-icon.income { color: var(--green); }
@@ -28,3 +28,52 @@
 .txn-item { padding: 10px 14px; }
 @media (max-width: 1000px) { .fin-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 699px) { .fin-summary { grid-template-columns: minmax(0, 1fr); } .fin-stat .stat-value { font-size: 1.25rem; } }
+
+/* Sekmeler ve ay seçici */
+.fin-monthnav { display: flex; align-items: center; gap: 8px; }
+.fin-tabs { margin-bottom: 16px; }
+.fin-panel[hidden] { display: none; }
+
+/* Grafikler */
+.fin-charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.chart-card { display: flex; flex-direction: column; gap: 10px; }
+.chart { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85rem; color: var(--text2); }
+.chart-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.chart-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.chart-swatch.series-income { background: var(--series-income); }
+.chart-swatch.series-expense { background: var(--series-expense); }
+.chart-stage { position: relative; width: 100%; min-width: 0; }
+.chart-svg { display: block; overflow: visible; }
+.chart-grid line { stroke: var(--border); stroke-width: 1; }
+.chart-grid line.chart-baseline { stroke: var(--text3); }
+.chart-axis { fill: var(--text3); font-size: 11px; font-family: var(--font); font-variant-numeric: tabular-nums; }
+.chart-bar.series-income { fill: var(--series-income); }
+.chart-bar.series-expense { fill: var(--series-expense); }
+.chart-hit { fill: transparent; cursor: pointer; outline: none; }
+.chart-hit.is-active, .chart-hit:focus-visible { fill: var(--text); fill-opacity: 0.06; }
+.chart-hit:focus-visible { stroke: var(--focus); stroke-width: 2; }
+.chart-tip { position: absolute; top: 0; z-index: 2; min-width: 170px; max-width: 260px; padding: 10px 12px; pointer-events: none;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); font-size: 0.85rem; }
+.chart-tip-title { font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.chart-tip ul { display: flex; flex-direction: column; gap: 4px; }
+.chart-tip li { display: flex; align-items: center; gap: 8px; color: var(--text2); }
+.chart-tip strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.chart-tip-note { margin-top: 6px; color: var(--text2); }
+.chart-table summary { font-size: 0.85rem; }
+.chart-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px 16px; margin: 0; font-size: 0.85rem; }
+.chart-facts dt { color: var(--text2); }
+.chart-facts dd { margin: 0 0 6px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Birikim hedefleri */
+.goal-card { display: flex; flex-direction: column; gap: 8px; }
+.goal-card .card-header { margin-bottom: 0; }
+.goal-title { font-size: 1rem; }
+.goal-amounts { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+.goal-history .compact-list { margin-top: 8px; }
+.savings-head .stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+@media (max-width: 699px) {
+  .fin-monthnav { width: 100%; justify-content: space-between; }
+  .fin-tabs { display: flex; }
+  .fin-tabs .segment { flex: 1; }
+}

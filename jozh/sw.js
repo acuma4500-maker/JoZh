@@ -1,6 +1,6 @@
 // JOZH Service Worker. VERSION, js/app.js içindeki APP_VERSION ile aynı olmalıdır.
 // Yeni dosya eklendiğinde APP_ASSETS listesine eklenir ve VERSION artırılır (tests/precache-check.mjs denetler).
-const VERSION = '1.1.1';
+const VERSION = '1.2.0';
 const APP_CACHE = `jozh-app-${VERSION}`;
 const SDK_VERSION = '10.12.2';
 const SDK_CACHE = `jozh-firebase-sdk-${SDK_VERSION}`;
@@ -54,6 +54,7 @@ const APP_ASSETS = [
   './js/router.js',
   './js/ui.js',
   './js/validators.js',
+  './js/components/charts.js',
   './js/components/day-plans.js',
   './js/components/list-editor.js',
   './js/components/photos.js',
