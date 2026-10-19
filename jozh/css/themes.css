@@ -12,5 +12,7 @@ html[data-theme="light"] {
   --type-plan-personal: #1e9e57;
   --type-plan-special: #7a5bd6;
   --type-plan-other: #6b7590;
+  --series-income: #2a78d6;
+  --series-expense: #eb6834;
   color-scheme: light;
 }

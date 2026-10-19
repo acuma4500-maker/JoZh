@@ -127,6 +127,19 @@ export const SCHEMAS = {
   settings: {
     calendarView: oneOf(['month', 'agenda'], 'month')
   },
+  savings: {
+    title: str(100, { required: true }),
+    targetAmount: num(0.01, 100000000, { decimals: 2, required: true }),
+    targetDate: date(),
+    note: str(500),
+    contributions: list(obj({
+      id: str(16),
+      date: date({ required: true }),
+      amount: num(-100000000, 100000000, { decimals: 2, required: true }),
+      note: str(200),
+      txnId: str(60)
+    }), 500)
+  },
   transactions: {
     type: oneOf(['income', 'expense'], 'expense'),
     amount: num(0.01, 100000000, { decimals: 2, required: true }),
@@ -137,9 +150,9 @@ export const SCHEMAS = {
   }
 };
 
-export const SYNCED_STORES = ['profile', 'settings', 'partner', 'memories', 'notes', 'diary', 'dreams', 'plans', 'transactions'];
+export const SYNCED_STORES = ['profile', 'settings', 'partner', 'memories', 'notes', 'diary', 'dreams', 'plans', 'transactions', 'savings'];
 export const SINGLETON_STORES = ['profile', 'partner', 'settings'];
-export const ID_PREFIX = { memories: 'mem', diary: 'diary', dreams: 'dream', plans: 'plan', notes: 'note', transactions: 'txn' };
+export const ID_PREFIX = { memories: 'mem', diary: 'diary', dreams: 'dream', plans: 'plan', notes: 'note', transactions: 'txn', savings: 'save' };
 
 function cleanString(value, def, errors, path) {
   if (value === null || value === undefined) return '';
@@ -303,6 +316,11 @@ function crossValidate(store, rec, errors) {
       rec.spent = Math.round(actual * 100) / 100;
       if (rec.spent > 100000000) errors.spent = 'Harcama toplamı çok büyük.';
     }
+  }
+  if (store === 'savings') {
+    rec.contributions.forEach((c, i) => {
+      if (c.amount === 0) errors[`contributions.${i}.amount`] = 'Tutar sıfır olamaz.';
+    });
   }
   if (store === 'transactions' && rec.type === 'income' && rec.account === 'card') {
     errors.account = 'Gelir nakit ya da bankaya kaydedilir.';

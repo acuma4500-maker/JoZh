@@ -1,4 +1,4 @@
-# JOZH — Kişisel Yaşam Paneli (v1.1.0)
+# JOZH — Kişisel Yaşam Paneli (v1.2.0)
 
 JOZH tek kullanıcılı, kişisel bir yaşam panelidir. İçinde profil, sevdiğim kadın, günlük, hayaller ve hedefler, planlar ve seyahatler, takvim, hızlı notlar, **gelir ve gider**, Gizli Kasa, yedekleme ve ayarlar bulunur.
 
@@ -67,7 +67,17 @@ Bu sayfa üç soruya cevap verir: **Bu ay ne kadar geldi?**, **Para nereye ne ka
   - Kredi kartıyla yapılan harcamalar kart borcu olarak ayrıca gösterilir. Nakit ya da bankadan yapılan "Kart ödemesi" giderleri bu borçtan düşülür.
 - **Bakiye gir:** Bir kez, şu an cebindeki ve bankandaki gerçek parayı yaz. Fark "Başlangıç bakiyesi" olarak kaydedilir ve aylık gelire ya da gidere sayılmaz.
 - Önceki ve sonraki aylara geçilebilir. Hareketler tür, hesap ve aramayla süzülebilir. Her kayıt düzenlenebilir ve silindiğinde geri alınabilir.
-- Kayıtlar senkronizasyona ve yedeğe dahildir. Ana panelde de bu ayın özeti görünür.
+- Sayfanın üstünde üç sekme var: **Özet**, **Grafikler**, **Birikim**.
+- **Grafikler:**
+  - **Son 6 ay: gelen ve giden.** Her ay için gelen (mavi) ve giden (turuncu) çubuklar, aylık ortalamalarla birlikte.
+  - **Günlük harcama.** Seçili ayın her günü için toplam gider; ayrıca aylık toplam, günlük ortalama ve en çok harcanan gün.
+  - Bir çubuğa dokununca ya da üzerine gelince tutarlar görünür. Her grafiğin altında **Tablo olarak göster** seçeneği var.
+- **Birikim hedefleri:** Ad, hedef tutar ve isteğe bağlı hedef tarihi girilir. Her hedef için biriken tutar, ilerleme yüzdesi ve kalan tutar görünür. Hedef tarihi varsa ayda ne kadar biriktirmen gerektiği hesaplanır.
+  - **Para ekle / Para çek:** "Nakit ya da bankadan düş" işaretliyse para seçilen hesaptan düşülür (çekerken hesaba eklenir).
+  - Bu aktarımlar ("Birikime aktarılan", "Birikimden çekilen") aylık gelire ya da gidere sayılmaz; yalnızca bakiyeyi değiştirir.
+  - "Cebimde ne var" kartında **Birikimlerde** ve **Toplam varlık** satırları da görünür.
+  - Bir hareket silinirse ona bağlı bakiye kaydı da silinir.
+- Kayıtlar ve birikim hedefleri senkronizasyona ve yedeğe dahildir. Ana panelde de bu ayın özeti ve toplam birikim görünür.
 
 ## 5. Bilinen sınırlar
 
@@ -124,6 +134,7 @@ jozh/
 │   │   └── backup-manager.js    Şifreli .jozh yedeği: oluşturma, doğrulama, geri yükleme
 │   ├── components/
 │   │   ├── pin-pad.js           4 haneli PIN tuş takımı (açılış ve kasa ortak)
+│   │   ├── charts.js            SVG çubuk grafik (bilgi balonu, gösterge, tablo görünümü)
 │   │   ├── photos.js            Fotoğraf alanı (commit/discard), görüntüleyici, avatar
 │   │   ├── plan-editor.js       Plan düzenleyici (Planlar, Takvim, Ana panel)
 │   │   ├── list-editor.js       Düzenlenebilir ve işaretlenebilir listeler
@@ -151,7 +162,7 @@ Her sayfa ortak olarak şunları kullanır: `base/themes/layout/components/respo
 | plans.html | `plans.css`, `plans.js` | `plan-editor.js`, `list-editor.js`, `day-plans.js`, `plan-helpers.js` |
 | calendar.html | `calendar.css`, `calendar.js` | `plan-editor.js`, `day-plans.js`, `plan-helpers.js` |
 | notes.html | `notes.css`, `notes.js` | `records.js`, `autosave.js`, `tags.js` |
-| finance.html | `finance.css`, `finance.js` | `records.js`, `finance-helpers.js` |
+| finance.html | `finance.css`, `finance.js` | `records.js`, `finance-helpers.js`, `charts.js` |
 | vault-login.html | `vault-login.css`, `vault-login.js` | `pin-pad.js`, `vault-storage.js` |
 | vault.html | `vault.css`, `vault.js` | `vault-storage.js`, `photos.js` (şifreli kaynak) |
 | backup.html | `backup.css`, `backup.js` | `backup-manager.js`, `validators.js` |
@@ -164,9 +175,10 @@ Her sayfa ortak olarak şunları kullanır: `base/themes/layout/components/respo
   - 2: images
   - 3: vault, vaultImages, vaultSession
   - 4: transactions (gelir ve gider)
+  - 5: savings (birikim hedefleri)
   - Eski adımlar asla değiştirilmez; yeni ihtiyaçta `MIGRATIONS` dizisine adım eklenir.
 - **Her kaydın ortak alanları:** `id` (`<önek>_<uuid>`, tek belgelilerde `main`), `createdAt`, `updatedAt`, `version`, `deleted` (geri alınabilir silme), `syncedRev` (yalnızca cihazda).
-- **Firestore yolu:** `jozh/{anahtar}/{koleksiyon}/{belge}`. Koleksiyonlar: profile, settings, partner, memories, notes, diary, dreams, plans, transactions.
+- **Firestore yolu:** `jozh/{anahtar}/{koleksiyon}/{belge}`. Koleksiyonlar: profile, settings, partner, memories, notes, diary, dreams, plans, transactions, savings.
 
 ## 8. Testler
 
@@ -174,5 +186,7 @@ Her sayfa ortak olarak şunları kullanır: `base/themes/layout/components/respo
 node tests/precache-check.mjs          # sw.js APP_ASSETS listesi ↔ diskteki dosyalar, sürüm eşleşmesi
 cd tests && npm install && npm run test:rules   # Firestore kural testleri (Firebase CLI + Java gerekir)
 ```
+
+**Kurallar değiştiğinde** (ör. v1.2.0'da `savings` koleksiyonu eklendi) `firestore.rules` dosyasını Firebase Console → Firestore → Rules'a yeniden yapıştırıp **Publish**'e bas; yoksa yeni koleksiyonun kayıtları buluta gönderilemez.
 
 Yeni bir dosya eklediğinde onu `sw.js` içindeki `APP_ASSETS` listesine ekle ve `VERSION` ile `js/app.js` içindeki `APP_VERSION` değerini birlikte artır.

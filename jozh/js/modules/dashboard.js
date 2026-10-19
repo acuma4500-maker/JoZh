@@ -9,7 +9,7 @@ import { todayISO, formatDate, calcAge, relativeDayLabel, monthGrid, WEEKDAYS_SH
 import { formatMoney, initials, truncate, formatNumber } from '../utils/formatters.js';
 import { isUpcomingOrOngoing, sortByStart, timingLabel, budgetLabel, isOnDay, planStart, planEnd } from '../utils/plan-helpers.js';
 import { nextImportantDate } from '../utils/partner-helpers.js';
-import { inMonth, totals, balances } from '../utils/finance-helpers.js';
+import { inMonth, totals, balances, savingsSummary } from '../utils/finance-helpers.js';
 import { avatar } from '../components/photos.js';
 import { renderDayPlans } from '../components/day-plans.js';
 import { openPlanEditor } from '../components/plan-editor.js';
@@ -198,10 +198,13 @@ async function financeCard(body) {
   }
   const t = totals(txns.filter((x) => inMonth(x, today.slice(0, 7))));
   const b = balances(txns);
+  const goals = await listRecords('savings');
+  const sv = savingsSummary(goals);
   replace(body, el('div', { class: 'stats' },
     el('div', { class: 'stat' }, el('span', { class: 'stat-value text-green' }, formatMoney(t.income)), el('span', { class: 'stat-label' }, 'Bu ay gelen')),
     el('div', { class: 'stat' }, el('span', { class: 'stat-value text-red' }, formatMoney(t.expense)), el('span', { class: 'stat-label' }, 'Bu ay giden')),
-    el('div', { class: 'stat' }, el('span', { class: `stat-value${b.available < 0 ? ' text-red' : ''}` }, `${b.available < 0 ? '−' : ''}${formatMoney(Math.abs(b.available))}`), el('span', { class: 'stat-label' }, 'Nakit + banka'))));
+    el('div', { class: 'stat' }, el('span', { class: `stat-value${b.available < 0 ? ' text-red' : ''}` }, `${b.available < 0 ? '−' : ''}${formatMoney(Math.abs(b.available))}`), el('span', { class: 'stat-label' }, 'Nakit + banka')),
+    goals.length ? el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, formatMoney(sv.saved)), el('span', { class: 'stat-label' }, `Birikimde (${sv.reached}/${sv.count} hedef)`)) : null));
 }
 
 async function setup() {

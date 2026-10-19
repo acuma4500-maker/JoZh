@@ -42,6 +42,11 @@ const MIGRATIONS = [
     const store = db.createObjectStore('transactions', { keyPath: 'id' });
     store.createIndex('updatedAt', 'updatedAt');
     store.createIndex('date', 'date');
+  },
+  // Sürüm 5: birikim hedefleri
+  (db) => {
+    const store = db.createObjectStore('savings', { keyPath: 'id' });
+    store.createIndex('updatedAt', 'updatedAt');
   }
 ];
 

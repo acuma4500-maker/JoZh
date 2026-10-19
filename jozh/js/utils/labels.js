@@ -9,7 +9,8 @@ export const STORE_LABELS = {
   dreams: 'Hedef',
   plans: 'Plan',
   notes: 'Not',
-  transactions: 'Gelir/gider'
+  transactions: 'Gelir/gider',
+  savings: 'Birikim hedefi'
 };
 
 export const BLOOD_TYPES = ['A Rh+', 'A Rh−', 'B Rh+', 'B Rh−', 'AB Rh+', 'AB Rh−', '0 Rh+', '0 Rh−'];
@@ -53,6 +54,11 @@ export const TXN_ACCOUNTS = { cash: 'Nakit', bank: 'Banka', card: 'Kredi kartı'
 // Başlangıç bakiyesi aylık gelire sayılmaz; yalnızca bakiyeyi başlatır.
 export const OPENING_CATEGORY = 'Başlangıç bakiyesi';
 
+// Birikime aktarılan / birikimden çekilen para gelir ya da gider sayılmaz; yalnızca bakiyeyi değiştirir.
+export const SAVING_IN_CATEGORY = 'Birikime aktarılan';
+export const SAVING_OUT_CATEGORY = 'Birikimden çekilen';
+export const TRANSFER_CATEGORIES = [OPENING_CATEGORY, SAVING_IN_CATEGORY, SAVING_OUT_CATEGORY];
+
 export const INCOME_CATEGORIES = ['Maaş', 'Ek iş', 'Prim', 'Kira geliri', 'Satış', 'Hediye', 'Borç geri ödemesi', 'Diğer gelir'];
 
 export const EXPENSE_CATEGORIES = [
@@ -85,7 +91,8 @@ export const FIELD_LABELS = {
     surprises: 'Sürpriz fikirleri', privateNotes: 'Özel notlar'
   },
   settings: { calendarView: 'Takvim görünümü' },
-  transactions: { type: 'Tür', amount: 'Tutar', category: 'Kategori', date: 'Tarih', account: 'Hesap', note: 'Açıklama' }
+  transactions: { type: 'Tür', amount: 'Tutar', category: 'Kategori', date: 'Tarih', account: 'Hesap', note: 'Açıklama' },
+  savings: { title: 'Ad', targetAmount: 'Hedef tutar', targetDate: 'Hedef tarihi', note: 'Not', contributions: 'Hareketler' }
 };
 
 export function fieldLabel(store, field) {
@@ -101,6 +108,7 @@ export function recordTitle(store, record) {
     case 'settings': return 'Ayarlar';
     case 'plans': return record.name || 'Adsız plan';
     case 'notes': return record.title || (record.body ? String(record.body).slice(0, 40) : 'Adsız not');
+    case 'savings': return record.title || 'Birikim hedefi';
     case 'transactions': return `${TXN_TYPES[record.type] || ''} · ${record.category || ''}`;
     default: return record.title || 'Adsız kayıt';
   }

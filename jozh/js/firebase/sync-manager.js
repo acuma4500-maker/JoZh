@@ -185,6 +185,7 @@ async function pullStore(key, store) {
 async function pushQueue(key) {
   const queue = await db.getAll('syncQueue');
   const conflicts = (await db.getMeta(CONFLICTS_KEY)) || {};
+  const failed = [];
   for (const entry of queue) {
     if (conflicts[entry.key]) continue;
     if (!SYNCED_STORES.includes(entry.store)) {
@@ -197,10 +198,18 @@ async function pushQueue(key) {
       continue;
     }
     const rev = records.revOf(rec);
-    let res = await pushIfUnchanged(key, entry.store, rec, rec.syncedRev ?? null);
-    if (!res.ok && !res.remote && rec.syncedRev) {
-      // Bulutta hiç yok (silinmiş ya da yedekten gelme): beklenen sürüm null ile yeniden dene.
-      res = await pushIfUnchanged(key, entry.store, rec, null);
+    let res;
+    try {
+      res = await pushIfUnchanged(key, entry.store, rec, rec.syncedRev ?? null);
+      if (!res.ok && !res.remote && rec.syncedRev) {
+        // Bulutta hiç yok (silinmiş ya da yedekten gelme): beklenen sürüm null ile yeniden dene.
+        res = await pushIfUnchanged(key, entry.store, rec, null);
+      }
+    } catch (err) {
+      // Bir kaydın reddedilmesi (ör. kurallar güncel değil) diğerlerinin gönderilmesini durdurmaz.
+      if (classifyError(err) === 'network') throw err;
+      failed.push(err);
+      continue;
     }
     if (res.ok) {
       await records.markSynced(entry.store, entry.id, rev);
@@ -212,6 +221,7 @@ async function pushQueue(key) {
     status.pending = await records.pendingCount();
     emit();
   }
+  if (failed.length) throw failed[0];
 }
 
 async function doRound() {

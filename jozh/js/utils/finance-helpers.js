@@ -1,8 +1,14 @@
 // Gelir ve gider hesapları: aylık toplamlar, kategori dağılımı, hesap bakiyeleri.
-import { INCOME_CATEGORIES, EXPENSE_CATEGORIES, OPENING_CATEGORY } from './labels.js';
+import { INCOME_CATEGORIES, EXPENSE_CATEGORIES, OPENING_CATEGORY, TRANSFER_CATEGORIES } from './labels.js';
+import { daysInMonth } from './dates.js';
 
 export function isOpening(txn) {
   return txn.category === OPENING_CATEGORY;
+}
+
+// Başlangıç bakiyesi ve birikim aktarımları gelir/gider sayılmaz; yalnızca bakiyeyi değiştirir.
+export function isTransfer(txn) {
+  return TRANSFER_CATEGORIES.includes(txn.category);
 }
 
 function round2(n) {
@@ -17,7 +23,7 @@ export function totals(txns) {
   let income = 0;
   let expense = 0;
   for (const t of txns) {
-    if (isOpening(t)) continue;
+    if (isTransfer(t)) continue;
     if (t.type === 'income') income += Number(t.amount) || 0;
     else expense += Number(t.amount) || 0;
   }
@@ -29,7 +35,7 @@ export function byCategory(txns, type = 'expense') {
   const map = new Map();
   let total = 0;
   for (const t of txns) {
-    if (t.type !== type || isOpening(t)) continue;
+    if (t.type !== type || isTransfer(t)) continue;
     const amount = Number(t.amount) || 0;
     total += amount;
     map.set(t.category, (map.get(t.category) || 0) + amount);
@@ -66,7 +72,7 @@ export function balances(txns) {
 
 export function categoriesFor(type, txns = []) {
   const base = type === 'income' ? [...INCOME_CATEGORIES, OPENING_CATEGORY] : EXPENSE_CATEGORIES;
-  const used = txns.filter((t) => t.type === type).map((t) => t.category);
+  const used = txns.filter((t) => t.type === type && !isTransfer(t)).map((t) => t.category);
   return [...new Set([...base, ...used])];
 }
 
@@ -84,4 +90,47 @@ export function nextMonth(ym) {
   const [y, m] = ym.split('-').map(Number);
   const d = new Date(y, m, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Bitiş ayı dahil son n ayın gelen ve giden toplamları (eskiden yeniye).
+export function monthlySeries(txns, endYm, n = 6) {
+  const months = [];
+  let ym = endYm;
+  for (let i = 0; i < n; i += 1) {
+    months.unshift(ym);
+    ym = previousMonth(ym);
+  }
+  return months.map((m) => ({ month: m, ...totals(txns.filter((t) => inMonth(t, m))) }));
+}
+
+// Bir ayın her günü için gider toplamı.
+export function dailyExpenses(txns, ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const days = Array.from({ length: daysInMonth(y, m - 1) }, (_, i) => ({ day: i + 1, amount: 0 }));
+  for (const t of txns) {
+    if (t.type !== 'expense' || isTransfer(t) || !inMonth(t, ym)) continue;
+    const d = Number(t.date.slice(8, 10));
+    days[d - 1].amount += Number(t.amount) || 0;
+  }
+  for (const d of days) d.amount = round2(d.amount);
+  return days;
+}
+
+// --- Birikim hedefleri ---
+
+export function savedAmount(goal) {
+  return round2((goal.contributions || []).reduce((s, c) => s + (Number(c.amount) || 0), 0));
+}
+
+export function savingsSummary(goals) {
+  let saved = 0;
+  let target = 0;
+  let reached = 0;
+  for (const g of goals) {
+    const s = savedAmount(g);
+    saved += s;
+    target += Number(g.targetAmount) || 0;
+    if (s >= g.targetAmount) reached += 1;
+  }
+  return { saved: round2(saved), target: round2(target), reached, count: goals.length };
 }
