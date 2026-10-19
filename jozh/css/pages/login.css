@@ -1,2 +1,5 @@
 /* Açılış PIN ekranı: ortak düzen components.css içindeki .lock-screen / .pin-* sınıflarındadır. */
 #main { min-height: 100vh; min-height: 100dvh; }
+
+.bio-button { align-self: stretch; max-width: 320px; }
+@media (max-width: 699px), (orientation: portrait) and (max-width: 900px) { .bio-button { align-self: center; width: 100%; } }

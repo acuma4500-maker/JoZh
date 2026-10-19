@@ -1,11 +1,12 @@
 // Ana panel: gerçek verilerle kartlar. Bir kartın verisi okunamazsa yalnızca o kart hata gösterir.
 import { initApp } from '../app.js';
 import { getSingleton, listRecords } from '../storage/records.js';
+import { getMeta } from '../storage/local-db.js';
 import { el, replace, loadingState, errorState, progressBar, chip, iconButton } from '../ui.js';
 import { icon } from '../utils/icons.js';
 import { logError } from '../utils/logger.js';
 import { pageUrl } from '../router.js';
-import { todayISO, formatDate, calcAge, relativeDayLabel, monthGrid, WEEKDAYS_SHORT_MON, formatMonthYear, addMonths, pad2 } from '../utils/dates.js';
+import { todayISO, diffDays, formatDate, calcAge, relativeDayLabel, monthGrid, WEEKDAYS_SHORT_MON, formatMonthYear, addMonths, pad2 } from '../utils/dates.js';
 import { formatMoney, initials, truncate, formatNumber } from '../utils/formatters.js';
 import { isUpcomingOrOngoing, sortByStart, timingLabel, budgetLabel, isOnDay, planStart, planEnd } from '../utils/plan-helpers.js';
 import { nextImportantDate } from '../utils/partner-helpers.js';
@@ -207,6 +208,21 @@ async function financeCard(body) {
     goals.length ? el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, formatMoney(sv.saved)), el('span', { class: 'stat-label' }, `Birikimde (${sv.reached}/${sv.count} hedef)`)) : null));
 }
 
+async function interviewCard(body) {
+  const { QUESTIONS } = await import('../data/interview-bank.js');
+  const settings = (await getMeta('study:settings')) || {};
+  const progress = (await getMeta('study:progress')) || {};
+  const days = (await getMeta('study:days')) || {};
+  const learned = Object.values(progress).filter((p) => p.box >= 4).length;
+  const todayCount = days[today] || 0;
+  const left = settings.interviewDate ? diffDays(today, settings.interviewDate) : null;
+  replace(body,
+    el('div', { class: 'stats' },
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, left === null ? '—' : left > 0 ? `${left} gün` : left === 0 ? 'Bugün' : 'Geçti'), el('span', { class: 'stat-label' }, 'Mülakata kalan')),
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, `${todayCount} / ${settings.dailyGoal || 20}`), el('span', { class: 'stat-label' }, 'Bugünkü kartlar')),
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, `%${Math.round((learned / QUESTIONS.length) * 100)}`), el('span', { class: 'stat-label' }, 'Öğrenilen'))));
+}
+
 async function setup() {
   const cProfile = card('dash-profile', 'Profilim', pageUrl('profile'), 'Profile git');
   const cPartner = card('dash-partner', 'Sevdiğim kadın', pageUrl('partner'), 'Aç', 'warm-card');
@@ -216,13 +232,17 @@ async function setup() {
   const cDiary = card('dash-diary', 'Son günlükler', pageUrl('diary'), 'Günlüğe git');
   const cNotes = card('dash-notes', 'Son notlar', pageUrl('notes', 'new'), 'Yeni not');
   const cFinance = card('dash-finance', 'Gelir ve gider', pageUrl('finance'), 'Ayrıntılar');
+  const interview = el('section', { class: 'card dash-card', 'aria-labelledby': 'dash-iv-title' },
+    el('div', { class: 'card-header' }, el('h2', { id: 'dash-iv-title' }, 'Mülakat hazırlık'), el('a', { class: 'card-link', href: pageUrl('interview') }, 'Çalış')),
+    el('div', { class: 'card-body' }, loadingState()));
   const vault = el('section', { class: 'card dash-card vault-card', 'aria-labelledby': 'dash-vault-title' },
     el('div', { class: 'card-header' }, el('h2', { id: 'dash-vault-title' }, 'Gizli Kasa')),
     el('p', { class: 'muted small' }, 'Kasa içeriği burada asla gösterilmez. Açmak için kasa PIN\'in gerekir.'),
     el('a', { class: 'btn btn-secondary mt', href: pageUrl('vaultLogin') }, icon('shield'), el('span', null, 'Gizli Kasa\'yı aç')));
 
   replace(main, el('div', { class: 'dash-grid' },
-    cProfile.node, cPartner.node, cFinance.node, cCal.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
+    cProfile.node, cPartner.node, cFinance.node, interview, cCal.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
+  fill({ body: interview.querySelector('.card-body') }, interviewCard);
 
   fill(cProfile, profileCard);
   fill(cPartner, partnerCard);

@@ -1,0 +1,43 @@
+/* Mülakat hazırlık */
+.iv-hero { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.iv-hero .stat { gap: 6px; }
+.iv-countdown .stat-value { color: var(--accent); }
+.iv-tabs { margin-bottom: 16px; }
+.iv-panel[hidden] { display: none; }
+.iv-cats { margin-bottom: 12px; }
+.chip-count { color: var(--text3); font-variant-numeric: tabular-nums; }
+.chip-button[aria-pressed="true"] .chip-count { color: rgba(255, 255, 255, 0.8); }
+.iv-modes { margin-bottom: 12px; }
+.iv-card { display: flex; flex-direction: column; gap: 14px; padding: 20px; min-height: 260px; }
+.iv-card-head { gap: 8px; }
+.iv-question { font-size: 1.3rem; line-height: 1.4; font-weight: 600; }
+.iv-reveal { align-self: flex-start; min-width: 200px; }
+.iv-answer { border-top: 1px solid var(--border); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.iv-answer .prose { font-size: 1.02rem; }
+.iv-rate { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.iv-rate .btn { min-height: 52px; }
+.iv-bad { border-color: var(--red); color: var(--red); }
+.iv-mid { border-color: var(--yellow); color: var(--yellow); }
+.iv-left { margin-top: auto; }
+.iv-empty { align-items: center; justify-content: center; text-align: center; }
+.iv-empty .icon { color: var(--green); }
+.iv-bank-card { margin-top: 14px; }
+.iv-bank-card > summary { font-weight: 600; color: var(--text); }
+.iv-bank { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; max-height: 60vh; overflow-y: auto; }
+.iv-bank details { border-bottom: 1px solid var(--border); padding: 4px 0; }
+.iv-bank summary { color: var(--text); gap: 8px; }
+.iv-bank .prose { padding: 4px 0 8px; color: var(--text2); }
+.iv-check { margin-left: 6px; }
+.iv-timer { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.1rem; min-width: 52px; text-align: right; }
+.iv-timer.is-long { color: var(--yellow); }
+.iv-score .row { gap: 8px; }
+.iv-prompt textarea { min-height: 110px; }
+.iv-fit-stats .stat { gap: 6px; }
+@media (max-width: 899px) { .iv-hero { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 699px) {
+  .iv-tabs { display: flex; }
+  .iv-tabs .segment { flex: 1; padding: 0 6px; font-size: 0.82rem; }
+  .iv-question { font-size: 1.15rem; }
+  .iv-reveal { align-self: stretch; }
+  .iv-card { padding: 16px; }
+}

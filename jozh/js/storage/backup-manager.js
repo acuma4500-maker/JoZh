@@ -17,7 +17,7 @@ const FORMAT_VERSION = 1;
 const RECORDS_PER_BLOCK = 200;
 const RECORD_STORES = ['profile', 'partner', 'settings', 'memories', 'diary', 'dreams', 'plans', 'notes', 'transactions', 'savings'];
 const META_EXACT = ['sync:key', 'vault:config', 'appLock:config'];
-const META_PREFIX = 'draft:';
+const META_PREFIXES = ['draft:', 'study:'];
 const LEGACY_META = ['ownerUid'];
 const VAULT_ID_RE = /^vault_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
@@ -46,7 +46,7 @@ function reviver(_key, value) {
 const aad = (saltB64, index) => `jozh-backup-v1:${saltB64}:${index}`;
 
 function isMetaAllowed(key) {
-  return META_EXACT.includes(key) || key.startsWith(META_PREFIX);
+  return META_EXACT.includes(key) || META_PREFIXES.some((p) => key.startsWith(p));
 }
 
 // --- Oluşturma ---

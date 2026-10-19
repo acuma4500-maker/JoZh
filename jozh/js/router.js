@@ -12,6 +12,7 @@ export const PAGES = {
   calendar: '../pages/calendar.html',
   notes: '../pages/notes.html',
   finance: '../pages/finance.html',
+  interview: '../pages/interview.html',
   vaultLogin: '../pages/vault-login.html',
   vault: '../pages/vault.html',
   backup: '../pages/backup.html',

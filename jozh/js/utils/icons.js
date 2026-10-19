@@ -51,6 +51,8 @@ const PATHS = {
   location: '<path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
   income: '<path d="M12 19V5M5 12l7-7 7 7"/>',
   expense: '<path d="M12 5v14M19 12l-7 7-7-7"/>',
+  speaker: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
+  medal: '<path d="M7 3h4l1 5M17 3h-4l-1 5"/><circle cx="12" cy="15" r="6"/><path d="M12 12.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3z"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
   logo: '<rect x="2" y="2" width="20" height="20" rx="5"/><path d="M14 7v7a3 3 0 0 1-6 0"/>'
 };
