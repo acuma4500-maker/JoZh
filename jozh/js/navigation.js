@@ -12,7 +12,8 @@ const MAIN_ITEMS = [
   ['plans', 'Planlar', 'map'],
   ['calendar', 'Takvim', 'calendar'],
   ['notes', 'Notlar', 'note'],
-  ['finance', 'Gelir ve gider', 'wallet']
+  ['finance', 'Gelir ve gider', 'wallet'],
+  ['interview', 'Mülakat hazırlık', 'medal']
 ];
 
 const BOTTOM_ITEMS = [

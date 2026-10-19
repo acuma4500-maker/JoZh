@@ -1,4 +1,4 @@
-# JOZH — Kişisel Yaşam Paneli (v1.2.0)
+# JOZH — Kişisel Yaşam Paneli (v1.3.0)
 
 JOZH tek kullanıcılı, kişisel bir yaşam panelidir. İçinde profil, sevdiğim kadın, günlük, hayaller ve hedefler, planlar ve seyahatler, takvim, hızlı notlar, **gelir ve gider**, Gizli Kasa, yedekleme ve ayarlar bulunur.
 
@@ -78,6 +78,29 @@ Bu sayfa üç soruya cevap verir: **Bu ay ne kadar geldi?**, **Para nereye ne ka
   - "Cebimde ne var" kartında **Birikimlerde** ve **Toplam varlık** satırları da görünür.
   - Bir hareket silinirse ona bağlı bakiye kaydı da silinir.
 - Kayıtlar ve birikim hedefleri senkronizasyona ve yedeğe dahildir. Ana panelde de bu ayın özeti ve toplam birikim görünür.
+
+## 4a. Face ID ile açma
+
+**Ayarlar → Face ID ile açma → Etkinleştir** dedikten sonra kilit ekranında **Face ID ile aç** düğmesi çıkar.
+- Cihazın kendi doğrulamasını (WebAuthn/passkey) kullanır. Yüz ya da parmak izi bilgisi uygulamaya hiç gelmez; uygulama yalnızca cihazın imzasını kayıtlı açık anahtarla denetler.
+- PIN her zaman yedek yöntemdir. Gizli Kasa yine kendi PIN'iyle açılır.
+- Kayıt cihaza bağlıdır; yedeğe girmez. Yeni telefonda yeniden etkinleştir.
+
+## 4b. Mülakat hazırlık (uzman çavuş)
+
+Menü → **Mülakat hazırlık**. Beş bölüm var:
+- **Çalış:** 219 soruluk banka, 8 kategori (kişisel, durum soruları, TSK, Atatürk ve Milli Mücadele, Türk tarihi, anayasa, coğrafya, güncel ve savunma sanayii).
+  - Kartlar akıllı tekrar (Leitner) ile gelir: bilemediğin kart sık, bildiğin seyrek gelir. "Öğrenilen", 4. kutuya ulaşan kartlardır.
+  - Kendi sorularını ekleyebilirsin; bütün bankada arama yapabilirsin.
+  - "Kontrol et" işaretli cevaplar (isimler, güncel olaylar) zamanla değişebilir; resmî kaynaktan doğrula.
+- **Deneme:** Seçtiğin sayıda soruyla deneme mülakatı yaparsın. Sorular sesli okunur, süre tutulur, kendine puan verirsin; zayıf sorular çalışma listesine eklenebilir.
+- **Cevaplarım:** Kişisel sorulara kendi cevabını yazar, kelime sayısını ve yaklaşık konuşma süresini görürsün.
+- **Fiziki:** Koşu, şınav ve mekik kayıtları, hedefler ve gelişim grafiği. Hedefleri başvuru kılavuzundaki tabloya göre gir.
+- **Rehber:** Mülakat günü kontrol listesi ve mülakat odası davranış kuralları.
+
+Notlar:
+- Sorular resmî "çıkmış sorular" değildir; resmî liste yayımlanmaz. MSB mülakat kitapçığı derlemesi ve adayların sık aktardığı soru türlerinden hazırlanmıştır.
+- İlerleme cihazda tutulur ve yedeğe dahildir; buluta gönderilmez.
 
 ## 5. Bilinen sınırlar
 

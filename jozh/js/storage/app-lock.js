@@ -57,6 +57,11 @@ export async function verifyPin(pin) {
   return { ok: false, lockedUntil, remainingFree: Math.max(0, FREE_ATTEMPTS - failures) };
 }
 
+// Face ID ile başarılı açılış sahibini doğruladığı için PIN deneme sayacı sıfırlanır.
+export function clearAttempts() {
+  return db.removeMeta(ATTEMPTS_KEY);
+}
+
 // --- Oturum (yalnızca sessionStorage) ---
 
 function readSession() {

@@ -1,6 +1,6 @@
 // JOZH Service Worker. VERSION, js/app.js içindeki APP_VERSION ile aynı olmalıdır.
 // Yeni dosya eklendiğinde APP_ASSETS listesine eklenir ve VERSION artırılır (tests/precache-check.mjs denetler).
-const VERSION = '1.2.0';
+const VERSION = '1.3.0';
 const APP_CACHE = `jozh-app-${VERSION}`;
 const SDK_VERSION = '10.12.2';
 const SDK_CACHE = `jozh-firebase-sdk-${SDK_VERSION}`;
@@ -19,6 +19,7 @@ const APP_ASSETS = [
   './pages/diary.html',
   './pages/dreams.html',
   './pages/finance.html',
+  './pages/interview.html',
   './pages/login.html',
   './pages/notes.html',
   './pages/partner.html',
@@ -38,6 +39,7 @@ const APP_ASSETS = [
   './css/pages/diary.css',
   './css/pages/dreams.css',
   './css/pages/finance.css',
+  './css/pages/interview.css',
   './css/pages/login.css',
   './css/pages/notes.css',
   './css/pages/partner.css',
@@ -60,6 +62,7 @@ const APP_ASSETS = [
   './js/components/photos.js',
   './js/components/pin-pad.js',
   './js/components/plan-editor.js',
+  './js/data/interview-bank.js',
   './js/firebase/firebase-config.js',
   './js/firebase/firestore.js',
   './js/firebase/sync-manager.js',
@@ -69,6 +72,7 @@ const APP_ASSETS = [
   './js/modules/diary.js',
   './js/modules/dreams.js',
   './js/modules/finance.js',
+  './js/modules/interview.js',
   './js/modules/login.js',
   './js/modules/notes.js',
   './js/modules/partner.js',
@@ -79,6 +83,7 @@ const APP_ASSETS = [
   './js/modules/vault.js',
   './js/storage/app-lock.js',
   './js/storage/backup-manager.js',
+  './js/storage/biometric.js',
   './js/storage/encryption.js',
   './js/storage/image-storage.js',
   './js/storage/local-db.js',

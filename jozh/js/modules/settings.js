@@ -13,6 +13,7 @@ import { testConnection } from '../firebase/firestore.js';
 import { stats as imageStats, cleanupOrphans } from '../storage/image-storage.js';
 import { isStandalone, isIOS, canInstall, promptInstall, checkForUpdate, getOfflineStatus, getWorkerVersion } from '../pwa.js';
 import { pageUrl } from '../router.js';
+import * as biometric from '../storage/biometric.js';
 import { SYNCED_STORES } from '../storage/schemas.js';
 
 const main = document.getElementById('main');
@@ -205,6 +206,44 @@ async function renderConflicts() {
     })));
 }
 
+// --- Face ID ---
+
+async function biometricSection() {
+  const body = el('div', { class: 'stack' });
+  const name = biometric.methodName();
+  const render = async () => {
+    if (!(await biometric.isSupported())) {
+      replace(body, el('p', { class: 'muted small' }, 'Bu cihaz ya da tarayıcı yüz/parmak izi ile açmayı desteklemiyor. iPhone\'da uygulamayı ana ekrandan açtığından ve iOS\'un güncel olduğundan emin ol.'));
+      return;
+    }
+    const enrolled = await biometric.isEnrolled();
+    replace(body,
+      el('p', { class: 'small' }, enrolled
+        ? `Açık: uygulamayı ${name} ile açabilirsin. PIN her zaman yedek yöntem olarak çalışır.`
+        : `Kilit ekranında PIN yerine ${name} ile açabilirsin. Yüz/parmak izi bilgin uygulamaya gelmez; doğrulamayı cihaz yapar.`),
+      el('div', { class: 'row' }, enrolled
+        ? button(`${name} ile açmayı kapat`, async () => {
+          await biometric.disable();
+          toast(`${name} ile açma kapatıldı.`);
+          render();
+        }, { kind: 'danger', className: 'btn-small' })
+        : button(`${name} ile açmayı etkinleştir`, async () => {
+          try {
+            await biometric.enroll();
+            await biometric.verify();
+            toast(`${name} ile açma etkinleştirildi.`, { kind: 'success' });
+          } catch (err) {
+            await biometric.disable().catch(() => {});
+            toast(err.userMessage || `${name} etkinleştirilemedi.`, { kind: 'error' });
+          }
+          render();
+        }, { kind: 'primary', iconName: 'user' })),
+      el('p', { class: 'muted small' }, 'Not: Gizli Kasa yine kendi PIN\'iyle açılır; içerikleri o PIN\'den türetilen anahtarla şifrelidir.'));
+  };
+  await render();
+  return sectionCard('biometric', `${name} ile açma`, body);
+}
+
 // --- Depolama ---
 
 async function storageSection() {
@@ -319,6 +358,7 @@ async function setup() {
     el('div', null, el('a', { class: 'btn btn-secondary', href: pageUrl('vaultLogin', 'change') }, icon('lock'), el('span', null, 'Gizli Kasa PIN\'ini değiştir'))));
   replace(main, el('div', { class: 'settings-layout' },
     await appearanceSection(),
+    await biometricSection(),
     syncSection,
     vaultSection,
     await storageSection(),

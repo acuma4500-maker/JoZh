@@ -2,7 +2,8 @@
 import { initApp } from '../app.js';
 import * as appLock from '../storage/app-lock.js';
 import { createPinPad, formatWait } from '../components/pin-pad.js';
-import { confirmDialog, toastError } from '../ui.js';
+import { confirmDialog, toastError, button } from '../ui.js';
+import * as biometric from '../storage/biometric.js';
 import { replaceWith } from '../router.js';
 
 const main = document.getElementById('main');
@@ -107,6 +108,23 @@ async function setup() {
   });
   if (configured) {
     pad.setLinks([{ label: 'PIN\'imi unuttum', onClick: forgot }]);
+    if (await biometric.isEnrolled() && await biometric.isSupported()) {
+      const name = biometric.methodName();
+      const bio = button(`${name} ile aç`, async () => {
+        bio.disabled = true;
+        pad.setMessage(`${name} bekleniyor…`);
+        try {
+          await biometric.verify();
+          await appLock.clearAttempts();
+          pad.success('');
+          goHome();
+        } catch (err) {
+          pad.setMessage(err.userMessage || `${name} ile açılamadı. PIN'ini gir.`, 'error');
+          bio.disabled = false;
+        }
+      }, { kind: 'primary', iconName: 'user', className: 'bio-button' });
+      main.querySelector('.pin-links').before(bio);
+    }
     const state = await appLock.getAttemptState();
     if (state.lockedUntil) showLockout(state.lockedUntil);
   } else {
