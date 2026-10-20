@@ -1,4 +1,4 @@
-# JOZH — Kişisel Yaşam Paneli (v1.3.0)
+# JOZH — Kişisel Yaşam Paneli (v1.4.0)
 
 JOZH tek kullanıcılı, kişisel bir yaşam panelidir. İçinde profil, sevdiğim kadın, günlük, hayaller ve hedefler, planlar ve seyahatler, takvim, hızlı notlar, **gelir ve gider**, Gizli Kasa, yedekleme ve ayarlar bulunur.
 
@@ -101,6 +101,22 @@ Menü → **Mülakat hazırlık**. Beş bölüm var:
 Notlar:
 - Sorular resmî "çıkmış sorular" değildir; resmî liste yayımlanmaz. MSB mülakat kitapçığı derlemesi ve adayların sık aktardığı soru türlerinden hazırlanmıştır.
 - İlerleme cihazda tutulur ve yedeğe dahildir; buluta gönderilmez.
+
+## 4c. Antrenman (ekipmansız fiziki hazırlık)
+
+Menü → **Antrenman**. Hiç ekipman gerekmez; yalnızca zemin ve duvar.
+- **Kurulum:** Antrenman günlerini (3–5) ve bugünkü en iyi değerlerini (şınav, mekik, squat, plank, kesintisiz koşu dakikası) gir. Bilmiyorsan "Önce seviye testi yap" ile başla.
+- **8 haftalık dönem:** Temel → Gelişim → ara test → Yoğun → sınav haftası. Setler senin maksimumlarından hesaplanır. 3 gün: üst vücut, aralıklı koşu, bacak + kondisyon; 4 gün: + uzun koşu; 5 gün: + komando devresi. 5. ve 8. haftanın son antrenmanı fiziki testtir.
+- **Kendini ayarlayan yük:** Antrenman sonunda "Kolay / Tam kıvamında / Zor" seçersin; ilgili kas grubunun yükü %5–7 değişir. "Yapabildiğin kadar" son setlerinde beklenenden çok yaparsan maksimumun yükselir. Test sonuçları maksimumları doğrudan günceller ve Mülakat → Fiziki kayıtlarına da yazılır.
+- **Antrenman yöneticisi:** Isınmadan esnemeye adım adım; süreli hareketlerde halka sayaç, dinlenmede geri sayım (+15 sn, atla, duraklat), son 3 saniyede bip, Türkçe sesli komut, ekranın kapanmaması (destekleyen tarayıcılarda). Yarıda bırakılan antrenman kaldığı adımdan sürer.
+- **Rütbe ve rozetler:** Her tekrar ve süre puan kazandırır; puanla acemi erden astsubaya rütbe atlarsın. Rozetler kalıcıdır.
+- **Gelişim:** maksimumların başlangıca göre değişimi, haftalık hacim grafiği, test sonuçları grafiği, 12 haftalık antrenman takvimi ve geçmiş.
+- **Hareketler:** 39 hareket; doğru form, sık hatalar, kolay/zor hâli.
+
+Notlar:
+- Antrenman ekranı açık ve görünürken uygulama kilidinin 10 dakikalık süresi işlemez (uzun koşuda kilitlenmesin diye). Telefonu kilitlersen ya da başka uygulamaya geçersen süre normal işler.
+- Veriler cihazda (meta `sport:*`) tutulur ve yedeğe dahildir; buluta gönderilmez.
+- Program genel fiziki hazırlık içindir; sağlık sorunun varsa önce hekime danış.
 
 ## 5. Bilinen sınırlar
 

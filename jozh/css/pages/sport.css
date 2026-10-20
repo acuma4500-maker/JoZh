@@ -1,0 +1,202 @@
+/* Antrenman */
+.sp-tabs { margin-bottom: 16px; }
+.sp-panel[hidden] { display: none; }
+.sp-h2 { margin-bottom: 12px; }
+
+/* Rütbe işareti */
+.sp-insignia { flex-shrink: 0; }
+.sp-insignia-shield { fill: var(--bg3); stroke: var(--yellow); stroke-width: 2; stroke-linejoin: round; }
+.sp-insignia-mark { fill: none; stroke: var(--yellow); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.sp-insignia-star { fill: var(--yellow); }
+
+/* Durum şeridi */
+.sp-hero { display: grid; grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.sp-hero .stat { gap: 6px; }
+.sp-rank { display: flex; gap: 14px; align-items: center; }
+.sp-rank-text { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.sp-rank-name { font-size: 1.25rem; font-weight: 700; }
+.sp-streak { display: inline-flex; align-items: center; gap: 6px; }
+.sp-streak .icon { color: var(--yellow); }
+
+/* Günün görevi */
+.sp-mission { display: flex; flex-direction: column; gap: 14px; border-left: 4px solid var(--accent); }
+.sp-mission.is-test { border-left-color: var(--yellow); }
+.sp-mission.is-complete { border-left-color: var(--green); }
+.sp-mission.is-complete .sp-mission-head > .icon { color: var(--green); }
+.sp-mission-head { display: flex; gap: 14px; align-items: flex-start; }
+.sp-mission-head h2 { font-size: 1.35rem; margin: 2px 0 6px; }
+.sp-mission-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--bg3); color: var(--accent); flex-shrink: 0; }
+.sp-mission.is-test .sp-mission-icon { color: var(--yellow); }
+.sp-mission-meta { gap: 6px; }
+.sp-mission-list { display: flex; flex-direction: column; border-top: 1px solid var(--border); }
+.sp-mission-list li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.sp-mission-list li span:last-child, .sp-mission-list li strong { text-align: right; }
+.sp-mission-list li > span:first-child { flex-shrink: 0; max-width: 55%; }
+.sp-mission-actions .sp-start { min-width: 180px; min-height: 52px; font-size: 1.05rem; }
+.sp-resume { margin-bottom: 14px; }
+
+/* Haftalık şerit */
+.sp-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.sp-day { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border-radius: var(--radius); background: var(--bg3); border: 1px solid transparent; text-align: center; min-width: 0; }
+.sp-day-name { font-size: 0.78rem; color: var(--text2); }
+.sp-day-icon { display: grid; place-items: center; height: 22px; color: var(--text3); }
+.sp-day-label { font-size: 0.72rem; color: var(--text2); line-height: 1.2; overflow-wrap: anywhere; }
+.sp-day.is-planned .sp-day-icon { color: var(--accent); }
+.sp-day.is-done { background: color-mix(in srgb, var(--green) 14%, var(--bg3)); }
+.sp-day.is-done .sp-day-icon { color: var(--green); }
+.sp-day.is-today { border-color: var(--accent); }
+.sp-day.is-today .sp-day-name { color: var(--text); font-weight: 600; }
+.sp-day.is-rest { opacity: 0.7; }
+
+.sp-tip { display: flex; gap: 10px; align-items: flex-start; }
+.sp-tip .icon { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+
+/* Önizleme listesi */
+.sp-preview { display: flex; flex-direction: column; }
+.sp-preview li { display: grid; grid-template-columns: 96px 1fr auto; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+.sp-preview-block { font-size: 0.75rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; }
+.sp-preview-target { color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Program */
+.sp-timeline { display: flex; flex-direction: column; gap: 6px; }
+.sp-tl { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: var(--radius); background: var(--bg3); border: 1px solid transparent; }
+.sp-tl-week { font-weight: 700; color: var(--text2); font-variant-numeric: tabular-nums; }
+.sp-tl-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sp-tl-name { display: flex; gap: 8px; align-items: center; font-weight: 600; flex-wrap: wrap; }
+.sp-tl-done { font-variant-numeric: tabular-nums; color: var(--text2); }
+.sp-tl.is-current { border-color: var(--accent); }
+.sp-tl.is-current .sp-tl-week { color: var(--accent); }
+.sp-tl.is-done .sp-tl-week, .sp-tl.is-done .sp-tl-done { color: var(--green); }
+.sp-tl.is-missed .sp-tl-done { color: var(--yellow); }
+.sp-plan-day { border-bottom: 1px solid var(--border); padding: 6px 0; }
+.sp-plan-day > summary { display: flex; justify-content: space-between; gap: 12px; cursor: pointer; min-height: 40px; align-items: center; font-weight: 600; }
+.sp-dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; margin-bottom: 12px; }
+.sp-dl dt { color: var(--text2); }
+.sp-dl dd { font-variant-numeric: tabular-nums; }
+
+/* Kurulum */
+.sp-setup { display: flex; flex-direction: column; gap: 16px; max-width: 760px; }
+.sp-setup-head { display: flex; gap: 16px; align-items: center; }
+.sp-fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.sp-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.sp-day-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 2px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; min-height: 44px; }
+.sp-day-pick:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+
+/* Gelişim */
+.sp-up { color: var(--green); }
+.sp-ranks { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.sp-rank-step { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: var(--radius); background: var(--bg3); text-align: center; opacity: 0.55; border: 1px solid transparent; }
+.sp-rank-step.is-past { opacity: 0.85; }
+.sp-rank-step.is-current { opacity: 1; border-color: var(--yellow); }
+.sp-rank-step-name { font-weight: 600; font-size: 0.88rem; }
+.sp-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.sp-badge { display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: var(--radius); background: var(--bg3); color: var(--text3); }
+.sp-badge-name { font-weight: 600; color: var(--text2); }
+.sp-badge.is-earned { color: var(--yellow); border: 1px solid color-mix(in srgb, var(--yellow) 45%, transparent); }
+.sp-badge.is-earned .sp-badge-name { color: var(--text); }
+.sp-heat-wrap { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.sp-heat { display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+.sp-heat-cell { border-radius: 3px; background: var(--bg3); }
+.sp-heat-cell.lv1 { background: color-mix(in srgb, var(--green) 55%, var(--bg3)); }
+.sp-heat-cell.lv2 { background: var(--green); }
+.sp-heat-cell.lvx { background: transparent; border: 1px dashed var(--border); }
+.sp-history { display: flex; flex-direction: column; }
+.sp-history li { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.sp-history-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.sp-history-title { display: flex; gap: 8px; align-items: center; font-weight: 600; flex-wrap: wrap; }
+
+/* Hareketler */
+.sp-moves-tools { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 14px; }
+.sp-groups { overflow-x: auto; max-width: 100%; }
+.sp-groups .segment { white-space: nowrap; }
+.sp-move { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0 14px; }
+.sp-move > summary { display: flex; justify-content: space-between; gap: 12px; align-items: center; min-height: 48px; cursor: pointer; }
+.sp-move-name { font-weight: 600; }
+.sp-move-body { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; }
+.sp-move-body h3 { font-size: 0.92rem; margin-top: 4px; }
+
+/* Oynatıcı */
+.sp-player { display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 0 auto; }
+.sp-player-head { display: flex; gap: 10px; align-items: center; }
+.sp-player-title { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.sp-stage { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 20px 16px; border-radius: var(--radius-lg); background: var(--bg2); border: 1px solid var(--border); text-align: center; }
+.sp-stage.phase-work { border-color: var(--accent); }
+.sp-stage.phase-rest { border-color: var(--green); }
+.sp-stage.phase-ready, .sp-stage.phase-input { border-color: var(--yellow); }
+.sp-stage.is-paused { opacity: 0.75; }
+.sp-info { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+.sp-phase { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.phase-rest .sp-phase { color: var(--green); }
+.phase-ready .sp-phase, .phase-input .sp-phase { color: var(--yellow); }
+.sp-ex-name { font-size: 1.8rem; line-height: 1.15; font-weight: 700; }
+.sp-ex-set { font-size: 0.95rem; }
+.sp-cues { width: 100%; max-width: 520px; text-align: left; }
+.sp-cues > summary { cursor: pointer; color: var(--accent); justify-content: center; text-align: center; min-height: 32px; }
+.sp-cues .bullets { margin-top: 8px; color: var(--text2); }
+.sp-center { display: grid; place-items: center; }
+.sp-ring-wrap { position: relative; width: min(240px, 62vw); aspect-ratio: 1; }
+.sp-ring { width: 100%; height: 100%; display: block; }
+.sp-ring-track { fill: none; stroke: var(--bg3); stroke-width: 12; }
+.sp-ring-arc { fill: none; stroke: var(--accent); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.2s linear; }
+.phase-rest .sp-ring-arc { stroke: var(--green); }
+.phase-ready .sp-ring-arc { stroke: var(--yellow); }
+.sp-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.sp-clock { font-size: 3.2rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.sp-clock-sub { font-size: 0.8rem; color: var(--text2); }
+.sp-big-target { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; }
+.sp-big-num { font-size: 5rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.sp-big-unit { color: var(--text2); }
+.sp-player-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+.sp-stepper { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sp-stepper-label { font-size: 0.85rem; color: var(--text2); }
+.sp-stepper-row { display: flex; align-items: center; gap: 10px; }
+.sp-step-btn { min-width: 52px; min-height: 52px; font-size: 1.4rem; padding: 0; justify-content: center; }
+.sp-step-5 { font-size: 1rem; }
+.sp-count { min-width: 64px; font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.sp-main-btn { min-width: 220px; min-height: 56px; font-size: 1.1rem; justify-content: center; }
+.sp-ctrl-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.sp-ctrl-row .btn { min-height: 48px; min-width: 110px; justify-content: center; }
+.sp-player-foot { justify-content: center; }
+
+/* Bitiş */
+.sp-finish { display: flex; flex-direction: column; gap: 16px; }
+.sp-finish-head { display: flex; gap: 16px; align-items: center; }
+.sp-rate { display: flex; }
+.sp-rate .segment { flex: 1; min-height: 48px; }
+
+@media (max-width: 899px) {
+  .sp-hero { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sp-rank { grid-column: 1 / -1; }
+}
+@media (max-width: 699px) {
+  .sp-tabs { display: flex; }
+  .sp-tabs .segment { flex: 1; padding: 0 6px; font-size: 0.85rem; }
+  .sp-hero { gap: 8px; }
+  .sp-hero .stat-value { font-size: 1.1rem; }
+  .sp-week { gap: 4px; }
+  .sp-day { padding: 8px 2px; }
+  .sp-day-label { font-size: 0.66rem; }
+  .sp-preview li { grid-template-columns: 1fr auto; }
+  .sp-preview-block { grid-column: 1 / -1; }
+  .sp-mission-actions .btn { flex: 1; }
+  .sp-ex-name { font-size: 1.5rem; }
+  .sp-main-btn { width: 100%; }
+}
+@media (max-width: 420px) {
+  .sp-hero { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sp-hero > :last-child { grid-column: 1 / -1; }
+  .sp-days { gap: 4px; }
+}
+/* Yatay telefon: halka ve bilgi yan yana */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sp-stage { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "info center" "actions center"; gap: 10px 20px; padding: 12px 16px; text-align: left; }
+  .sp-info { grid-area: info; align-items: flex-start; }
+  .sp-center { grid-area: center; }
+  .sp-player-actions { grid-area: actions; align-items: flex-start; }
+  .sp-ring-wrap { width: min(200px, 48vh); }
+  .sp-clock { font-size: 2.4rem; }
+  .sp-big-num { font-size: 3.6rem; }
+  .sp-ex-name { font-size: 1.35rem; }
+  .sp-cues > summary { justify-content: flex-start; text-align: left; }
+  .sp-main-btn { min-height: 48px; }
+}

@@ -1,5 +1,5 @@
 /* Ana panel */
-.dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; align-items: start; }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; align-items: stretch; grid-auto-flow: row dense; }
 .dash-card { display: flex; flex-direction: column; min-height: 140px; }
 .dash-card.span-2 { grid-column: span 2; }
 .warm-card { border-top: 2px solid var(--warm); }
@@ -20,3 +20,23 @@
 .mini-legend { margin-top: 8px; }
 .mini-day .card-header h3 { font-size: 0.9rem; }
 @media (max-width: 760px) { .dash-card.span-2 { grid-column: auto; } }
+
+/* Hedef ilerleme satırları: başlık üstte, çubuk altta tam genişlikte */
+.compact-list > li.stack-s { flex-direction: column; align-items: stretch; gap: 6px; }
+.dash-card .card-body { flex: 1; }
+.vault-card { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-height: 0; }
+.vault-card .card-header { margin: 0; }
+.vault-card p { flex: 1 1 240px; }
+.vault-card .btn { margin-top: 0; }
+
+/* Yatay telefon: takvim kısalır */
+@media (max-height: 500px) {
+  .mini-day-btn { min-height: 30px; font-size: 0.8rem; }
+  .mini-wd { padding: 2px 0; }
+  .dash-card { min-height: 0; }
+}
+
+/* Geniş ekran (3 sütun): takvim iki satır kaplar, yanına iki kart dizilir */
+@media (min-width: 1200px) {
+  .dash-card.span-2 { grid-row: span 2; }
+}

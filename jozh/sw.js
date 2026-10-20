@@ -1,6 +1,6 @@
 // JOZH Service Worker. VERSION, js/app.js içindeki APP_VERSION ile aynı olmalıdır.
 // Yeni dosya eklendiğinde APP_ASSETS listesine eklenir ve VERSION artırılır (tests/precache-check.mjs denetler).
-const VERSION = '1.3.0';
+const VERSION = '1.4.0';
 const APP_CACHE = `jozh-app-${VERSION}`;
 const SDK_VERSION = '10.12.2';
 const SDK_CACHE = `jozh-firebase-sdk-${SDK_VERSION}`;
@@ -26,6 +26,7 @@ const APP_ASSETS = [
   './pages/plans.html',
   './pages/profile.html',
   './pages/settings.html',
+  './pages/sport.html',
   './pages/vault-login.html',
   './pages/vault.html',
   './css/base.css',
@@ -46,6 +47,7 @@ const APP_ASSETS = [
   './css/pages/plans.css',
   './css/pages/profile.css',
   './css/pages/settings.css',
+  './css/pages/sport.css',
   './css/pages/vault-login.css',
   './css/pages/vault.css',
   './js/app.js',
@@ -62,6 +64,7 @@ const APP_ASSETS = [
   './js/components/photos.js',
   './js/components/pin-pad.js',
   './js/components/plan-editor.js',
+  './js/data/exercises.js',
   './js/data/interview-bank.js',
   './js/firebase/firebase-config.js',
   './js/firebase/firestore.js',
@@ -79,6 +82,7 @@ const APP_ASSETS = [
   './js/modules/plans.js',
   './js/modules/profile.js',
   './js/modules/settings.js',
+  './js/modules/sport.js',
   './js/modules/vault-login.js',
   './js/modules/vault.js',
   './js/storage/app-lock.js',
@@ -102,6 +106,7 @@ const APP_ASSETS = [
   './js/utils/partner-helpers.js',
   './js/utils/plan-helpers.js',
   './js/utils/tags.js',
+  './js/utils/training.js',
   './assets/icons/apple-touch-icon.png',
   './assets/icons/favicon-32.png',
   './assets/icons/icon-192.png',
