@@ -10,6 +10,7 @@ import { matchesSearch, formatNumber } from '../utils/formatters.js';
 import { createAutosave } from '../utils/autosave.js';
 import { shortId } from '../utils/id-generator.js';
 import { barChart } from '../components/charts.js';
+import { pageUrl } from '../router.js';
 
 const main = document.getElementById('main');
 const KEYS = {
@@ -582,6 +583,7 @@ function renderFitness() {
         t.pushups && best.pushups ? status(best.pushups >= Number(t.pushups)) : el('span', { class: 'small muted' }, t.pushups ? `Hedef ${t.pushups}` : 'Hedef girilmedi')),
       el('div', { class: 'card stat' }, el('span', { class: 'stat-label' }, 'En çok mekik'), el('span', { class: 'stat-value' }, String(best.situps || '—')),
         t.situps && best.situps ? status(best.situps >= Number(t.situps)) : el('span', { class: 'small muted' }, t.situps ? `Hedef ${t.situps}` : 'Hedef girilmedi'))),
+    el('p', { class: 'notice notice-info mt' }, icon('run'), el('span', null, 'Ekipmansız 8 haftalık program, sesli zamanlayıcı ve seviye testleri için ', el('a', { href: pageUrl('sport') }, 'Antrenman sayfasına'), ' geç. Oradaki test sonuçları buraya da yazılır.')),
     el('div', { class: 'row mt' },
       button('Antrenman kaydet', () => openFitnessEntry(null), { kind: 'primary', iconName: 'plus' }),
       button('Hedefleri gir', openTargets, { iconName: 'target' })),

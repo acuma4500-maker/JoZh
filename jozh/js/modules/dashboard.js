@@ -223,6 +223,28 @@ async function interviewCard(body) {
       el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, `%${Math.round((learned / QUESTIONS.length) * 100)}`), el('span', { class: 'stat-label' }, 'Öğrenilen'))));
 }
 
+async function sportCard(body) {
+  const T = await import('../utils/training.js');
+  const profile = await getMeta('sport:profile');
+  if (!profile) {
+    replace(body, el('p', { class: 'muted small' }, 'Ekipmansız 8 haftalık fiziki hazırlık programı. Seviyeni gir, program sana göre kurulsun.'),
+      el('a', { class: 'btn btn-secondary mt', href: pageUrl('sport') }, icon('run'), el('span', null, 'Programı kur')));
+    return;
+  }
+  const p = { ...T.DEFAULT_PROFILE, ...profile, adjust: { ...T.DEFAULT_PROFILE.adjust, ...profile.adjust } };
+  const sessions = (await getMeta('sport:sessions')) || [];
+  const wk = T.weekIndex(p, today);
+  const next = T.nextSlot(p, wk, sessions);
+  const rot = T.rotationFor(p, wk);
+  const done = Math.min(rot.length, sessions.filter((s) => s.week === wk && !s.extra).length);
+  const rank = T.rankOf(sessions.reduce((sum, s) => sum + (s.xp || 0), 0));
+  replace(body,
+    el('div', { class: 'stats' },
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, next ? T.TYPES[next.type].short : 'Tamam'), el('span', { class: 'stat-label' }, 'Sıradaki görev')),
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, `${done}/${rot.length}`), el('span', { class: 'stat-label' }, 'Bu hafta')),
+      el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, rank.name), el('span', { class: 'stat-label' }, 'Rütbe'))));
+}
+
 async function setup() {
   const cProfile = card('dash-profile', 'Profilim', pageUrl('profile'), 'Profile git');
   const cPartner = card('dash-partner', 'Sevdiğim kadın', pageUrl('partner'), 'Aç', 'warm-card');
@@ -235,15 +257,17 @@ async function setup() {
   const interview = el('section', { class: 'card dash-card', 'aria-labelledby': 'dash-iv-title' },
     el('div', { class: 'card-header' }, el('h2', { id: 'dash-iv-title' }, 'Mülakat hazırlık'), el('a', { class: 'card-link', href: pageUrl('interview') }, 'Çalış')),
     el('div', { class: 'card-body' }, loadingState()));
+  const sport = card('dash-sport', 'Antrenman', pageUrl('sport'), 'Başla');
   const vault = el('section', { class: 'card dash-card vault-card', 'aria-labelledby': 'dash-vault-title' },
     el('div', { class: 'card-header' }, el('h2', { id: 'dash-vault-title' }, 'Gizli Kasa')),
     el('p', { class: 'muted small' }, 'Kasa içeriği burada asla gösterilmez. Açmak için kasa PIN\'in gerekir.'),
     el('a', { class: 'btn btn-secondary mt', href: pageUrl('vaultLogin') }, icon('shield'), el('span', null, 'Gizli Kasa\'yı aç')));
 
   replace(main, el('div', { class: 'dash-grid' },
-    cProfile.node, cPartner.node, cFinance.node, interview, cCal.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
+    cProfile.node, cPartner.node, cFinance.node, interview, cCal.node, sport.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
   fill({ body: interview.querySelector('.card-body') }, interviewCard);
 
+  fill(sport, sportCard);
   fill(cProfile, profileCard);
   fill(cPartner, partnerCard);
   fill(cFinance, financeCard);
