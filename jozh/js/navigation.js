@@ -14,7 +14,8 @@ const MAIN_ITEMS = [
   ['notes', 'Notlar', 'note'],
   ['finance', 'Gelir ve gider', 'wallet'],
   ['interview', 'Mülakat hazırlık', 'medal'],
-  ['sport', 'Antrenman', 'run']
+  ['sport', 'Antrenman', 'run'],
+  ['kisla', 'Kışla', 'flag']
 ];
 
 const BOTTOM_ITEMS = [

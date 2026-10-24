@@ -223,6 +223,25 @@ async function interviewCard(body) {
       el('div', { class: 'stat' }, el('span', { class: 'stat-value' }, `%${Math.round((learned / QUESTIONS.length) * 100)}`), el('span', { class: 'stat-label' }, 'Öğrenilen'))));
 }
 
+async function kislaCard(body) {
+  const K = await import('../utils/kisla.js');
+  const personnel = (await getMeta('kisla:personnel')) || [];
+  if (!personnel.length) {
+    replace(body, el('p', { class: 'muted small' }, 'Mıntıka listesi ve nöbet çizelgesi.'),
+      el('a', { class: 'btn btn-secondary mt', href: pageUrl('kisla') }, icon('flag'), el('span', null, 'Personeli ekle')));
+    return;
+  }
+  const names = Object.fromEntries(personnel.map((p) => [p.id, p.name]));
+  const lists = (await getMeta('kisla:lists')) || {};
+  const duties = (await getMeta('kisla:duties')) || [];
+  const entry = lists[today];
+  const now = K.currentSlot(duties[duties.length - 1]);
+  replace(body,
+    now ? el('p', { class: 'small' }, el('strong', null, 'Nöbette: '), now.ids.map((id) => names[id] || '?').join(', ')) : null,
+    entry ? el('ul', { class: 'compact-list' }, entry.areas.map((a) => el('li', null, el('span', null, a.name), el('span', { class: 'muted small' }, a.ids.map((id) => names[id] || '?').join(', ') || '—'))))
+      : el('p', { class: 'muted small' }, 'Bugünün mıntıka listesi henüz yapılmadı.'));
+}
+
 async function sportCard(body) {
   const T = await import('../utils/training.js');
   const profile = await getMeta('sport:profile');
@@ -258,16 +277,18 @@ async function setup() {
     el('div', { class: 'card-header' }, el('h2', { id: 'dash-iv-title' }, 'Mülakat hazırlık'), el('a', { class: 'card-link', href: pageUrl('interview') }, 'Çalış')),
     el('div', { class: 'card-body' }, loadingState()));
   const sport = card('dash-sport', 'Antrenman', pageUrl('sport'), 'Başla');
+  const kisla = card('dash-kisla', 'Kışla', pageUrl('kisla'), 'Aç');
   const vault = el('section', { class: 'card dash-card vault-card', 'aria-labelledby': 'dash-vault-title' },
     el('div', { class: 'card-header' }, el('h2', { id: 'dash-vault-title' }, 'Gizli Kasa')),
     el('p', { class: 'muted small' }, 'Kasa içeriği burada asla gösterilmez. Açmak için kasa PIN\'in gerekir.'),
     el('a', { class: 'btn btn-secondary mt', href: pageUrl('vaultLogin') }, icon('shield'), el('span', null, 'Gizli Kasa\'yı aç')));
 
   replace(main, el('div', { class: 'dash-grid' },
-    cProfile.node, cPartner.node, cFinance.node, interview, cCal.node, sport.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
+    cProfile.node, cPartner.node, cFinance.node, interview, cCal.node, sport.node, kisla.node, cPlans.node, cDreams.node, cDiary.node, cNotes.node, vault));
   fill({ body: interview.querySelector('.card-body') }, interviewCard);
 
   fill(sport, sportCard);
+  fill(kisla, kislaCard);
   fill(cProfile, profileCard);
   fill(cPartner, partnerCard);
   fill(cFinance, financeCard);
