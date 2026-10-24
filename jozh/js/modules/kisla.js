@@ -1,4 +1,4 @@
-// Kışla: mıntıka (temizlik) listesi, nöbet çizelgesi, iş için kişi seçimi, personel ve istatistik.
+// Kışla: mıntıka (temizlik) listesi, nöbet çizelgesi, personel ve istatistik.
 // Veriler cihazda (meta 'kisla:*') tutulur ve yedeğe dahildir; buluta gönderilmez.
 import { initApp } from '../app.js';
 import * as db from '../storage/local-db.js';
@@ -16,11 +16,10 @@ const KEYS = {
   lists: 'kisla:lists',
   duties: 'kisla:duties',
   dutyNext: 'kisla:dutyNext',
-  jobs: 'kisla:jobs',
   since: 'kisla:statsSince'
 };
 const TAB_KEY = 'jozh.kislaTab';
-const TABS = [['mintika', 'Mıntıka'], ['nobet', 'Nöbet'], ['is', 'İş seç'], ['personel', 'Personel'], ['stats', 'İstatistik']];
+const TABS = [['mintika', 'Mıntıka'], ['nobet', 'Nöbet'], ['personel', 'Personel'], ['stats', 'İstatistik']];
 const KEEP_DAYS = 180;
 
 const S = {
@@ -30,11 +29,8 @@ const S = {
   lists: {},
   duties: [],
   dutyNext: 0,
-  jobs: { pool: [], log: [] },
   since: '',
-  day: 'today',
-  lastJob: null,
-  jobName: ''
+  day: 'today'
 };
 
 const panels = Object.fromEntries(TABS.map(([k]) => [k, el('div', { class: 'ks-panel' })]));
@@ -89,7 +85,7 @@ function goTab(t) {
 }
 
 function needPersonnel(panel) {
-  replace(panel, emptyState('Önce personeli ekle. Mıntıka, nöbet ve iş seçimi bu listeden yapılır.', 'Personel ekle', () => goTab('personel'), 'user'));
+  replace(panel, emptyState('Önce personeli ekle. Mıntıka ve nöbet bu listeden yapılır.', 'Personel ekle', () => goTab('personel'), 'user'));
 }
 
 // --- Mıntıka ---
@@ -506,52 +502,6 @@ function renderNobet() {
     sch ? scheduleCard(sch) : null);
 }
 
-// --- İş seç ---
-
-function renderIs() {
-  const panel = panels.is;
-  if (!S.personnel.length) {
-    needPersonnel(panel);
-    return;
-  }
-  const present = K.presentOn(S.personnel, todayISO());
-  const remaining = (S.jobs.pool || []).filter((id) => present.some((p) => p.id === id));
-  const jobName = el('input', { type: 'text', class: 'input', maxlength: 60, placeholder: 'ör. Yemekhane servisi', 'aria-label': 'İşin adı (isteğe bağlı)', value: S.jobName });
-  jobName.addEventListener('input', () => {
-    S.jobName = jobName.value;
-  });
-  const pick = async (n) => {
-    const res = K.pickForJob({ n, present, pool: S.jobs.pool });
-    const entry = { id: shortId(), date: todayISO(), at: new Date().toISOString(), name: jobName.value.trim(), ids: res.picked };
-    S.jobs = { pool: res.pool, log: [entry, ...(S.jobs.log || [])].slice(0, 200) };
-    S.lastJob = entry;
-    if (await save(KEYS.jobs, S.jobs)) render();
-  };
-  const last = S.lastJob;
-  replace(panel,
-    el('section', { class: 'card' },
-      el('div', { class: 'card-header' }, el('h2', null, 'İş için kişi seç')),
-      el('p', { class: 'small muted' }, `Bugün mevcut ${present.length} kişi arasından adil seçim: herkes bir kez seçilmeden aynı kişi tekrar seçilmez. Bu turda henüz seçilmeyen: ${remaining.length ? remaining.map(nameOf).join(', ') : 'herkes seçildi, yeni tur başlar'}.`),
-      jobName,
-      el('p', { class: 'field-label mt' }, 'Kaç kişi lazım?'),
-      el('div', { class: 'ks-count-row' }, [1, 2, 3, 4, 5, 6].filter((n) => n <= Math.max(1, present.length)).map((n) => button(String(n), () => pick(n), { className: 'ks-count-btn' })))),
-    last ? el('section', { class: 'card mt ks-picked', 'aria-live': 'polite' },
-      el('h2', null, last.name || 'Seçilenler'),
-      el('div', { class: 'ks-people-row' }, last.ids.map((id) => personChip(id))),
-      el('div', { class: 'row mt' }, button('Metni kopyala', () => copyText(`${last.name || 'İş'}: ${last.ids.map(nameOf).join(', ')}`), { iconName: 'copy' }))) : null,
-    (S.jobs.log || []).length ? el('section', { class: 'card mt' },
-      el('div', { class: 'card-header' }, el('h2', null, 'Son seçimler'),
-        button('Turu sıfırla', async () => {
-          S.jobs = { ...S.jobs, pool: [] };
-          await save(KEYS.jobs, S.jobs);
-          toast('Yeni tur başladı.');
-          render();
-        }, { kind: 'ghost', iconName: 'refresh', className: 'btn-small' })),
-      el('ul', { class: 'ks-past-list' }, S.jobs.log.slice(0, 10).map((j) => el('li', null,
-        el('span', null, `${formatDate(j.date, { short: true, year: false })}${j.name ? ` · ${j.name}` : ''}`),
-        el('span', { class: 'muted' }, j.ids.map(nameOf).join(', ')))))) : null);
-}
-
 // --- Personel ---
 
 function personEditor(person) {
@@ -690,7 +640,6 @@ function renderStats() {
   }
   const { counts, points } = K.cleaningStats(S.lists, { since: S.since });
   const duty = K.dutyCounts(S.duties, S.since);
-  const jobs = K.jobCounts(S.jobs.log, S.since);
   const rows = S.personnel.slice().sort((a, b) => (points[b.id] || 0) - (points[a.id] || 0));
   const max = Math.max(1, ...rows.map((p) => points[p.id] || 0));
   replace(panel,
@@ -702,13 +651,11 @@ function renderStats() {
           el('th', null, 'Kişi'),
           ...S.areas.map((a) => el('th', { class: 'num' }, a.name)),
           el('th', { class: 'num' }, 'Nöbet'),
-          el('th', { class: 'num' }, 'İş'),
           el('th', { class: 'num' }, 'Puan'))),
         el('tbody', null, rows.map((p) => el('tr', null,
           el('th', { scope: 'row' }, p.name, p.fixed ? el('span', { class: 'small muted' }, ' (sabit)') : null),
           ...S.areas.map((a) => el('td', { class: 'num' }, String((counts[p.id] || {})[a.id] || 0))),
           el('td', { class: 'num' }, String(duty[p.id] || 0)),
-          el('td', { class: 'num' }, String(jobs[p.id] || 0)),
           el('td', { class: 'num ks-points' },
             el('span', null, String(points[p.id] || 0)),
             bar(((points[p.id] || 0) / max) * 100))))))),
@@ -727,7 +674,6 @@ function render() {
   for (const [k, node] of Object.entries(panels)) node.hidden = k !== S.tab;
   if (S.tab === 'mintika') renderMintika();
   else if (S.tab === 'nobet') renderNobet();
-  else if (S.tab === 'is') renderIs();
   else if (S.tab === 'personel') renderPersonel();
   else renderStats();
 }
@@ -744,7 +690,6 @@ async function load() {
   S.lists = await get(KEYS.lists, {});
   S.duties = await get(KEYS.duties, []);
   S.dutyNext = await get(KEYS.dutyNext, 0);
-  S.jobs = { pool: [], log: [], ...(await get(KEYS.jobs, {})) };
   S.since = await get(KEYS.since, '');
 }
 

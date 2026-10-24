@@ -56,13 +56,6 @@
 .ks-duty-table tr.is-now td { background: color-mix(in srgb, var(--yellow) 12%, transparent); font-weight: 600; }
 .ks-time { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-/* İş seç */
-.ks-count-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.ks-count-btn { min-width: 56px; min-height: 56px; font-size: 1.2rem; justify-content: center; }
-.ks-picked { border-left: 4px solid var(--accent); }
-.ks-picked h2 { margin-bottom: 10px; }
-.ks-people-row { display: flex; flex-wrap: wrap; gap: 8px; }
-
 /* İstatistik */
 .ks-stats th[scope="row"] { font-weight: 600; white-space: nowrap; }
 .ks-points { min-width: 90px; }

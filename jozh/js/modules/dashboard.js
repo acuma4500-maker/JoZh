@@ -227,7 +227,7 @@ async function kislaCard(body) {
   const K = await import('../utils/kisla.js');
   const personnel = (await getMeta('kisla:personnel')) || [];
   if (!personnel.length) {
-    replace(body, el('p', { class: 'muted small' }, 'Mıntıka listesi, nöbet çizelgesi ve iş için kişi seçimi.'),
+    replace(body, el('p', { class: 'muted small' }, 'Mıntıka listesi ve nöbet çizelgesi.'),
       el('a', { class: 'btn btn-secondary mt', href: pageUrl('kisla') }, icon('flag'), el('span', null, 'Personeli ekle')));
     return;
   }

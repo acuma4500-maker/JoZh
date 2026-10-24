@@ -1,4 +1,4 @@
-// Kışla: mıntıka (temizlik) dağıtımı, nöbet çizelgesi, iş için kişi seçimi. DOM kullanmaz.
+// Kışla: mıntıka (temizlik) dağıtımı ve nöbet çizelgesi. DOM kullanmaz.
 // Adalet kuralı: zor yerler, o güne kadar en az puan toplamış kişiye verilir; dün aynı yerde olan mümkünse oraya verilmez.
 
 export const DEFAULT_AREAS = [
@@ -131,30 +131,6 @@ export function dutyCounts(schedules, since = '') {
   for (const sch of schedules || []) {
     if ((sch.createdAt || '').slice(0, 10) < since) continue;
     for (const slot of sch.slots || []) for (const id of slot.ids) c[id] = (c[id] || 0) + 1;
-  }
-  return c;
-}
-
-// --- İş için seç: herkes bir kez seçilmeden aynı kişi tekrar seçilmez ---
-
-export function pickForJob({ n, present, pool, random = Math.random }) {
-  const ids = present.map((p) => p.id);
-  let remaining = (pool || []).filter((id) => ids.includes(id));
-  const picked = [];
-  while (picked.length < Math.min(n, ids.length)) {
-    if (!remaining.length) remaining = ids.filter((id) => !picked.includes(id));
-    const i = Math.floor(random() * remaining.length);
-    picked.push(remaining[i]);
-    remaining = remaining.filter((_, k) => k !== i);
-  }
-  return { picked, pool: remaining };
-}
-
-export function jobCounts(jobs, since = '') {
-  const c = {};
-  for (const j of jobs || []) {
-    if ((j.date || '') < since) continue;
-    for (const id of j.ids) c[id] = (c[id] || 0) + 1;
   }
   return c;
 }
