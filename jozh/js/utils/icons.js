@@ -60,6 +60,7 @@ const PATHS = {
   skip: '<path d="M5 4l10 8-10 8z"/><path d="M19 4v16"/>',
   timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/>',
   mute: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9l5 6M21 9l-5 6"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
   logo: '<rect x="2" y="2" width="20" height="20" rx="5"/><path d="M14 7v7a3 3 0 0 1-6 0"/>'
 };

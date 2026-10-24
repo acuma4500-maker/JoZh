@@ -1,6 +1,6 @@
 // JOZH Service Worker. VERSION, js/app.js içindeki APP_VERSION ile aynı olmalıdır.
 // Yeni dosya eklendiğinde APP_ASSETS listesine eklenir ve VERSION artırılır (tests/precache-check.mjs denetler).
-const VERSION = '1.4.0';
+const VERSION = '1.5.0';
 const APP_CACHE = `jozh-app-${VERSION}`;
 const SDK_VERSION = '10.12.2';
 const SDK_CACHE = `jozh-firebase-sdk-${SDK_VERSION}`;
@@ -20,6 +20,7 @@ const APP_ASSETS = [
   './pages/dreams.html',
   './pages/finance.html',
   './pages/interview.html',
+  './pages/kisla.html',
   './pages/login.html',
   './pages/notes.html',
   './pages/partner.html',
@@ -41,6 +42,7 @@ const APP_ASSETS = [
   './css/pages/dreams.css',
   './css/pages/finance.css',
   './css/pages/interview.css',
+  './css/pages/kisla.css',
   './css/pages/login.css',
   './css/pages/notes.css',
   './css/pages/partner.css',
@@ -64,6 +66,7 @@ const APP_ASSETS = [
   './js/components/photos.js',
   './js/components/pin-pad.js',
   './js/components/plan-editor.js',
+  './js/components/table-image.js',
   './js/data/exercises.js',
   './js/data/interview-bank.js',
   './js/firebase/firebase-config.js',
@@ -76,6 +79,7 @@ const APP_ASSETS = [
   './js/modules/dreams.js',
   './js/modules/finance.js',
   './js/modules/interview.js',
+  './js/modules/kisla.js',
   './js/modules/login.js',
   './js/modules/notes.js',
   './js/modules/partner.js',
@@ -101,6 +105,7 @@ const APP_ASSETS = [
   './js/utils/formatters.js',
   './js/utils/icons.js',
   './js/utils/id-generator.js',
+  './js/utils/kisla.js',
   './js/utils/labels.js',
   './js/utils/logger.js',
   './js/utils/partner-helpers.js',

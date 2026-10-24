@@ -17,7 +17,7 @@ const FORMAT_VERSION = 1;
 const RECORDS_PER_BLOCK = 200;
 const RECORD_STORES = ['profile', 'partner', 'settings', 'memories', 'diary', 'dreams', 'plans', 'notes', 'transactions', 'savings'];
 const META_EXACT = ['sync:key', 'vault:config', 'appLock:config'];
-const META_PREFIXES = ['draft:', 'study:', 'sport:'];
+const META_PREFIXES = ['draft:', 'study:', 'sport:', 'kisla:'];
 const LEGACY_META = ['ownerUid'];
 const VAULT_ID_RE = /^vault_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 

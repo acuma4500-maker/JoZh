@@ -1,4 +1,4 @@
-# JOZH — Kişisel Yaşam Paneli (v1.4.0)
+# JOZH — Kişisel Yaşam Paneli (v1.5.0)
 
 JOZH tek kullanıcılı, kişisel bir yaşam panelidir. İçinde profil, sevdiğim kadın, günlük, hayaller ve hedefler, planlar ve seyahatler, takvim, hızlı notlar, **gelir ve gider**, Gizli Kasa, yedekleme ve ayarlar bulunur.
 
@@ -117,6 +117,20 @@ Notlar:
 - Antrenman ekranı açık ve görünürken uygulama kilidinin 10 dakikalık süresi işlemez (uzun koşuda kilitlenmesin diye). Telefonu kilitlersen ya da başka uygulamaya geçersen süre normal işler.
 - Veriler cihazda (meta `sport:*`) tutulur ve yedeğe dahildir; buluta gönderilmez.
 - Program genel fiziki hazırlık içindir; sağlık sorunun varsa önce hekime danış.
+
+## 4d. Kışla (mıntıka, nöbet, iş seçimi)
+
+Menü → **Kışla**. Beş bölüm var:
+- **Personel:** Adları tek tek ekle. Listedeki sıra nöbet sırasıdır (oklarla değiştir). "Yok" yalnızca bugün içindir; birkaç günlük izin için kişiyi düzenle → Durum: İzinde. Kişiye sabit görev verebilir, nöbetten muaf tutabilirsin.
+- **Mıntıka:** Hazır yerler: Tuvalet (2), Banyo (1), Yazhane + Koğuş (1 kişi ikisini birden), Koridor (1), Dış mıntıka + Çamaşırhane (2 kişi ikisini birden). Yerleri ekleyip silebilir, adını, kişi sayısını ve zorluğunu değiştirebilirsin.
+  - "Listeyi yap": sabit görevliler kendi yerine yazılır; kalanlar en az puanı olandan başlayarak zor yerlere dağıtılır, dün aynı yerde olan mümkünse aynı yere düşmez. Kişi azsa önce her yere en az bir kişi verilir; fazlaysa "fazlalar buraya" işaretli yere eklenir.
+  - Bir yere dokunarak kişileri elle değiştirebilirsin. Liste bugün ya da yarın için yapılabilir.
+  - "Resim olarak paylaş" (WhatsApp'a gönderilebilir PNG) ve "Metni kopyala".
+- **Nöbet:** Başlangıç ve bitiş tarih-saati, dilim süresi (varsayılan 2 saat) ve dilim başına nöbetçi sayısı (varsayılan 2). Sıra bir önceki çizelgenin kaldığı yerden devam eder; o gün izinde olan atlanır. Dilime dokunarak nöbetçiyi değiştirebilirsin; şu anki dilim vurgulanır. Resim ve metin olarak paylaşılır.
+- **İş seç:** Kaç kişi lazım olduğunu seç; herkes bir kez seçilmeden aynı kişi tekrar seçilmez.
+- **İstatistik:** Kişi başı yer sayıları, nöbet ve iş sayısı, adalet puanı. Sayaçlar sıfırlanabilir (geçmiş listeler silinmez).
+
+Veriler cihazda (meta `kisla:*`) tutulur ve yedeğe dahildir; buluta gönderilmez.
 
 ## 5. Bilinen sınırlar
 

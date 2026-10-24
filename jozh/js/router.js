@@ -14,6 +14,7 @@ export const PAGES = {
   finance: '../pages/finance.html',
   interview: '../pages/interview.html',
   sport: '../pages/sport.html',
+  kisla: '../pages/kisla.html',
   vaultLogin: '../pages/vault-login.html',
   vault: '../pages/vault.html',
   backup: '../pages/backup.html',

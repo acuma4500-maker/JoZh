@@ -1,0 +1,89 @@
+/* Kışla */
+.ks-tabs { margin-bottom: 16px; }
+.ks-panel[hidden] { display: none; }
+.ks-h2 { margin-bottom: 12px; }
+.ks-toolbar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-bottom: 14px; }
+
+.ks-avatar { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); color: var(--accent); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+.ks-person { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--bg3); font-weight: 600; font-size: 0.92rem; }
+.ks-person.is-fixed { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--yellow) 60%, transparent); }
+.ks-fixed-mark { display: inline-flex; color: var(--yellow); }
+
+/* Bugünün listesi */
+.ks-make { display: flex; flex-direction: column; gap: 14px; border-left: 4px solid var(--accent); }
+.ks-make-head { display: flex; gap: 14px; align-items: flex-start; }
+.ks-make-head > .icon { color: var(--accent); flex-shrink: 0; }
+.ks-make-head h2 { margin-bottom: 4px; }
+.ks-big { min-height: 52px; min-width: 200px; font-size: 1.05rem; justify-content: center; }
+.ks-list { display: flex; flex-direction: column; gap: 12px; border-left: 4px solid var(--green); }
+.ks-assign { display: flex; flex-direction: column; gap: 8px; }
+.ks-assign-row { display: grid; grid-template-columns: minmax(140px, 1fr) 2fr auto; gap: 12px; align-items: center; width: 100%; text-align: left; padding: 12px 14px; border-radius: var(--radius); background: var(--bg2); border: 1px solid var(--border); color: inherit; font: inherit; cursor: pointer; min-height: 56px; }
+.ks-assign-row:hover { border-color: var(--accent); }
+.ks-assign-area { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ks-assign-name { font-weight: 700; }
+.ks-assign-people { display: flex; flex-wrap: wrap; gap: 6px; }
+.ks-assign-edit { color: var(--text3); }
+
+/* Yerler ve personel listeleri */
+.ks-areas, .ks-people { display: flex; flex-direction: column; }
+.ks-areas li, .ks-people li { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.ks-area-main, .ks-people-main { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ks-area-name, .ks-people-name { font-weight: 600; }
+.ks-people-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ks-people-tags:empty { display: none; }
+.ks-people-tags .chip { white-space: normal; max-width: 100%; height: auto; min-height: 24px; line-height: 1.3; border-radius: 8px; }
+.ks-people li.is-absent .ks-people-name { color: var(--text3); text-decoration: line-through; }
+.ks-row-actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.ks-quick-add { display: flex; gap: 8px; margin-bottom: 8px; }
+.ks-quick-add .input { flex: 1; min-width: 0; }
+
+.ks-checks { display: flex; flex-direction: column; gap: 4px; }
+.ks-check { display: flex; gap: 10px; align-items: center; min-height: 44px; padding: 4px 8px; border-radius: var(--radius); cursor: pointer; }
+.ks-check:has(input:checked) { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.ks-check .small { margin-left: auto; }
+
+.ks-past > summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 600; }
+.ks-past-list { display: flex; flex-direction: column; }
+.ks-past-list li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.ks-past-list li span:last-child { text-align: right; }
+
+/* Nöbet */
+.ks-duty-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ks-now { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-radius: var(--radius); background: color-mix(in srgb, var(--yellow) 14%, var(--bg2)); border-left: 3px solid var(--yellow); }
+.ks-now .icon { color: var(--yellow); flex-shrink: 0; }
+.ks-duty-table td, .ks-duty-table th { vertical-align: middle; }
+.ks-day-row th { background: var(--bg3); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text2); text-align: left; }
+.ks-duty-table tr.is-now td { background: color-mix(in srgb, var(--yellow) 12%, transparent); font-weight: 600; }
+.ks-time { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* İş seç */
+.ks-count-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ks-count-btn { min-width: 56px; min-height: 56px; font-size: 1.2rem; justify-content: center; }
+.ks-picked { border-left: 4px solid var(--accent); }
+.ks-picked h2 { margin-bottom: 10px; }
+.ks-people-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* İstatistik */
+.ks-stats th[scope="row"] { font-weight: 600; white-space: nowrap; }
+.ks-points { min-width: 90px; }
+.ks-points > span:first-child { font-weight: 700; color: var(--accent); }
+.ks-bar { display: block; height: 4px; border-radius: 2px; background: var(--bg3); margin-top: 4px; overflow: hidden; }
+.ks-bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+
+@media (max-width: 699px) {
+  .ks-tabs { display: flex; }
+  .ks-tabs .segment { flex: 1; padding: 0 4px; font-size: 0.8rem; }
+  .ks-assign-row { grid-template-columns: 1fr auto; }
+  .ks-assign-people { grid-column: 1 / -1; grid-row: 2; }
+  .ks-assign-edit { grid-column: 2; grid-row: 1; }
+  .ks-big { width: 100%; }
+  .ks-people li { gap: 8px; }
+  .ks-people-main { flex: 1 1 100px; }
+  .ks-people .ks-row-actions { gap: 0; }
+}
+@media (max-width: 420px) {
+  .ks-duty-grid { grid-template-columns: 1fr; }
+}
+.ks-duty-table th:first-child, .ks-duty-table td:first-child { width: 44px; }
+.ks-duty-table td:last-child { width: 52px; text-align: right; }
+.ks-duty-table .ks-day-row th { width: auto; }
