@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: tam ekran 3D sahne; üstünde kenarlara yaslanmış, çizim kâğıdı hissinde yarı saydam paneller */
+/* Layout: tam ekran 3D sahne; üstünde kenarlara yaslanmış, çizim kâğıdı hissinde yarı saydam paneller.
+   Telefon dik tutulduğunda bütün sahne 90° döndürülür, tur hep yatay görünür. */
 :root {
   --paper: #f5f6f2;
   --glass: rgba(245, 246, 242, 0.9);
@@ -39,7 +40,8 @@ body {
   font-family: var(--font-display); overflow: hidden;
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
-#app { position: relative; width: 100%; height: 100%; overflow: hidden; }
+#app { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+#app.rot { position: fixed; top: 0; transform-origin: 0 0; transform: rotate(90deg); }
 #c { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
 
 .panel {
@@ -68,7 +70,7 @@ body {
   right: max(16px, env(safe-area-inset-right, 0px));
   display: flex; padding: 3px; gap: 3px; flex-wrap: wrap; justify-content: flex-end;
 }
-.modes button, .btn {
+.modes button {
   font: 600 13px/1 var(--font-display); font-stretch: 90%; color: var(--ink);
   background: transparent; border: 0; border-radius: 7px; padding: 9px 12px; cursor: pointer;
 }
@@ -104,7 +106,7 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
 
 .joy {
   position: absolute; left: max(22px, calc(env(safe-area-inset-left, 0px) + 12px));
-  bottom: max(26px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  bottom: max(22px, calc(env(safe-area-inset-bottom, 0px) + 12px));
   width: 124px; height: 124px; border-radius: 50%; touch-action: none; display: none;
   background: var(--glass); border: 1px solid var(--line);
 }
@@ -113,22 +115,21 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
   border-radius: 50%; background: var(--accent); opacity: 0.9; pointer-events: none;
 }
 .actions-touch {
-  position: absolute; right: max(16px, env(safe-area-inset-right, 0px));
-  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 150px);
-  display: none; flex-direction: column; gap: 10px; align-items: flex-end;
+  position: absolute; right: calc(max(16px, env(safe-area-inset-right, 0px)) + 186px);
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  display: none; gap: 10px; align-items: flex-end;
 }
 .round {
-  width: 64px; height: 64px; border-radius: 50%; touch-action: none;
+  width: 62px; height: 62px; border-radius: 50%; touch-action: none;
   font: 700 12.5px/1.1 var(--font-display); font-stretch: 88%; color: var(--ink);
   background: var(--glass); border: 1px solid var(--line); cursor: pointer;
 }
 .round[aria-pressed="true"], .round.door { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
-@media (pointer: coarse) {
-  .joy { display: block; }
-  .actions-touch { display: flex; }
-  .hint, .crosshair, .prompt { display: none; }
-  #mini { width: 170px; }
-}
+.coarse .joy { display: block; }
+.coarse .actions-touch { display: flex; }
+.coarse .hint, .coarse .crosshair, .coarse .prompt { display: none; }
+.coarse #mini { width: 160px; }
+.coarse .room-card h1 { font-size: 18px; }
 
 #labels { position: absolute; inset: 0; pointer-events: none; }
 .label {
@@ -139,30 +140,22 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
 .label span { display: block; font: 500 10px var(--font-mono); color: #3d4744; }
 .label.out { color: #1f3d22; }
 
-.intro {
-  position: absolute; inset: 0; display: grid; place-items: center; overflow: auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 16px; background: color-mix(in srgb, var(--paper) 35%, transparent);
+.start {
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 18px;
+  background: color-mix(in srgb, var(--paper) 30%, transparent);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
 }
-.intro .card { max-width: 460px; width: 100%; padding: 22px 22px 18px; display: grid; gap: 14px; }
-.intro h2 { margin: 0; font-size: 30px; line-height: 1.05; font-weight: 800; font-stretch: 78%; letter-spacing: -0.015em; }
-.intro p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
-.specs { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); padding-block: 10px; gap: 8px; }
-.specs div { display: grid; gap: 2px; }
-.specs strong { font: 500 15px var(--font-mono); font-variant-numeric: tabular-nums; }
-.controls { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 13.5px; align-items: baseline; }
-.controls .k { font: 500 11px var(--font-mono); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; justify-self: start; white-space: nowrap; }
-.only-touch { display: none; }
-@media (pointer: coarse) { .only-touch { display: grid; } .only-fine { display: none; } }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); padding: 12px 18px; font-size: 15px; }
-.btn.ghost { border: 1px solid var(--line); padding: 12px 16px; font-size: 15px; }
-
-@media (max-width: 560px) {
-  .room-card h1 { font-size: 18px; }
-  .room-card { max-width: calc(100% - 200px); }
-  .modes button { padding: 8px 9px; font-size: 12px; }
+.start-btn {
+  width: 148px; height: 148px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+  font: 800 24px/1 var(--font-display); font-stretch: 85%; letter-spacing: 0.01em;
+  box-shadow: 0 10px 40px rgba(0,0,0,.28), 0 0 0 10px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: transform .15s ease;
 }
+.start-btn:hover:not(:disabled) { transform: scale(1.04); }
+.start-btn:disabled { cursor: progress; opacity: .75; font-size: 15px; }
+.start-sub { padding: 7px 14px; font-size: 13px; color: var(--ink); text-align: center; max-width: 90%; }
+@media (prefers-reduced-motion: reduce) { .start-btn { transition: none; } }
 </style>
 </head>
 <body>
@@ -174,8 +167,8 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
 
   <div class="room-card panel" aria-live="polite">
     <span class="eyebrow" id="roomEyebrow">Bulunduğunuz yer</span>
-    <h1 id="roomName">Bahçe</h1>
-    <span class="mono" id="roomArea">30 m²</span>
+    <h1 id="roomName">Salon</h1>
+    <span class="mono" id="roomArea"></span>
   </div>
 
   <div class="modes panel" role="group" aria-label="Görünüm">
@@ -186,48 +179,24 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
   </div>
 
   <div class="hint panel" id="hint">
-    <span><b>W A S D</b>yürü</span><span><b>Shift</b>koş</span><span><b>Boşluk</b>zıpla</span><span><b>C</b>eğil</span><span><b>E</b>kapı aç/kapat</span><span><b>T</b>üstten bak</span>
+    <span><b>W A S D</b>yürü</span><span><b>Shift</b>koş</span><span><b>Boşluk</b>zıpla</span><span><b>C</b>eğil</span><span><b>E</b>kapı aç/kapat</span><span><b>T</b>üstten bak</span><span><b>Esc</b>fareyi bırak</span>
   </div>
 
   <div class="map panel">
     <canvas id="mini" tabindex="0" aria-label="Kat planı. Bir yere dokunun, oraya gidin."></canvas>
-    <div class="row"><span class="eyebrow">Sizin planınız</span><span class="mono">Dokun, oraya git</span></div>
+    <div class="row"><span class="eyebrow">Sizin planınız</span><span class="mono">Dokun, git</span></div>
   </div>
 
   <div class="joy" id="joy" aria-hidden="true"><div class="knob" id="knob"></div></div>
   <div class="actions-touch">
     <button class="round door" id="tDoor" type="button" hidden>Kapıyı aç</button>
-    <button class="round" id="tJump" type="button">Zıpla</button>
     <button class="round" id="tCrouch" type="button" aria-pressed="false">Eğil</button>
+    <button class="round" id="tJump" type="button">Zıpla</button>
   </div>
 
-  <div class="intro" id="intro">
-    <div class="card panel">
-      <span class="eyebrow">Tek katlı bahçeli ev · 3D tur</span>
-      <h2>Evin içinde dolaşın</h2>
-      <p>Kat planınızdan ölçüsüne göre kurulmuş model: plandaki parke, fayans, ahşap teras, mobilya ve renkler. Bahçe kapısından başlıyorsunuz; kapıları kendiniz açıp bütün odaları gezebilirsiniz.</p>
-      <div class="specs">
-        <div><span class="eyebrow">Arsa</span><strong>20 × 15 m</strong></div>
-        <div><span class="eyebrow">Ev (brüt)</span><strong>≈ 190 m²</strong></div>
-        <div><span class="eyebrow">Tavan</span><strong>2,80 m</strong></div>
-      </div>
-      <div class="controls only-fine">
-        <span class="k">W A S D</span><span>Yürü (Shift ile koş)</span>
-        <span class="k">Fare</span><span>Sahneye tıklayın, etrafa bakın. Esc fareyi bırakır.</span>
-        <span class="k">E / tık</span><span>Baktığınız kapıyı açar ya da kapatır</span>
-        <span class="k">Boşluk</span><span>Zıpla</span>
-        <span class="k">C</span><span>Basılı tutunca eğilirsiniz</span>
-      </div>
-      <div class="controls only-touch">
-        <span class="k">Sol daire</span><span>Yürü</span>
-        <span class="k">Kaydır</span><span>Etrafa bak</span>
-        <span class="k">Düğmeler</span><span>Sağdaki düğmelerle zıplayın, eğilin, kapı açın. Kapıya dokunarak da açabilirsiniz.</span>
-      </div>
-      <div class="actions">
-        <button class="btn primary" id="startBtn" type="button" disabled>Model yükleniyor…</button>
-        <button class="btn ghost" id="startTop" type="button" disabled>Üstten bak</button>
-      </div>
-    </div>
+  <div class="start" id="intro">
+    <button class="start-btn" id="startBtn" type="button" disabled>Hazırlanıyor…</button>
+    <div class="start-sub panel" id="startSub">Ev yükleniyor</div>
   </div>
 </div>
 
@@ -239,7 +208,6 @@ button:focus-visible, #mini:focus-visible { outline: 2px solid var(--accent); ou
 </script>
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -247,11 +215,17 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-// Ölçüler metre. x: batı→doğu (0–20), z: kuzey→güney (0–15, yol güneyde).
+// Plan ölçüleri metre: x batı→doğu (0–20), z kuzey→güney (0–15, yol güneyde).
+// Ev plana göre SX × SZ oranında büyütülür; mobilya boyutları gerçek kalır, yalnızca yerleri taşınır.
+const SX = 1.2, SZ = 1.2;
+const MX = x => x * SX, MZ = z => z * SZ;
 const H = 2.8, EYE = 1.62, EYE_CROUCH = 1.0, R = 0.2;
 const COARSE = matchMedia('(pointer: coarse)').matches;
+const TQ = COARSE ? 0.5 : 1; // doku çözünürlüğü çarpanı
 let HQ = !COARSE;
 
+const app = document.getElementById('app');
+if (COARSE) app.classList.add('coarse');
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, COARSE ? 1.5 : 1.75));
@@ -264,10 +238,12 @@ const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, 1, 0.05, 2500);
 camera.rotation.order = 'YXZ';
-const world = new THREE.Group(); scene.add(world);
+let world = new THREE.Group(); scene.add(world);
+const ROOT = world;
 const roof = new THREE.Group(); scene.add(roof);
 
 // ---------- gökyüzü, güneş, ortam ışığı ----------
+const CX = MX(10), CZ = MZ(7.5);
 const sunDir = new THREE.Vector3(-0.42, 0.62, 0.66).normalize();
 function makeSky(scale) {
   const s = new Sky(); s.scale.setScalar(scale);
@@ -277,7 +253,7 @@ function makeSky(scale) {
   return s;
 }
 const sky = makeSky(2000); sky.userData.noAO = true; scene.add(sky);
-scene.fog = new THREE.Fog('#c9d9e2', 60, 220);
+scene.fog = new THREE.Fog('#c9d9e2', 70, 240);
 {
   const pm = new THREE.PMREMGenerator(renderer);
   const envScene = new THREE.Scene();
@@ -287,159 +263,238 @@ scene.fog = new THREE.Fog('#c9d9e2', 60, 220);
   scene.environment = pm.fromScene(envScene, 0.02, 0.1, 200).texture;
 }
 const sun = new THREE.DirectionalLight('#fff0dc', 3.2);
-sun.position.copy(sunDir).multiplyScalar(30).add(new THREE.Vector3(10, 0, 7.5));
-sun.target.position.set(10, 0, 7.5);
+sun.position.copy(sunDir).multiplyScalar(34).add(new THREE.Vector3(CX, 0, CZ));
+sun.target.position.set(CX, 0, CZ);
 sun.castShadow = true;
 sun.shadow.mapSize.set(HQ ? 4096 : 2048, HQ ? 4096 : 2048);
-Object.assign(sun.shadow.camera, { left: -17, right: 17, top: 17, bottom: -17, near: 5, far: 70 });
+Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 5, far: 80 });
 sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.025; sun.shadow.radius = 3;
 scene.add(sun, sun.target);
 scene.add(new THREE.HemisphereLight('#dfeaf5', '#6b5f48', 0.35));
 
-// ---------- dokular (tarayıcıda çizilir, ağdan bir şey indirilmez) ----------
+// ---------- prosedürel dokular: döşenebilir gürültü ile tarayıcıda çizilir ----------
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];
-function canvas2(n) { const c = document.createElement('canvas'); c.width = c.height = n; return c; }
+function canvas2(w, h = w) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
 function tex(c, srgb = true) {
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = ANISO;
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
-// draw(g, h, n): g renk, h yükseklik (gri) kanvası
-function surface(n, draw) {
-  const c = canvas2(n), hc = canvas2(n), g = c.getContext('2d'), h = hc.getContext('2d');
-  h.fillStyle = '#808080'; h.fillRect(0, 0, n, n);
-  draw(g, h, n);
-  return { map: tex(c), bump: tex(hc, false) };
+// periyodik değer gürültüsü: (x, y) kafes biriminde, px × py kafeste sarar
+function noise2(px, py) {
+  const g = new Float32Array(px * py); for (let i = 0; i < g.length; i++) g[i] = Math.random();
+  return (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const x0 = ((xi % px) + px) % px, y0 = ((yi % py) + py) % py, x1 = (x0 + 1) % px, y1 = (y0 + 1) % py;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const a = g[y0 * px + x0], b = g[y0 * px + x1], c = g[y1 * px + x0], d = g[y1 * px + x1];
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  };
+}
+// fbm alanı: w × h piksel, döşenebilir, değerler ~0..1
+function field(w, h, px, py, oct = 5) {
+  const ns = []; for (let o = 0; o < oct; o++) ns.push(noise2(px << o, py << o));
+  const out = new Float32Array(w * h);
+  let norm = 0; for (let o = 0; o < oct; o++) norm += 0.5 ** o;
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    let s = 0, amp = 1;
+    for (let o = 0; o < oct; o++) { s += amp * ns[o](i / w * (px << o), j / h * (py << o)); amp *= 0.5; }
+    out[j * w + i] = s / norm;
+  }
+  return out;
+}
+function fieldCanvas(w, h, f, fn) {
+  const c = canvas2(w, h), g = c.getContext('2d'), img = g.createImageData(w, h), d = img.data;
+  for (let i = 0; i < w * h; i++) { const [r, gg, b, a = 255] = fn(f[i], i); d[i * 4] = r; d[i * 4 + 1] = gg; d[i * 4 + 2] = b; d[i * 4 + 3] = a; }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+const N = n => Math.max(64, Math.round(n * TQ));
+// ortak gürültü kaynakları
+const MOTTLE = (() => { const n = N(1024), f = field(n, n, 6, 6, 5); return fieldCanvas(n, n, f, v => { const l = 150 + (v - 0.5) * 210; return [l, l, l]; }); })();
+// ahşap lif kaynağı: yatay uzanan lifler + yıllık halkalar
+const GRAIN = (() => {
+  const w = N(1024), h = N(1024), f = field(w, h, 2, 24, 5), fine = field(w, h, 4, 160, 2);
+  return fieldCanvas(w, h, f, (v, i) => {
+    const y = Math.floor(i / w) / h;
+    const ring = 0.5 + 0.5 * Math.sin((y * 90 + v * 14) * Math.PI);
+    const l = 255 * (0.8 + 0.12 * ring + 0.1 * (fine[i] - 0.5) - 0.1 * Math.pow(ring, 8));
+    return [l, l, l];
+  });
+})();
+function multiplyColor(g, x, y, w, h, color) { g.save(); g.globalCompositeOperation = 'multiply'; g.fillStyle = color; g.fillRect(x, y, w, h); g.restore(); }
+function overlay(g, n, src, alpha, op = 'multiply') { g.save(); g.globalAlpha = alpha; g.globalCompositeOperation = op; g.drawImage(src, 0, 0, n, n); g.restore(); }
+// draw(g, h, r, n): g renk, h yükseklik, r pürüzlülük (gri) kanvası
+function surface(size, draw) {
+  const n = N(size), c = canvas2(n), hc = canvas2(n), rc = canvas2(n);
+  const g = c.getContext('2d'), h = hc.getContext('2d'), r = rc.getContext('2d');
+  h.fillStyle = '#808080'; h.fillRect(0, 0, n, n); r.fillStyle = '#ffffff'; r.fillRect(0, 0, n, n);
+  draw(g, h, r, n);
+  return { map: tex(c), bump: tex(hc, false), rough: tex(rc, false) };
+}
+// tahta döşeme: lifli tahtalar, uçları kaydırılmış, kenarları pahlı
+function boards(g, h, r, n, rows, colorFn, gap, minL, maxL, roughFn) {
+  const rh = n / rows, gs = GRAIN.width;
+  for (let row = 0; row < rows; row++) {
+    let x = -Math.random() * n;
+    while (x < n) {
+      const len = n * rnd(minL, maxL), col = colorFn(), sx = rnd(0, gs * 0.2), sy = rnd(0, GRAIN.height - rh * 1.2), rv = roughFn();
+      const flip = Math.random() < 0.5;
+      for (const off of [0, n]) {
+        const X = x + off, Y = row * rh;
+        g.save(); g.beginPath(); g.rect(X, Y, len, rh); g.clip();
+        if (flip) { g.translate(X + len, Y); g.scale(-1, 1); g.drawImage(GRAIN, sx, sy, gs * 0.75, rh * 1.2, 0, 0, len, rh); }
+        else g.drawImage(GRAIN, sx, sy, gs * 0.75, rh * 1.2, X, Y, len, rh);
+        g.restore();
+        multiplyColor(g, X, Y, len, rh, col);
+        g.fillStyle = 'rgba(255,255,255,.07)'; g.fillRect(X, Y + gap, len, 1);
+        h.save(); h.globalAlpha = 0.35; h.drawImage(GRAIN, sx, sy, gs * 0.75, rh * 1.2, X, Y, len, rh); h.restore();
+        h.fillStyle = '#2a2a2a'; h.fillRect(X, Y, gap, rh);
+        r.fillStyle = `rgb(${rv},${rv},${rv})`; r.fillRect(X + gap, Y + gap, len - gap, rh - gap);
+        g.fillStyle = 'rgba(35,22,10,.55)'; g.fillRect(X, Y, gap, rh);
+      }
+      x += len;
+    }
+    g.fillStyle = 'rgba(35,22,10,.55)'; g.fillRect(0, row * rh, n, gap);
+    h.fillStyle = '#2a2a2a'; h.fillRect(0, row * rh, n, gap);
+  }
+}
+// mermer: türbülanslı damarlar
+function marbleCanvas(n, base, vein, scale = 1) {
+  const t = field(n, n, 3, 3, 6), t2 = field(n, n, 5, 5, 4);
+  return fieldCanvas(n, n, t, (v, i) => {
+    const x = (i % n) / n, y = Math.floor(i / n) / n;
+    const m = Math.abs(Math.sin((x * 2 * scale + y * scale + v * 3.2) * Math.PI));
+    const m2 = Math.abs(Math.sin((x * -1 + y * 3 + t2[i] * 4) * Math.PI));
+    const k = Math.pow(1 - m, 14) * 0.85 + Math.pow(1 - m2, 30) * 0.45 + (v - 0.5) * 0.12;
+    return [base[0] - k * (base[0] - vein[0]), base[1] - k * (base[1] - vein[1]), base[2] - k * (base[2] - vein[2])];
+  });
+}
+function tiling(g, h, r, n, cols, rows, src, grout, gw, tileRough = 40, tint = null) {
+  g.fillStyle = grout; g.fillRect(0, 0, n, n);
+  h.fillStyle = '#404040'; h.fillRect(0, 0, n, n);
+  r.fillStyle = '#e0e0e0'; r.fillRect(0, 0, n, n);
+  const tw = n / cols, th = n / rows;
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+    const x = i * tw + gw / 2, y = j * th + gw / 2, w = tw - gw, hh = th - gw;
+    // her karo kaynak dokunun farklı bir yerinden kesilir
+    const sx = rnd(0, src.width - w * src.width / n), sy = rnd(0, src.height - hh * src.height / n);
+    g.drawImage(src, sx, sy, w * src.width / n, hh * src.height / n, x, y, w, hh);
+    if (tint) multiplyColor(g, x, y, w, hh, tint());
+    g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x, y, w, 1); g.fillRect(x, y, 1, hh);
+    h.fillStyle = '#a8a8a8'; h.fillRect(x, y, w, hh);
+    const rv = tileRough + rnd(-6, 6) | 0; r.fillStyle = `rgb(${rv},${rv},${rv})`; r.fillRect(x, y, w, hh);
+  }
 }
 function speckle(g, n, count, colors, a = 1, b = 3) {
   for (let i = 0; i < count; i++) { g.fillStyle = pick(colors); g.fillRect(Math.random() * n, Math.random() * n, rnd(a, b), rnd(a, b)); }
 }
-function grain(g, x, y, w, h, count, rgba) {
-  for (let k = 0; k < count; k++) {
-    const yy = y + Math.random() * h, amp = rnd(0.5, 2.5);
-    g.strokeStyle = rgba(); g.lineWidth = rnd(0.5, 1.6);
-    g.beginPath(); g.moveTo(x, yy);
-    for (let s = 1; s <= 8; s++) g.lineTo(x + w * s / 8, yy + Math.sin(s * rnd(0.6, 1.2)) * amp);
-    g.stroke();
-  }
-}
-// tahta döşeme: satır satır, uçları kaydırılmış
-function boards(g, h, n, rows, colorFn, gap, minL, maxL) {
-  const rh = n / rows;
-  for (let r = 0; r < rows; r++) {
-    let x = -Math.random() * n;
-    while (x < n) {
-      const len = n * rnd(minL, maxL), col = colorFn();
-      for (const off of [0, n]) {
-        const X = x + off;
-        g.fillStyle = col; g.fillRect(X, r * rh, len, rh);
-        g.save(); g.beginPath(); g.rect(X, r * rh, len, rh); g.clip();
-        grain(g, X, r * rh, len, rh, 22, () => `rgba(85,52,25,${rnd(0.04, 0.12)})`);
-        if (Math.random() < 0.12) { g.fillStyle = 'rgba(80,45,20,.25)'; g.beginPath(); g.ellipse(X + rnd(0.2, 0.8) * len, r * rh + rh / 2, rnd(3, 7), rnd(2, 4), 0, 0, 7); g.fill(); }
-        g.restore();
-        h.fillStyle = '#9a9a9a'; h.fillRect(X, r * rh, len, rh);
-        h.fillStyle = '#303030'; h.fillRect(X, r * rh, gap, rh);
-      }
-      x += len;
-    }
-    g.fillStyle = 'rgba(40,25,12,.45)'; g.fillRect(0, r * rh, n, gap);
-    h.fillStyle = '#303030'; h.fillRect(0, r * rh, n, gap);
-  }
-}
-function tiling(g, h, n, cols, rows, colorFn, grout, gw, veins = 0) {
-  g.fillStyle = grout; g.fillRect(0, 0, n, n);
-  h.fillStyle = '#404040'; h.fillRect(0, 0, n, n);
-  const tw = n / cols, th = n / rows;
-  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
-    const x = i * tw + gw / 2, y = j * th + gw / 2, w = tw - gw, hh = th - gw;
-    g.fillStyle = colorFn(); g.fillRect(x, y, w, hh);
-    g.save(); g.beginPath(); g.rect(x, y, w, hh); g.clip();
-    for (let v = 0; v < veins; v++) {
-      g.strokeStyle = `rgba(120,120,125,${rnd(0.05, 0.16)})`; g.lineWidth = rnd(0.5, 2);
-      g.beginPath(); g.moveTo(x + rnd(0, w), y); g.bezierCurveTo(x + rnd(0, w), y + hh * 0.3, x + rnd(0, w), y + hh * 0.7, x + rnd(0, w), y + hh); g.stroke();
-    }
-    g.restore();
-    h.fillStyle = '#a0a0a0'; h.fillRect(x, y, w, hh);
-  }
-}
 function mat(s, size, opts = {}) {
-  const m = new THREE.MeshStandardMaterial({ map: s.map, bumpMap: s.bump, bumpScale: opts.bump ?? 1.2, roughness: opts.rough ?? 0.8, metalness: opts.metal ?? 0, color: opts.color ?? '#ffffff' });
+  const m = new THREE.MeshStandardMaterial({
+    map: s.map, bumpMap: s.bump, bumpScale: opts.bump ?? 1.2,
+    roughness: opts.rough ?? 0.8, metalness: opts.metal ?? 0, color: opts.color ?? '#ffffff',
+  });
+  if (opts.rmap) { m.roughnessMap = s.rough; m.roughness = opts.rough ?? 1; }
   m.userData.tile = size;
   return m;
 }
+const MARBLE = marbleCanvas(N(1024), [240, 239, 236], [128, 128, 132]);
+const MARBLE_GREY = marbleCanvas(N(1024), [214, 214, 211], [150, 150, 152], 0.7);
 const S = {
-  oak: surface(1024, (g, h, n) => boards(g, h, n, 13, () => `hsl(${rnd(30, 36)},${rnd(38, 50)}%,${rnd(64, 74)}%)`, 2, 0.35, 0.75)),
-  deck: surface(1024, (g, h, n) => boards(g, h, n, 14, () => `hsl(${rnd(20, 27)},${rnd(40, 52)}%,${rnd(36, 46)}%)`, 5, 0.4, 0.9)),
-  bathTile: surface(512, (g, h, n) => tiling(g, h, n, 2, 2, () => `hsl(200,${rnd(3, 6)}%,${rnd(84, 89)}%)`, '#b4b8b9', 3, 4)),
-  wallTile: surface(512, (g, h, n) => tiling(g, h, n, 4, 8, () => `hsl(195,${rnd(5, 9)}%,${rnd(90, 94)}%)`, '#c9cdce', 3)),
-  travertine: surface(512, (g, h, n) => { tiling(g, h, n, 2, 2, () => `hsl(36,${rnd(18, 26)}%,${rnd(78, 84)}%)`, '#b5a991', 3, 2); speckle(g, n, 1500, ['rgba(120,100,70,.08)', 'rgba(255,255,255,.1)']); }),
-  paver: surface(512, (g, h, n) => {
-    g.fillStyle = '#7f807c'; g.fillRect(0, 0, n, n); h.fillStyle = '#404040'; h.fillRect(0, 0, n, n);
-    const rows = 6, rh = n / rows, cw = n / 3;
-    for (let r = 0; r < rows; r++) for (let c = -1; c < 3; c++) {
-      const x = c * cw + (r % 2) * cw / 2 + 2, y = r * rh + 2;
-      g.fillStyle = `hsl(40,${rnd(3, 7)}%,${rnd(62, 70)}%)`; g.fillRect(x, y, cw - 4, rh - 4);
-      h.fillStyle = '#a0a0a0'; h.fillRect(x, y, cw - 4, rh - 4);
-    }
-    speckle(g, n, 2500, ['rgba(0,0,0,.07)', 'rgba(255,255,255,.07)'], 1, 2);
+  oak: surface(2048, (g, h, r, n) => boards(g, h, r, n, 13, () => `hsl(${rnd(30, 36)},${rnd(44, 56)}%,${rnd(66, 76)}%)`, Math.max(1, n / 600), 0.35, 0.72, () => rnd(95, 135) | 0)),
+  deck: surface(1024, (g, h, r, n) => boards(g, h, r, n, 14, () => `hsl(${rnd(19, 26)},${rnd(45, 58)}%,${rnd(40, 50)}%)`, Math.max(2, n / 200), 0.4, 0.9, () => rnd(170, 210) | 0)),
+  bathTile: surface(1024, (g, h, r, n) => tiling(g, h, r, n, 2, 1, MARBLE_GREY, '#a7aaab', Math.max(2, n / 340), 45)),
+  wallTile: surface(512, (g, h, r, n) => tiling(g, h, r, n, 4, 8, MARBLE, '#c9cdce', 2, 30)),
+  travertine: surface(1024, (g, h, r, n) => {
+    const t = field(n, n, 2, 18, 5);
+    const src = fieldCanvas(n, n, t, (v, i) => { const band = 0.5 + 0.5 * Math.sin((Math.floor(i / n) / n * 30 + v * 6) * Math.PI); return [222 - band * 22, 208 - band * 22, 182 - band * 22]; });
+    const sg = src.getContext('2d'); for (let i = 0; i < 900 * TQ; i++) { sg.fillStyle = `rgba(120,95,60,${rnd(0.15, 0.4)})`; sg.beginPath(); sg.ellipse(rnd(0, n), rnd(0, n), rnd(1, 4), rnd(0.5, 1.5), 0, 0, 7); sg.fill(); }
+    tiling(g, h, r, n, 2, 2, src, '#b9ab8f', 3, 120);
   }),
-  grass: surface(1024, (g, h, n) => {
-    g.fillStyle = '#4f7f2f'; g.fillRect(0, 0, n, n);
-    for (let i = 0; i < 26000; i++) {
-      const x = Math.random() * n, y = Math.random() * n, l = rnd(4, 11), a = rnd(-0.5, 0.5);
+  paver: surface(1024, (g, h, r, n) => {
+    g.fillStyle = '#7d7e7a'; g.fillRect(0, 0, n, n); h.fillStyle = '#383838'; h.fillRect(0, 0, n, n);
+    const rows = 6, rh = n / rows, cw = n / 3;
+    for (let row = 0; row < rows; row++) for (let c = -1; c < 3; c++) {
+      const x = c * cw + (row % 2) * cw / 2 + 3, y = row * rh + 3;
+      g.fillStyle = `hsl(40,${rnd(3, 7)}%,${rnd(62, 72)}%)`; g.fillRect(x, y, cw - 6, rh - 6);
+      h.fillStyle = '#a8a8a8'; h.fillRect(x, y, cw - 6, rh - 6);
+    }
+    overlay(g, n, MOTTLE, 0.5);
+    speckle(g, n, 6000 * TQ, ['rgba(0,0,0,.07)', 'rgba(255,255,255,.08)'], 1, 2);
+    overlay(r, n, MOTTLE, 0.3);
+  }),
+  grass: surface(1024, (g, h, r, n) => {
+    g.fillStyle = '#4c7a2d'; g.fillRect(0, 0, n, n);
+    overlay(g, n, MOTTLE, 0.5);
+    for (let i = 0; i < 26000 * TQ; i++) {
+      const x = Math.random() * n, y = Math.random() * n, l = rnd(4, 11) * TQ + 2, a = rnd(-0.5, 0.5);
       g.strokeStyle = `hsl(${rnd(80, 100)},${rnd(40, 60)}%,${rnd(24, 42)}%)`; g.lineWidth = rnd(0.8, 1.8);
       g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.sin(a) * l, y - Math.cos(a) * l); g.stroke();
     }
-    speckle(h, n, 20000, ['#606060', '#a0a0a0', '#c0c0c0'], 1, 3);
+    overlay(h, n, MOTTLE, 0.8, 'source-over');
   }),
-  plaster: surface(512, (g, h, n) => { g.fillStyle = '#f2f0eb'; g.fillRect(0, 0, n, n); speckle(g, n, 6000, ['rgba(0,0,0,.018)', 'rgba(255,255,255,.04)'], 1, 4); speckle(h, n, 9000, ['#787878', '#888888', '#808080'], 1, 5); }),
-  stoneWall: surface(512, (g, h, n) => {
-    g.fillStyle = '#9d968a'; g.fillRect(0, 0, n, n); h.fillStyle = '#303030'; h.fillRect(0, 0, n, n);
-    let y = 0;
+  plaster: surface(1024, (g, h, r, n) => {
+    g.fillStyle = '#f3f1ec'; g.fillRect(0, 0, n, n);
+    overlay(g, n, MOTTLE, 0.07);
+    speckle(g, n, 9000 * TQ, ['rgba(0,0,0,.02)', 'rgba(255,255,255,.05)'], 1, 3);
+    overlay(h, n, MOTTLE, 0.6, 'source-over'); speckle(h, n, 30000 * TQ, ['#727272', '#8e8e8e'], 1, 2);
+  }),
+  stoneWall: surface(1024, (g, h, r, n) => {
+    g.fillStyle = '#857e72'; g.fillRect(0, 0, n, n); h.fillStyle = '#282828'; h.fillRect(0, 0, n, n);
+    const k = n / 512; let y = 0;
     while (y < n) {
-      const rh = rnd(40, 70); let x = -rnd(0, 60);
-      while (x < n) { const w = rnd(60, 140); g.fillStyle = `hsl(${rnd(30, 42)},${rnd(8, 18)}%,${rnd(70, 82)}%)`; g.fillRect(x + 3, y + 3, w - 6, rh - 6); const v = rnd(150, 200) | 0; h.fillStyle = `rgb(${v},${v},${v})`; h.fillRect(x + 3, y + 3, w - 6, rh - 6); x += w; }
+      const rh = rnd(40, 72) * k; let x = -rnd(0, 60) * k;
+      while (x < n) {
+        const w = rnd(60, 150) * k, l = rnd(66, 82);
+        g.fillStyle = `hsl(${rnd(30, 42)},${rnd(8, 20)}%,${l}%)`;
+        g.beginPath(); g.roundRect(x + 3 * k, y + 3 * k, w - 6 * k, rh - 6 * k, 4 * k); g.fill();
+        const v = rnd(150, 210) | 0; h.fillStyle = `rgb(${v},${v},${v})`; h.beginPath(); h.roundRect(x + 3 * k, y + 3 * k, w - 6 * k, rh - 6 * k, 6 * k); h.fill();
+        x += w;
+      }
       y += rh;
     }
-    speckle(g, n, 3000, ['rgba(0,0,0,.08)', 'rgba(255,255,255,.08)']);
+    overlay(g, n, MOTTLE, 0.45); overlay(h, n, MOTTLE, 0.35);
   }),
-  hedge: surface(512, (g, h, n) => {
+  hedge: surface(512, (g, h, r, n) => {
     g.fillStyle = '#2d4f1f'; g.fillRect(0, 0, n, n); h.fillStyle = '#404040'; h.fillRect(0, 0, n, n);
-    for (let i = 0; i < 5500; i++) {
-      const x = Math.random() * n, y = Math.random() * n, r = rnd(3, 7), l = rnd(26, 50);
-      g.fillStyle = `hsl(${rnd(85, 105)},${rnd(35, 55)}%,${l}%)`; g.beginPath(); g.ellipse(x, y, r, r * 0.55, rnd(0, 3.14), 0, 7); g.fill();
-      h.fillStyle = `rgb(${l * 4},${l * 4},${l * 4})`; h.beginPath(); h.ellipse(x, y, r, r * 0.55, 0, 0, 7); h.fill();
+    for (let i = 0; i < 5500 * TQ; i++) {
+      const x = Math.random() * n, y = Math.random() * n, rr = rnd(3, 7) * TQ + 1, l = rnd(26, 50);
+      g.fillStyle = `hsl(${rnd(85, 105)},${rnd(35, 55)}%,${l}%)`; g.beginPath(); g.ellipse(x, y, rr, rr * 0.55, rnd(0, 3.14), 0, 7); g.fill();
+      h.fillStyle = `rgb(${l * 4},${l * 4},${l * 4})`; h.beginPath(); h.ellipse(x, y, rr, rr * 0.55, 0, 0, 7); h.fill();
     }
   }),
-  asphalt: surface(512, (g, h, n) => { g.fillStyle = '#45484b'; g.fillRect(0, 0, n, n); speckle(g, n, 14000, ['#3a3d40', '#55585b', '#4b4e51', '#62656a'], 1, 2.5); speckle(h, n, 14000, ['#606060', '#a0a0a0'], 1, 2.5); }),
-  walk: surface(256, (g, h, n) => tiling(g, h, n, 2, 2, () => `hsl(30,${rnd(4, 8)}%,${rnd(70, 76)}%)`, '#8f8c84', 4)),
-  fabric: surface(256, (g, h, n) => {
-    g.fillStyle = '#ffffff'; g.fillRect(0, 0, n, n);
-    for (let i = 0; i < n; i += 2) { g.fillStyle = `rgba(0,0,0,${rnd(0.02, 0.06)})`; g.fillRect(i, 0, 1, n); g.fillRect(0, i, n, 1); }
-    speckle(g, n, 2000, ['rgba(0,0,0,.05)', 'rgba(255,255,255,.2)'], 1, 2);
-    for (let i = 0; i < n; i += 2) { h.fillStyle = i % 4 ? '#707070' : '#909090'; h.fillRect(i, 0, 1, n); }
+  asphalt: surface(1024, (g, h, r, n) => { g.fillStyle = '#45484b'; g.fillRect(0, 0, n, n); overlay(g, n, MOTTLE, 0.35); speckle(g, n, 40000 * TQ, ['#3a3d40', '#55585b', '#4b4e51', '#6a6d72'], 1, 2.5); speckle(h, n, 40000 * TQ, ['#606060', '#a8a8a8'], 1, 2.5); }),
+  walk: surface(512, (g, h, r, n) => { g.fillStyle = '#8f8c84'; g.fillRect(0, 0, n, n); h.fillStyle = '#404040'; h.fillRect(0, 0, n, n); const t = n / 2; for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { g.fillStyle = `hsl(30,${rnd(4, 8)}%,${rnd(70, 76)}%)`; g.fillRect(i * t + 3, j * t + 3, t - 6, t - 6); h.fillStyle = '#a0a0a0'; h.fillRect(i * t + 3, j * t + 3, t - 6, t - 6); } overlay(g, n, MOTTLE, 0.35); }),
+  fabric: surface(512, (g, h, r, n) => {
+    // dokuma: atkı/çözgü iplikleri + düzensiz kalınlıklar
+    const f = field(n, n, 8, 64, 3);
+    const c = fieldCanvas(n, n, f, (v, i) => {
+      const x = i % n, y = Math.floor(i / n), wx = Math.sin(x * Math.PI / 2) * Math.sin(y * Math.PI / 4), l = 232 + wx * 14 + (v - 0.5) * 30;
+      return [l, l, l];
+    });
+    g.drawImage(c, 0, 0); h.drawImage(c, 0, 0);
   }),
-  woodGrain: surface(512, (g, h, n) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, n, n); grain(g, 0, 0, n, n, 160, () => `rgba(90,60,30,${rnd(0.05, 0.14)})`); }),
-  marble: surface(512, (g, h, n) => { g.fillStyle = '#f3f2ef'; g.fillRect(0, 0, n, n); for (let v = 0; v < 14; v++) { g.strokeStyle = `rgba(130,130,135,${rnd(0.06, 0.2)})`; g.lineWidth = rnd(0.6, 2.4); g.beginPath(); g.moveTo(rnd(0, n), 0); g.bezierCurveTo(rnd(0, n), n * 0.3, rnd(0, n), n * 0.7, rnd(0, n), n); g.stroke(); } }),
-  gravel: surface(512, (g, h, n) => { g.fillStyle = '#b3aa98'; g.fillRect(0, 0, n, n); for (let i = 0; i < 9000; i++) { const l = rnd(55, 85); g.fillStyle = `hsl(35,${rnd(5, 15)}%,${l}%)`; const x = Math.random() * n, y = Math.random() * n, r = rnd(1.5, 4); g.beginPath(); g.ellipse(x, y, r, r * 0.8, 0, 0, 7); g.fill(); const v = l * 2.5 | 0; h.fillStyle = `rgb(${v},${v},${v})`; h.beginPath(); h.ellipse(x, y, r, r * 0.8, 0, 0, 7); h.fill(); } }),
-  soil: surface(256, (g, h, n) => { g.fillStyle = '#4a3324'; g.fillRect(0, 0, n, n); speckle(g, n, 4000, ['#3d2a1d', '#5a4030', '#2f2017'], 1, 3); speckle(h, n, 4000, ['#606060', '#a0a0a0']); }),
+  woodGrain: surface(1024, (g, h, r, n) => { g.drawImage(GRAIN, 0, 0, n, n); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(0, 0, n, n); h.globalAlpha = 0.25; h.drawImage(GRAIN, 0, 0, n, n); }),
+  marble: surface(1024, (g, h, r, n) => { g.drawImage(MARBLE, 0, 0, n, n); }),
+  gravel: surface(512, (g, h, r, n) => { g.fillStyle = '#b3aa98'; g.fillRect(0, 0, n, n); for (let i = 0; i < 9000 * TQ; i++) { const l = rnd(55, 85); g.fillStyle = `hsl(35,${rnd(5, 15)}%,${l}%)`; const x = Math.random() * n, y = Math.random() * n, rr = rnd(1.5, 4); g.beginPath(); g.ellipse(x, y, rr, rr * 0.8, 0, 0, 7); g.fill(); const v = l * 2.5 | 0; h.fillStyle = `rgb(${v},${v},${v})`; h.beginPath(); h.ellipse(x, y, rr, rr * 0.8, 0, 0, 7); h.fill(); } }),
+  soil: surface(256, (g, h, r, n) => { g.fillStyle = '#4a3324'; g.fillRect(0, 0, n, n); speckle(g, n, 4000 * TQ, ['#3d2a1d', '#5a4030', '#2f2017'], 1, 3); speckle(h, n, 4000 * TQ, ['#606060', '#a0a0a0']); }),
 };
 const MAT = {
-  oak: mat(S.oak, 2.4, { rough: 0.55, bump: 0.8 }),
-  deck: mat(S.deck, 2.0, { rough: 0.75, bump: 1.5 }),
-  bathTile: mat(S.bathTile, 1.2, { rough: 0.25, bump: 0.8 }),
-  wallTile: mat(S.wallTile, 0.6, { rough: 0.2, bump: 0.6 }),
-  travertine: mat(S.travertine, 1.6, { rough: 0.5, bump: 0.8 }),
-  paver: mat(S.paver, 1.8, { rough: 0.9, bump: 1.5 }),
+  oak: mat(S.oak, 2.4, { rough: 1, bump: 0.9, rmap: true }),
+  deck: mat(S.deck, 2.0, { rough: 1, bump: 1.6, rmap: true }),
+  bathTile: mat(S.bathTile, 1.2, { rough: 1, bump: 0.8, rmap: true }),
+  wallTile: mat(S.wallTile, 0.6, { rough: 1, bump: 0.6, rmap: true }),
+  travertine: mat(S.travertine, 1.6, { rough: 1, bump: 0.8, rmap: true }),
+  paver: mat(S.paver, 1.8, { rough: 0.92, bump: 1.6 }),
   grass: mat(S.grass, 3.0, { rough: 1, bump: 1.2 }),
-  plaster: mat(S.plaster, 2.0, { rough: 0.92, bump: 0.35 }),
-  stoneWall: mat(S.stoneWall, 1.6, { rough: 0.95, bump: 2 }),
+  plaster: mat(S.plaster, 2.0, { rough: 0.9, bump: 0.3 }),
+  stoneWall: mat(S.stoneWall, 1.6, { rough: 0.95, bump: 2.2 }),
   hedge: mat(S.hedge, 1.0, { rough: 0.9, bump: 2.5 }),
   asphalt: mat(S.asphalt, 3.0, { rough: 0.95, bump: 1 }),
   walk: mat(S.walk, 0.8, { rough: 0.9, bump: 1 }),
-  marble: mat(S.marble, 1.2, { rough: 0.15, bump: 0 }),
+  marble: mat(S.marble, 1.2, { rough: 0.12, bump: 0 }),
   gravel: mat(S.gravel, 1.0, { rough: 1, bump: 2 }),
   soil: mat(S.soil, 0.8, { rough: 1, bump: 1.5 }),
 };
@@ -447,12 +502,12 @@ MAT.grass.polygonOffset = true; MAT.grass.polygonOffsetFactor = 2; MAT.grass.pol
 const fabCache = new Map(), woodCache = new Map(), matCache = new Map();
 function fabric(color, rough = 0.95) {
   const k = color + rough;
-  if (!fabCache.has(k)) fabCache.set(k, mat(S.fabric, 0.35, { color, rough, bump: 0.6 }));
+  if (!fabCache.has(k)) { const m = mat(S.fabric, 0.3, { color, rough, bump: 0.7 }); m.sheen = 0; fabCache.set(k, m); }
   return fabCache.get(k);
 }
-function veneer(color, rough = 0.5) {
+function veneer(color, rough = 0.45) {
   const k = color + rough;
-  if (!woodCache.has(k)) woodCache.set(k, mat(S.woodGrain, 0.9, { color, rough, bump: 0 }));
+  if (!woodCache.has(k)) woodCache.set(k, mat(S.woodGrain, 1.2, { color, rough, bump: 0.25 }));
   return woodCache.get(k);
 }
 function M(color, opts = {}) {
@@ -462,8 +517,8 @@ function M(color, opts = {}) {
 }
 const glassMat = new THREE.MeshStandardMaterial({ color: '#c8dde6', transparent: true, opacity: 0.18, roughness: 0.02, metalness: 0.9, depthWrite: false });
 const C = {
-  oak: veneer('#d9b48a'), walnut: veneer('#7a5236'), oakDark: veneer('#a77b52'),
-  white: M('#f3f2ee', { roughness: 0.35 }), lacquer: M('#f6f5f1', { roughness: 0.28 }), satin: M('#f1f0ec', { roughness: 0.45 }),
+  oak: veneer('#e2bc90'), walnut: veneer('#87593a'), oakDark: veneer('#b08355'),
+  white: M('#f3f2ee', { roughness: 0.35 }), lacquer: M('#f6f5f1', { roughness: 0.25 }), satin: M('#f1f0ec', { roughness: 0.45 }),
   anthracite: M('#2f3336', { roughness: 0.45, metalness: 0.2 }), black: M('#141516', { roughness: 0.25 }),
   steel: M('#c4c8cb', { roughness: 0.22, metalness: 1 }), chrome: M('#e6e8ea', { roughness: 0.06, metalness: 1 }),
   frame: M('#2b2f31', { roughness: 0.4, metalness: 0.6 }), porcelain: M('#fbfbfa', { roughness: 0.08 }),
@@ -473,8 +528,17 @@ const C = {
 };
 
 // ---------- geometri yardımcıları ----------
+// item(): içindeki mobilya plan koordinatlarıyla yazılır; (ax, az) çapa noktası büyütülmüş plana taşınır,
+// mobilyanın kendisi büyümez. Çapa olarak mobilyanın dayandığı duvar seçilir.
+const OFF = { x: 0, z: 0 };
+function item(ax, az, fn) {
+  const g = new THREE.Group(), prev = world, px = OFF.x, pz = OFF.z;
+  OFF.x = MX(ax) - ax; OFF.z = MZ(az) - az;
+  g.position.set(OFF.x, 0, OFF.z); ROOT.add(g); world = g;
+  try { fn(); } finally { world = prev; OFF.x = px; OFF.z = pz; }
+}
 const colliders = [];
-function addCol(x1, z1, x2, z2) { const c = [Math.min(x1, x2), Math.min(z1, z2), Math.max(x1, x2), Math.max(z1, z2)]; colliders.push(c); return c; }
+function addCol(x1, z1, x2, z2) { const c = [Math.min(x1, x2) + OFF.x, Math.min(z1, z2) + OFF.z, Math.max(x1, x2) + OFF.x, Math.max(z1, z2) + OFF.z]; colliders.push(c); return c; }
 function worldUV(geo, size, ox, oy, oz) {
   const p = geo.attributes.position, nn = geo.attributes.normal, uv = geo.attributes.uv;
   for (let i = 0; i < p.count; i++) {
@@ -505,13 +569,13 @@ function rbox(x1, z1, x2, z2, y0, y1, m, r = 0.03, o = {}) {
 }
 const cbox = (cx, cz, w, d, y0, y1, m, o) => box(cx - w / 2, cz - d / 2, cx + w / 2, cz + d / 2, y0, y1, m, o);
 const crbox = (cx, cz, w, d, y0, y1, m, r, o) => rbox(cx - w / 2, cz - d / 2, cx + w / 2, cz + d / 2, y0, y1, m, r, o);
-function cyl(cx, cz, r, y0, y1, m, { seg = 28, r2 = r, col = false, shadow = true, parent = world } = {}) {
+function cyl(cx, cz, r, y0, y1, m, { seg = 28, r2 = r, col = false, shadow = true } = {}) {
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r2, r, y1 - y0, seg), m);
-  mesh.position.set(cx, (y0 + y1) / 2, cz); mesh.castShadow = shadow; mesh.receiveShadow = true; parent.add(mesh);
+  mesh.position.set(cx, (y0 + y1) / 2, cz); mesh.castShadow = shadow; mesh.receiveShadow = true; world.add(mesh);
   if (col) addCol(cx - r, cz - r, cx + r, cz + r);
   return mesh;
 }
-// yatay çubuk (havlupan, askı borusu): x ya da z yönünde
+// yatay çubuk (havlupan, askı borusu, korniş)
 function rod(x1, z1, x2, z2, y, r, m) {
   const len = Math.hypot(x2 - x1, z2 - z1), mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 12), m);
   mesh.position.set((x1 + x2) / 2, y, (z1 + z2) / 2);
@@ -519,9 +583,9 @@ function rod(x1, z1, x2, z2, y, r, m) {
   mesh.castShadow = true; world.add(mesh);
   return mesh;
 }
-function sph(x, y, z, r, m, seg = 20, parent = world) {
+function sph(x, y, z, r, m, seg = 20) {
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(r, seg, Math.max(8, seg * 0.7 | 0)), m);
-  mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh);
+  mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; world.add(mesh);
   return mesh;
 }
 function lathe(x, z, y0, pts, m, { col = 0, seg = 40 } = {}) {
@@ -548,7 +612,7 @@ function doorLeaf(style, L, hgt) {
     add(new THREE.BoxGeometry(L, 0.06, 0.05), C.frame, L / 2, hgt - 0.05, 0);
     for (let x = 0.04; x < L - 0.02; x += 0.11) add(new THREE.BoxGeometry(0.035, hgt - 0.12, 0.035), C.frame, x, hgt / 2 + 0.03, 0);
   } else if (style === 'front') {
-    add(new RoundedBoxGeometry(L, hgt, 0.06, 2, 0.008), veneer('#4a3527', 0.45), L / 2, hgt / 2, 0);
+    add(new RoundedBoxGeometry(L, hgt, 0.06, 2, 0.008), veneer('#4a3527', 0.4), L / 2, hgt / 2, 0);
     add(new THREE.BoxGeometry(0.16, hgt - 0.5, 0.065), glassMat, 0.26, hgt / 2, 0);
     for (const s of [-1, 1]) {
       add(new THREE.CylinderGeometry(0.014, 0.014, 1.2, 12), C.steel, L - 0.12, 1.05, s * 0.09);
@@ -587,15 +651,15 @@ function addDoor(hz, c, s, e, head, t, o) {
   const closedCol = hz ? addCol(s, c - t / 2, e, c + t / 2) : addCol(c - t / 2, s, c + t / 2, e);
   const openCol = addCol(Math.min(ox, ox + nx * L) - 0.03, Math.min(oz, oz + nz * L) - 0.03, Math.max(ox, ox + nx * L) + 0.03, Math.max(oz, oz + nz * L) + 0.03);
   openCol.off = true;
-  registerDoor({ pivot, angle, t: 0, target: 0, closedCol, openCol, center: hz ? [(s + e) / 2, c] : [c, (s + e) / 2], name: o.name || 'Kapı' }, leaf);
+  registerDoor({ pivot, angle, t: 0, target: 0, closedCol, openCol, center: hz ? [(s + e) / 2, c] : [c, (s + e) / 2] }, leaf);
 }
 
 // ---------- duvarlar ----------
-const baseMat = M('#f7f6f2', { roughness: 0.4 }), plinthMat = mat(S.stoneWall, 1.2, { rough: 0.95, bump: 1, color: '#c9c2b6' });
+const baseMat = M('#f7f6f2', { roughness: 0.4 }), plinthMat = mat(S.stoneWall, 1.2, { rough: 0.95, bump: 1.2, color: '#c9c2b6' });
 // tül perde (duvara paralel, dalgalı)
 const curtainMat = new THREE.MeshStandardMaterial({ color: '#fbfaf6', transparent: true, opacity: 0.6, roughness: 1, side: THREE.DoubleSide, depthWrite: false });
 function curtain(hz, c, s, e, top) {
-  for (const [a, b] of [[s, s + 0.55], [e - 0.55, e]]) {
+  for (const [a, b] of [[s, s + 0.6], [e - 0.6, e]]) {
     const w = b - a, g = new THREE.PlaneGeometry(w, top - 0.03, 24, 1), p = g.attributes.position;
     for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin((p.getX(i) / w) * Math.PI * 7) * 0.035);
     g.computeVertexNormals();
@@ -606,11 +670,13 @@ function curtain(hz, c, s, e, top) {
   }
   if (hz) rod(s - 0.05, c, e + 0.05, c, top, 0.012, C.frame); else rod(c, s - 0.05, c, e + 0.05, top, 0.012, C.frame);
 }
-// Duvar: eksene paralel çizgi + açıklıklar (kapı / pencere). out: dış duvarsa dış yüzün yönü (+1/-1)
+// Duvar: plan koordinatlarında eksene paralel çizgi + açıklıklar (kapı / pencere). out: dış yüzün yönü (+1/-1).
+// Konumlar büyütülür; kapı genişlikleri gerçek kalır, pencereler duvarla birlikte genişler.
 function wall(x1, z1, x2, z2, ops = [], t = 0.12, out = 0) {
   const hz = z1 === z2;
-  const a = Math.min(hz ? x1 : z1, hz ? x2 : z2), b = Math.max(hz ? x1 : z1, hz ? x2 : z2);
-  const c = hz ? z1 : x1;
+  const sc = hz ? SX : SZ, mp = hz ? MX : MZ;
+  const a = mp(Math.min(hz ? x1 : z1, hz ? x2 : z2)), b = mp(Math.max(hz ? x1 : z1, hz ? x2 : z2));
+  const c = hz ? MZ(z1) : MX(x1);
   const h = t > 0.15 ? H : H - 0.01;
   const rect = (s, e, d = t, oc = 0) => hz ? [s, c + oc - d / 2, e, c + oc + d / 2] : [c + oc - d / 2, s, c + oc + d / 2, e];
   const seg = (s, e, y0, y1, col, m = MAT.plaster, d = t, shadow = true, oc = 0) => {
@@ -624,7 +690,8 @@ function wall(x1, z1, x2, z2, ops = [], t = 0.12, out = 0) {
     else { seg(s, e, 0, 0.08, false, baseMat, 0.012, false, -out * (t / 2 + 0.006)); seg(s, e, 0, 0.32, false, plinthMat, 0.02, false, out * (t / 2 + 0.01)); }
   };
   let cur = a - t / 2;
-  for (const o of [...ops].sort((p, q) => p.c - q.c)) {
+  const list = ops.map(o => ({ ...o, c: mp(o.c), w: o.win || o.open ? o.w * sc : o.w })).sort((p, q) => p.c - q.c);
+  for (const o of list) {
     const s = o.c - o.w / 2, e = o.c + o.w / 2;
     seg(cur, s, 0, h, true); skirting(cur, s);
     if (o.win) {
@@ -639,7 +706,7 @@ function wall(x1, z1, x2, z2, ops = [], t = 0.12, out = 0) {
       seg(e - 0.06, e, sill, head, false, C.frame, fd, false);
       const n = Math.floor((e - s) / 1.1);
       for (let i = 1; i <= n; i++) { const m = s + (e - s) * i / (n + 1); seg(m - 0.03, m + 0.03, sill, head, false, C.frame, fd, false); }
-      if (o.curtain) curtain(hz, c - o.curtain * (t / 2 + 0.12), s - 0.25, e + 0.25, head + 0.25);
+      if (o.curtain) curtain(hz, c - o.curtain * (t / 2 + 0.12), s - 0.3, e + 0.3, head + 0.25);
     } else {
       const head = o.head ?? 2.1;
       seg(s, e, head, h, false);
@@ -661,7 +728,7 @@ function wall(x1, z1, x2, z2, ops = [], t = 0.12, out = 0) {
 }
 
 // ---------- odalar ve dış alanlar ----------
-// r: dikdörtgenler [x1,z1,x2,z2]; f: zemin; lp: etiket konumu; a: plandaki net alan
+// r: plan dikdörtgenleri [x1,z1,x2,z2] (aşağıda büyütülür); f: zemin; lp: etiket konumu; a: plandaki net alan
 const ZONES = [
   { n: 'Depo', a: 8, f: 'bathTile', r: [[0, 0, 2.5, 3.2]] },
   { n: 'Oyun / Bilgisayar Odası', a: 14, f: 'oak', r: [[2.5, 0, 7.0, 3.2]] },
@@ -684,19 +751,25 @@ const ZONES = [
   { n: 'Bahçe', a: 30, out: true, r: [[-1, 8.4, 21, 14.55]], lp: [9.3, 12.2] },
   { n: 'Sokak', out: true, hide: true, r: [[-80, 14.55, 100, 80]] },
 ];
+for (const zn of ZONES) {
+  zn.r = zn.r.map(([x1, z1, x2, z2]) => [MX(x1), MZ(z1), MX(x2), MZ(z2)]);
+  if (zn.lp) zn.lp = [MX(zn.lp[0]), MZ(zn.lp[1])];
+  if (zn.a) zn.a = Math.round(zn.a * SX * SZ);
+}
 const inside = (x, z, [x1, z1, x2, z2]) => x >= x1 && x <= x2 && z >= z1 && z <= z2;
 const zoneAt = (x, z) => ZONES.find(zn => zn.r.some(r => inside(x, z, r)));
 for (const zn of ZONES) if (zn.f) for (const r of zn.r) {
   if (zn.out) box(r[0], r[1], r[2], r[3], 0, 0.04, MAT[zn.f], { shadow: false });
   else floor(...r, MAT[zn.f]);
 }
-
-floor(-90, -90, 110, 14.55, MAT.grass, 0);
-floor(-90, 14.85, 110, 15.9, MAT.walk, 0.02);
-box(-90, 15.84, 110, 15.96, 0, 0.12, M('#b9b6ae', { roughness: 0.9 }), { shadow: false });
-floor(-90, 15.9, 110, 24, MAT.asphalt, 0.01);
-floor(-90, 24, 110, 26, MAT.walk, 0.02);
-for (let x = -88; x < 110; x += 5) box(x, 19.9, x + 2.6, 20.02, 0.012, 0.016, M('#e9e6da', { roughness: 0.7 }), { shadow: false });
+// arsa önü: ön duvar, kaldırım, yol (genişlikleri gerçek kalır)
+const ZF = MZ(14.55);
+floor(-90, -90, 110, ZF, MAT.grass, 0);
+floor(-90, ZF + 0.3, 110, ZF + 1.35, MAT.walk, 0.02);
+box(-90, ZF + 1.29, 110, ZF + 1.41, 0, 0.12, M('#b9b6ae', { roughness: 0.9 }), { shadow: false });
+floor(-90, ZF + 1.35, 110, ZF + 9.45, MAT.asphalt, 0.01);
+floor(-90, ZF + 9.45, 110, ZF + 11.45, MAT.walk, 0.02);
+for (let x = -88; x < 110; x += 5) box(x, ZF + 5.35, x + 2.6, ZF + 5.47, 0.012, 0.016, M('#e9e6da', { roughness: 0.7 }), { shadow: false });
 
 // ---------- duvarlar (plandaki konumlar) ----------
 const EXT = 0.25;
@@ -706,12 +779,12 @@ wall(0, 0, 20, 0, [W(1.25, 0.7, 1.2), W(3.6, 1.0), W(6.0, 1.0), W(8.55, 1.4, 0.9
 wall(0, 0, 0, 8.4, [], EXT, -1);
 wall(20, 0, 20, 8.4, [W(1.9, 0.8, 1.5)], EXT, 1);
 wall(0, 8.4, 5.8, 8.4, [W(2.9, 3.6, 0.3, 2.4, 1)], EXT, 1);
-wall(5.8, 8.4, 7.4, 8.4, [D(6.35, 0.9, -1, 's', { name: 'Teras kapısı' })], EXT, 1);
+wall(5.8, 8.4, 7.4, 8.4, [D(6.35, 0.9, -1, 's')], EXT, 1);
 wall(7.4, 8.4, 7.4, 9.8, [W(9.1, 1.2, 0.5, 2.4)], EXT, -1);
 wall(7.4, 9.8, 10.4, 9.8, [W(8.9, 2.6, 0.5, 2.4)], EXT, 1);
 wall(10.4, 8.4, 10.4, 9.8, [W(9.1, 1.2, 0.5, 2.4)], EXT, 1);
 wall(10.4, 8.4, 11.1, 8.4, [], EXT, 1);
-wall(11.1, 8.4, 12.6, 8.4, [D(11.85, 1.0, -1, 'e', { head: 2.2, style: 'front', name: 'Ana kapı' })], EXT, 1);
+wall(11.1, 8.4, 12.6, 8.4, [D(11.85, 1.0, -1, 'e', { head: 2.2, style: 'front' })], EXT, 1);
 wall(15.6, 8.4, 20, 8.4, [W(17.8, 3.0, 0.6, 2.3, 1)], EXT, 1);
 wall(12.6, 5.1, 12.6, 8.4, [W(6.8, 0.9)], 0.2, 1);
 wall(12.6, 5.1, 15.6, 5.1, [W(14.1, 1.8)], 0.2, 1);
@@ -730,32 +803,36 @@ wall(11.1, 4.3, 11.1, 8.4);
 // ---------- çatı, tavan, aydınlatma ----------
 const roofTop = mat(S.gravel, 1.2, { rough: 1, bump: 1.5, color: '#9d9890' }), ceil = M('#f8f7f3', { roughness: 0.95, emissive: '#fbf8f0', emissiveIntensity: 0.12 });
 const roofMats = [MAT.plaster, MAT.plaster, roofTop, ceil, MAT.plaster, MAT.plaster];
-function roofSlab(x1, z1, x2, z2, top = H + 0.3) {
-  const g = new THREE.BoxGeometry(x2 - x1, top - (H - 0.012), z2 - z1);
-  worldUV(g, 2, (x1 + x2) / 2, 0, (z1 + z2) / 2);
+// x/z: büyütülmüş değil plan koordinatı; saçak payı (ov) gerçek metre
+function roofSlab(x1, z1, x2, z2, ov = [0.35, 0.35, 0.35, 0.35], top = H + 0.3) {
+  const X1 = MX(x1) - ov[0], Z1 = MZ(z1) - ov[1], X2 = MX(x2) + ov[2], Z2 = MZ(z2) + ov[3];
+  const g = new THREE.BoxGeometry(X2 - X1, top - (H - 0.012), Z2 - Z1);
+  worldUV(g, 2, (X1 + X2) / 2, 0, (Z1 + Z2) / 2);
   const m = new THREE.Mesh(g, roofMats);
-  m.position.set((x1 + x2) / 2, (top + H - 0.012) / 2, (z1 + z2) / 2);
+  m.position.set((X1 + X2) / 2, (top + H - 0.012) / 2, (Z1 + Z2) / 2);
   m.castShadow = true; m.receiveShadow = true; roof.add(m);
 }
-roofSlab(-0.35, -0.35, 20.35, 5.0);
-roofSlab(-0.35, 5.0, 12.7, 8.75);
-roofSlab(15.5, 5.0, 20.35, 8.75);
-roofSlab(7.25, 8.75, 10.55, 9.95, H + 0.26);
+roofSlab(0, 0, 20, 5.1, [0.35, 0.35, 0.35, -0.1]);
+roofSlab(0, 5.1, 12.6, 8.4, [0.35, 0.1, 0.1, 0.35]);
+roofSlab(15.6, 5.1, 20, 8.4, [0.1, 0.1, 0.35, 0.35]);
+roofSlab(7.4, 8.4, 10.4, 9.8, [0.15, -0.35, 0.15, 0.15], H + 0.26);
 const parapet = M('#e8e6e0', { roughness: 0.8 });
-for (const [x1, z1, x2, z2] of [[-0.35, -0.35, 20.35, -0.2], [-0.35, -0.35, -0.2, 8.75], [20.2, -0.35, 20.35, 8.75]]) box(x1, z1, x2, z2, H + 0.3, H + 0.55, parapet, { parent: roof });
+box(MX(0) - 0.35, MZ(0) - 0.35, MX(20) + 0.35, MZ(0) - 0.2, H + 0.3, H + 0.55, parapet, { parent: roof });
+box(MX(0) - 0.35, MZ(0) - 0.35, MX(0) - 0.2, MZ(8.4) + 0.35, H + 0.3, H + 0.55, parapet, { parent: roof });
+box(MX(20) + 0.2, MZ(0) - 0.35, MX(20) + 0.35, MZ(8.4) + 0.35, H + 0.3, H + 0.55, parapet, { parent: roof });
 const spotMat = M('#ffffff', { emissive: '#fff2d8', emissiveIntensity: 2.2 });
 const ringMat = M('#d8d8d6', { roughness: 0.3, metalness: 0.6 });
 const spotGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.01, 20), ringGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.008, 24);
 for (const zn of ZONES) if (!zn.out) for (const [x1, z1, x2, z2] of zn.r) {
-  const nx = Math.max(1, Math.round((x2 - x1) / 1.5)), nz = Math.max(1, Math.round((z2 - z1) / 1.5));
+  const nx = Math.max(1, Math.round((x2 - x1) / 1.6)), nz = Math.max(1, Math.round((z2 - z1) / 1.6));
   for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
     const x = x1 + (x2 - x1) * (i + 0.5) / nx, z = z1 + (z2 - z1) * (j + 0.5) / nz;
     const r = new THREE.Mesh(ringGeo, ringMat); r.position.set(x, H - 0.016, z); roof.add(r);
     const s = new THREE.Mesh(spotGeo, spotMat); s.position.set(x, H - 0.02, z); roof.add(s);
   }
 }
-const roomLights = [[2.9, 6.3, 7], [8.6, 6.4, 7], [17.8, 5.8, 6], [6.0, 3.75, 3.5], [10.5, 3.75, 3], [14.1, 2.1, 5], [4.7, 1.6, 5], [8.5, 1.6, 4.5], [11.3, 1.6, 3], [18.7, 1.6, 3], [16.5, 1.6, 2.5], [11.85, 6.3, 3], [8.9, 9.1, 3], [1.2, 1.6, 2.5]];
-for (const [x, z, p] of roomLights) { const l = new THREE.PointLight('#ffe9cc', p, 0, 2); l.position.set(x, 1.95, z); roof.add(l); }
+const roomLights = [[2.9, 6.3, 8], [8.6, 6.4, 8], [17.8, 5.8, 7], [6.0, 3.75, 4], [10.5, 3.75, 3.5], [14.1, 2.1, 6], [4.7, 1.6, 6], [8.5, 1.6, 5], [11.3, 1.6, 3.5], [18.7, 1.6, 3.5], [16.5, 1.6, 3], [11.85, 6.3, 3.5], [8.9, 9.1, 3.5], [1.2, 1.6, 3]];
+for (const [x, z, p] of roomLights) { const l = new THREE.PointLight('#ffe9cc', p, 0, 2); l.position.set(MX(x), 1.95, MZ(z)); roof.add(l); }
 
 // ---------- bitki ve yaprak dokuları ----------
 function leafTexture(hue, light, big = false) {
@@ -764,7 +841,10 @@ function leafTexture(hue, light, big = false) {
   for (let i = 0; i < count; i++) {
     const x = rnd(0.15, 0.85) * n, y = rnd(0.15, 0.85) * n, len = big ? rnd(60, 90) : rnd(18, 30), wid = len * (big ? 0.42 : 0.38), a = rnd(0, Math.PI * 2);
     g.save(); g.translate(x, y); g.rotate(a);
-    g.fillStyle = `hsl(${hue + rnd(-8, 8)},${rnd(40, 60)}%,${light + rnd(-10, 10)}%)`;
+    const grd = g.createLinearGradient(0, -wid, 0, wid);
+    const l0 = light + rnd(-10, 10), hh = hue + rnd(-8, 8), ss = rnd(40, 60);
+    grd.addColorStop(0, `hsl(${hh},${ss}%,${l0 - 6}%)`); grd.addColorStop(0.5, `hsl(${hh},${ss}%,${l0 + 6}%)`); grd.addColorStop(1, `hsl(${hh},${ss}%,${l0 - 8}%)`);
+    g.fillStyle = grd;
     g.beginPath(); g.moveTo(-len / 2, 0); g.quadraticCurveTo(0, -wid, len / 2, 0); g.quadraticCurveTo(0, wid, -len / 2, 0); g.fill();
     g.strokeStyle = 'rgba(20,40,10,.35)'; g.lineWidth = big ? 2 : 1; g.beginPath(); g.moveTo(-len / 2, 0); g.lineTo(len / 2, 0); g.stroke();
     g.restore();
@@ -792,17 +872,18 @@ function foliage(cx, cy, cz, rx, ry, rz, count, size, m = leafMats.tree, shadow 
   im.castShadow = shadow; im.receiveShadow = true; im.userData.noAO = true; world.add(im);
   return im;
 }
-// [x, y, z, ölçek, renk?, dönüş?] listesinden tek çizimlik örnekli ağ
+// [x, y, z, ölçek, renk?] listesinden tek çizimlik örnekli ağ
 function instanced(geo, m, list, shadow = true) {
   const im = new THREE.InstancedMesh(geo, m, list.length);
-  list.forEach(([x, y, z, sc, col, ry = 0], i) => {
-    _q.setFromEuler(_e.set(0, ry, 0)); _m4.compose(_p.set(x, y, z), _q, _s.set(sc, sc, sc)); im.setMatrixAt(i, _m4);
+  list.forEach(([x, y, z, sc, col], i) => {
+    _m4.compose(_p.set(x, y, z), _q.identity(), _s.set(sc, sc, sc)); im.setMatrixAt(i, _m4);
     if (col) im.setColorAt(i, _c.set(col));
   });
   im.castShadow = shadow; im.receiveShadow = true; world.add(im);
   return im;
 }
-const bark = mat(S.woodGrain, 0.5, { color: '#5c4633', rough: 0.95 });
+const bark = mat(S.woodGrain, 0.5, { color: '#5c4633', rough: 0.95, bump: 1.5 });
+// ağaç, çalı, saksı: koordinatlar zaten büyütülmüş dünyada
 function tree(x, z, s = 1, fruit = null) {
   cyl(x, z, 0.11 * s, 0, 1.6 * s, bark, { r2: 0.07 * s, seg: 12 });
   for (const a of [0.6, 2.7, 4.6]) {
@@ -827,8 +908,8 @@ function bush(x, z, s = 1, flower = null) {
   }
 }
 const potMat = M('#cfc8bb', { roughness: 0.7 });
-function plant(x, z, s = 1, potColor = potMat) {
-  lathe(x, z, 0, [[0, 0], [0.13 * s, 0], [0.17 * s, 0.34 * s], [0.18 * s, 0.36 * s], [0.155 * s, 0.36 * s], [0.15 * s, 0.32 * s], [0, 0.32 * s]], potColor, { col: 0.17 * s });
+function plant(x, z, s = 1) {
+  lathe(x, z, 0, [[0, 0], [0.13 * s, 0], [0.17 * s, 0.34 * s], [0.18 * s, 0.36 * s], [0.155 * s, 0.36 * s], [0.15 * s, 0.32 * s], [0, 0.32 * s]], potMat, { col: 0.17 * s });
   foliage(x, 0.75 * s, z, 0.28 * s, 0.38 * s, 0.28 * s, Math.round(26 * s), 0.34 * s, leafMats.indoor, true);
 }
 const FLOWER = ['#e4558f', '#f6f3ee', '#f2c94c', '#9b6fd6', '#e8743b', '#ffffff', '#d63d55'];
@@ -850,21 +931,21 @@ function bed(x1, z1, x2, z2, head, duvet, headboard = C.beige) {
   rbox(x1, z1, x2, z2, 0.08, 0.32, C.walnut, 0.02, { col: true });
   for (const [x, z] of [[x1 + 0.08, z1 + 0.08], [x2 - 0.08, z1 + 0.08], [x1 + 0.08, z2 - 0.08], [x2 - 0.08, z2 - 0.08]]) cbox(x, z, 0.05, 0.05, 0, 0.08, C.walnut);
   rbox(x1 + 0.03, z1 + 0.03, x2 - 0.03, z2 - 0.03, 0.32, 0.55, C.linen, 0.06);
-  const hz = head === 'n' || head === 's', L = hz ? z2 - z1 : x2 - x1;
+  const hz = head === 'n', L = hz ? z2 - z1 : x2 - x1;
   // nevresim ayak ucundan uzanır, yastık tarafı açık; üstünde katlanmış renkli örtü
   const cov = L * 0.62;
-  const Rr = { n: [x1, z2 - cov, x2, z2], e: [x1, z1, x1 + cov, z2] }[head];
+  const Rr = hz ? [x1, z2 - cov, x2, z2] : [x1, z1, x1 + cov, z2];
   rbox(Rr[0] - 0.015, Rr[1] - 0.015, Rr[2] + 0.015, Rr[3] + 0.015, 0.48, 0.6, C.sheet, 0.05);
-  const fold = { n: [x1 - 0.02, z2 - cov * 0.55, x2 + 0.02, z2 + 0.01], e: [x1 - 0.01, z1 - 0.02, x1 + cov * 0.55, z2 + 0.02] }[head];
+  const fold = hz ? [x1 - 0.02, z2 - cov * 0.55, x2 + 0.02, z2 + 0.01] : [x1 - 0.01, z1 - 0.02, x1 + cov * 0.55, z2 + 0.02];
   rbox(...fold, 0.5, 0.63, duvet, 0.04);
   const w = hz ? x2 - x1 : z2 - z1, n = w > 1.3 ? 2 : 1;
   for (let i = 0; i < n; i++) {
     const p = (hz ? x1 : z1) + w * (i + 0.5) / n, pw = w / n - 0.16;
-    if (head === 'n') { crbox(p, z1 + 0.28, pw, 0.36, 0.55, 0.72, C.cream, 0.07); crbox(p, z1 + 0.5, pw * 0.7, 0.14, 0.55, 0.78, duvet, 0.05); }
-    if (head === 'e') { crbox(x2 - 0.28, p, 0.36, pw, 0.55, 0.72, C.cream, 0.07); crbox(x2 - 0.5, p, 0.14, pw * 0.7, 0.55, 0.78, duvet, 0.05); }
+    if (hz) { crbox(p, z1 + 0.28, pw, 0.36, 0.55, 0.72, C.cream, 0.07); crbox(p, z1 + 0.5, pw * 0.7, 0.14, 0.55, 0.78, duvet, 0.05); }
+    else { crbox(x2 - 0.28, p, 0.36, pw, 0.55, 0.72, C.cream, 0.07); crbox(x2 - 0.5, p, 0.14, pw * 0.7, 0.55, 0.78, duvet, 0.05); }
   }
-  if (head === 'n') rbox(x1 - 0.06, z1 - 0.1, x2 + 0.06, z1 + 0.01, 0, 1.15, headboard, 0.04);
-  if (head === 'e') rbox(x2 - 0.01, z1 - 0.06, x2 + 0.1, z2 + 0.06, 0, 1.15, headboard, 0.04);
+  if (hz) rbox(x1 - 0.06, z1 - 0.1, x2 + 0.06, z1 + 0.01, 0, 1.15, headboard, 0.04);
+  else rbox(x2 - 0.01, z1 - 0.06, x2 + 0.1, z2 + 0.06, 0, 1.15, headboard, 0.04);
 }
 // kanepe: dikdörtgen + sırtın hangi tarafta olduğu
 function sofa(x1, z1, x2, z2, back, m = C.beige, arms = true, pillow = C.olive) {
@@ -991,65 +1072,63 @@ function artwork(x, z, w, hgt, y, axis, seed) {
 }
 
 // Depo
-lathe(0.45, 0.5, 0.2, [[0, 0], [0.27, 0], [0.28, 0.05], [0.28, 1.15], [0.24, 1.25], [0, 1.27]], C.white, { col: 0.28 });
-cyl(0.45, 0.5, 0.03, 0, 0.2, C.chrome);
-shelf(2.05, 0.15, 2.42, 2.7, 2.0, C.oakDark);
-rbox(0.2, 1.6, 0.8, 2.4, 0, 0.9, C.anthracite, 0.02, { col: true });
-crbox(1.2, 0.35, 0.45, 0.28, 0.02, 0.7, M('#2f4e74', { roughness: 0.4 }), 0.04, { col: true });
-crbox(1.25, 0.75, 0.38, 0.24, 0.02, 0.58, M('#3b5f8a', { roughness: 0.4 }), 0.04, { col: true });
-for (let i = 0; i < 4; i++) crbox(0.5 + i * 0.01, 2.85, 0.45, 0.35, i * 0.3, i * 0.3 + 0.28, M('#c9a77b', { roughness: 0.95 }), 0.01, { col: i === 0 });
+item(0, 0, () => { lathe(0.45, 0.5, 0.2, [[0, 0], [0.27, 0], [0.28, 0.05], [0.28, 1.15], [0.24, 1.25], [0, 1.27]], C.white, { col: 0.28 }); cyl(0.45, 0.5, 0.03, 0, 0.2, C.chrome); });
+item(2.5, 1.4, () => shelf(2.05, 0.15, 2.42, 2.7, 2.0, C.oakDark));
+item(0, 2.0, () => rbox(0.2, 1.6, 0.8, 2.4, 0, 0.9, C.anthracite, 0.02, { col: true }));
+item(1.2, 0, () => { crbox(1.2, 0.35, 0.45, 0.28, 0.02, 0.7, M('#2f4e74', { roughness: 0.4 }), 0.04, { col: true }); crbox(1.25, 0.75, 0.38, 0.24, 0.02, 0.58, M('#3b5f8a', { roughness: 0.4 }), 0.04, { col: true }); });
+item(0, 3.2, () => { for (let i = 0; i < 4; i++) crbox(0.5 + i * 0.01, 2.85, 0.45, 0.35, i * 0.3, i * 0.3 + 0.28, M('#c9a77b', { roughness: 0.95 }), 0.01, { col: i === 0 }); });
 // Oyun / bilgisayar odası (plandaki RGB masa, mor oyuncu koltuğu, bej kanepe)
-table(3.4, 0.12, 5.4, 0.82, 0.75, C.walnut, C.black);
-for (const [cx, rot] of [[3.95, 0.28], [4.4, 0], [4.85, -0.28]]) {
-  const scr = new THREE.Group(); scr.position.set(cx, 0.75, 0.38); scr.rotation.y = rot; world.add(scr);
-  const p = new THREE.Mesh(new RoundedBoxGeometry(0.6, 0.36, 0.03, 2, 0.008), C.black); p.position.set(0, 0.42, 0); p.castShadow = true; scr.add(p);
-  const s = new THREE.Mesh(new THREE.PlaneGeometry(0.57, 0.33), M('#1a2a6a', { emissive: cx === 4.4 ? '#4c6cf0' : '#7a3fd0', emissiveIntensity: 0.9, roughness: 0.15 })); s.position.set(0, 0.42, 0.016); scr.add(s);
-  const st = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.24, 0.04), C.black); st.position.set(0, 0.12, -0.03); scr.add(st);
-}
-box(3.6, 0.13, 5.2, 0.15, 0.6, 0.62, M('#7a3fd0', { emissive: '#9c4dff', emissiveIntensity: 1.2 }), { shadow: false });
-crbox(4.4, 0.62, 0.42, 0.14, 0.75, 0.77, C.black, 0.01);
-crbox(5.15, 0.35, 0.2, 0.42, 0.75, 1.2, C.black, 0.02);
-{ // oyuncu koltuğu
+item(4.4, 0, () => {
+  table(3.4, 0.12, 5.4, 0.82, 0.75, C.walnut, C.black);
+  for (const [cx, rot] of [[3.95, 0.28], [4.4, 0], [4.85, -0.28]]) {
+    const scr = new THREE.Group(); scr.position.set(cx, 0.75, 0.38); scr.rotation.y = rot; world.add(scr);
+    const p = new THREE.Mesh(new RoundedBoxGeometry(0.6, 0.36, 0.03, 2, 0.008), C.black); p.position.set(0, 0.42, 0); p.castShadow = true; scr.add(p);
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(0.57, 0.33), M('#1a2a6a', { emissive: cx === 4.4 ? '#4c6cf0' : '#7a3fd0', emissiveIntensity: 0.9, roughness: 0.15 })); s.position.set(0, 0.42, 0.016); scr.add(s);
+    const st = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.24, 0.04), C.black); st.position.set(0, 0.12, -0.03); scr.add(st);
+  }
+  box(3.6, 0.13, 5.2, 0.15, 0.6, 0.62, M('#7a3fd0', { emissive: '#9c4dff', emissiveIntensity: 1.2 }), { shadow: false });
+  crbox(4.4, 0.62, 0.42, 0.14, 0.75, 0.77, C.black, 0.01);
+  crbox(5.15, 0.35, 0.2, 0.42, 0.75, 1.2, C.black, 0.02);
   const x = 4.4, z = 1.25, purple = fabric('#5b2d8a', 0.6);
   for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; cbox(x + Math.cos(a) * 0.17, z + Math.sin(a) * 0.17, 0.05, 0.05, 0, 0.05, C.black); }
   cyl(x, z, 0.03, 0.05, 0.45, C.black); crbox(x, z, 0.52, 0.5, 0.45, 0.56, purple, 0.05, { col: true });
   crbox(x, z + 0.24, 0.5, 0.1, 0.56, 1.3, purple, 0.05); crbox(x, z + 0.22, 0.3, 0.1, 1.0, 1.25, fabric('#1b1b1f'), 0.04);
-}
-shelf(2.62, 0.15, 3.22, 0.5, 1.8, C.walnut);
-sofa(6.05, 1.0, 6.9, 2.9, 'e', C.beige, true, C.olive);
-rug(3.3, 1.5, 5.8, 3.0, C.grey);
-plant(2.85, 2.8, 1.0); lamp(6.5, 0.5, 0);
-artwork(6.93, 1.95, 0.8, 0.55, 1.35, 'x', 0);
+});
+item(2.5, 0, () => shelf(2.62, 0.15, 3.22, 0.5, 1.8, C.walnut));
+item(7.0, 1.95, () => { sofa(6.05, 1.0, 6.9, 2.9, 'e', C.beige, true, C.olive); artwork(6.93, 1.95, 0.8, 0.55, 1.35, 'x', 0); });
+item(4.55, 2.25, () => rug(3.3, 1.5, 5.8, 3.0, C.grey));
+item(2.5, 3.2, () => plant(2.85, 2.8, 1.0));
+item(7.0, 0, () => lamp(6.5, 0.5, 0));
 // Misafir odası
-bed(7.75, 0.12, 9.35, 2.12, 'n', C.olive);
-for (const x of [7.4, 9.7]) { rbox(x - 0.22, 0.15, x + 0.22, 0.55, 0, 0.5, C.oak, 0.01, { col: true }); lamp(x, 0.35, 0.5); }
-wardrobe(7.12, 1.4, 7.55, 2.95, 2.2);
-rug(7.8, 2.2, 9.3, 3.05, C.cream);
-plant(9.8, 1.25, 0.9);
-// Banyo (plandaki gibi cam duşakabin, kurutma + çamaşır makinesi)
-box(10.17, 0.07, 11.25, 1.12, 0.04, 2.3, MAT.wallTile, { shadow: false });
-shower(10.2, 0.1, 11.2, 1.1, ['e', 's']);
-for (const y of [0, 0.86]) {
-  crbox(12.24, 0.42, 0.6, 0.6, y, y + 0.85, C.white, 0.03, { col: true });
-  const dr = cyl(12.24, 0.73, 0.2, 0, 0.02, M('#3a4148', { roughness: 0.1, metalness: 0.5 })); dr.rotation.x = Math.PI / 2; dr.position.y = y + 0.43;
-  box(11.98, 0.71, 12.5, 0.73, y + 0.74, y + 0.8, M('#d4d6d8'), { shadow: false });
-}
-vanity(10.17, 1.65, 10.7, 2.55, 1, 'x');
-toilet(12.3, 2.45, 'w');
-rod(11.8, 3.08, 12.4, 3.08, 1.2, 0.012, C.chrome);
-crbox(12.1, 3.06, 0.5, 0.03, 0.75, 1.18, fabric('#e9e4da'), 0.01);
+item(8.55, 0, () => { bed(7.75, 0.12, 9.35, 2.12, 'n', C.olive); for (const x of [7.4, 9.7]) { rbox(x - 0.22, 0.15, x + 0.22, 0.55, 0, 0.5, C.oak, 0.01, { col: true }); lamp(x, 0.35, 0.5); } });
+item(7.0, 2.2, () => wardrobe(7.12, 1.4, 7.55, 2.95, 2.2));
+item(8.55, 2.6, () => rug(7.8, 2.2, 9.3, 3.05, C.cream));
+item(10.1, 1.25, () => plant(9.8, 1.25, 0.9));
+// Banyo (cam duşakabin, kurutma + çamaşır makinesi)
+item(10.1, 0, () => { box(10.17, 0.07, 11.25, 1.12, 0.04, 2.3, MAT.wallTile, { shadow: false }); shower(10.2, 0.1, 11.2, 1.1, ['e', 's']); });
+item(12.6, 0, () => {
+  for (const y of [0, 0.86]) {
+    crbox(12.24, 0.42, 0.6, 0.6, y, y + 0.85, C.white, 0.03, { col: true });
+    const dr = cyl(12.24, 0.73, 0.2, 0, 0.02, M('#3a4148', { roughness: 0.1, metalness: 0.5 })); dr.rotation.x = Math.PI / 2; dr.position.y = y + 0.43;
+    box(11.98, 0.71, 12.5, 0.73, y + 0.74, y + 0.8, M('#d4d6d8'), { shadow: false });
+  }
+});
+item(10.1, 2.1, () => { box(10.17, 1.5, 10.19, 2.7, 0.85, 2.3, MAT.wallTile, { shadow: false }); vanity(10.2, 1.65, 10.73, 2.55, 1, 'x'); });
+item(12.6, 2.45, () => toilet(12.3, 2.45, 'w'));
+item(12.1, 3.2, () => { rod(11.8, 3.08, 12.4, 3.08, 1.2, 0.012, C.chrome); crbox(12.1, 3.06, 0.5, 0.03, 0.75, 1.18, fabric('#e9e4da'), 0.01); });
 // Çocuk odası (mavi ve pembe yataklar, yuvarlak halı, oyuncak ayı)
-bed(12.75, 0.12, 13.7, 2.05, 'n', fabric('#9fb7cf'), fabric('#dfe7ef'));
-bed(14.5, 0.12, 15.45, 2.05, 'n', fabric('#e5b7b9'), fabric('#f3e2e2'));
-rbox(13.88, 0.15, 14.32, 0.55, 0, 0.5, C.white, 0.02, { col: true }); lamp(14.1, 0.35, 0.5, '#f4e3c0');
-cyl(14.2, 3.0, 0.75, 0.015, 0.03, fabric('#b9c7d6'), { seg: 48, shadow: false });
-chair(14.2, 3.85, 'n', C.white, fabric('#e2c46b'));
-{ const b = fabric('#b07b4a', 1); sph(14.3, 0.2, 2.95, 0.15, b); sph(14.3, 0.42, 2.95, 0.11, b); sph(14.22, 0.5, 2.95, 0.04, b); sph(14.38, 0.5, 2.95, 0.04, b); sph(14.18, 0.18, 2.85, 0.06, b); sph(14.42, 0.18, 2.85, 0.06, b); }
-for (const [x, z, c] of [[13.6, 2.7, '#d76a4f'], [13.75, 2.62, '#3f6a8a'], [14.8, 3.4, '#e2c46b'], [14.95, 3.3, '#5f7f4f']]) crbox(x, z, 0.1, 0.1, 0.03, 0.13, M(c, { roughness: 0.5 }), 0.012);
-shelf(15.15, 2.4, 15.52, 3.6, 1.2, C.white);
-artwork(14.1, 0.07, 0.7, 0.5, 1.4, 'z', 1);
+item(13.2, 0, () => bed(12.75, 0.12, 13.7, 2.05, 'n', fabric('#9fb7cf'), fabric('#dfe7ef')));
+item(14.95, 0, () => bed(14.5, 0.12, 15.45, 2.05, 'n', fabric('#e5b7b9'), fabric('#f3e2e2')));
+item(14.1, 0, () => { rbox(13.88, 0.15, 14.32, 0.55, 0, 0.5, C.white, 0.02, { col: true }); lamp(14.1, 0.35, 0.5, '#f4e3c0'); artwork(14.1, 0.07, 0.7, 0.5, 1.4, 'z', 1); });
+item(14.2, 3.0, () => {
+  cyl(14.2, 3.0, 0.75, 0.015, 0.03, fabric('#b9c7d6'), { seg: 48, shadow: false });
+  const b = fabric('#b07b4a', 1); sph(14.3, 0.2, 2.95, 0.15, b); sph(14.3, 0.42, 2.95, 0.11, b); sph(14.22, 0.5, 2.95, 0.04, b); sph(14.38, 0.5, 2.95, 0.04, b); sph(14.18, 0.18, 2.85, 0.06, b); sph(14.42, 0.18, 2.85, 0.06, b);
+  for (const [x, z, c] of [[13.6, 2.7, '#d76a4f'], [13.75, 2.62, '#3f6a8a'], [14.8, 3.4, '#e2c46b'], [14.95, 3.3, '#5f7f4f']]) crbox(x, z, 0.1, 0.1, 0.03, 0.13, M(c, { roughness: 0.5 }), 0.012);
+});
+item(14.2, 4.2, () => chair(14.2, 3.85, 'n', C.white, fabric('#e2c46b')));
+item(15.6, 3.0, () => shelf(15.15, 2.4, 15.52, 3.6, 1.2, C.white));
 // Giyinme odası (açık dolap, askıda kıyafetler)
-{
+item(16.5, 0, () => {
   box(15.68, 0.06, 17.34, 0.62, 0, 0.03, C.oak, { col: true });
   for (const x of [15.7, 16.5, 17.32]) box(x - 0.012, 0.06, x + 0.012, 0.62, 0, 2.3, C.oak);
   box(15.68, 0.06, 17.34, 0.62, 2.28, 2.3, C.oak);
@@ -1060,88 +1139,108 @@ artwork(14.1, 0.07, 0.7, 0.5, 1.4, 'z', 1);
   const im = new THREE.InstancedMesh(new THREE.BoxGeometry(0.03, 1, 0.46), fabric('#ffffff'), clothes.length);
   clothes.forEach(([x, col], i) => { const hh = rnd(0.55, 0.95); _m4.compose(_p.set(x, 1.84 - hh / 2, 0.34), _q.identity(), _s.set(1, hh, 1)); im.setMatrixAt(i, _m4); im.setColorAt(i, _c.set(col)); });
   im.castShadow = true; world.add(im);
-  wardrobe(15.68, 0.75, 16.25, 2.3, 2.3, C.oak);
-  crbox(16.9, 1.8, 0.6, 0.45, 0, 0.45, C.beige, 0.08, { col: true });
-  box(17.33, 1.3, 17.35, 2.4, 0.3, 2.0, C.mirror, { shadow: false });
-}
+});
+item(15.6, 1.5, () => wardrobe(15.68, 0.75, 16.25, 2.3, 2.3, C.oak));
+item(16.9, 1.8, () => crbox(16.9, 1.8, 0.6, 0.45, 0, 0.45, C.beige, 0.08, { col: true }));
+item(17.4, 1.85, () => box(17.33, 1.3, 17.35, 2.4, 0.3, 2.0, C.mirror, { shadow: false }));
 // Ebeveyn banyosu (ayaklı küvet, cam duş, lavabo)
-box(17.47, 0.07, 18.32, 1.3, 0.04, 2.3, MAT.wallTile, { shadow: false });
-shower(17.5, 0.1, 18.3, 1.25, ['e', 's']);
-{
+item(17.4, 0, () => { box(17.47, 0.07, 18.32, 1.3, 0.04, 2.3, MAT.wallTile, { shadow: false }); shower(17.5, 0.1, 18.3, 1.25, ['e', 's']); });
+item(20, 0, () => {
   const tub = new THREE.Mesh(new THREE.CapsuleGeometry(0.36, 0.8, 8, 24), C.porcelain);
   tub.rotation.z = Math.PI / 2; tub.scale.set(0.75, 1, 1); tub.position.set(19.15, 0.36, 0.5); tub.castShadow = true; tub.receiveShadow = true; world.add(tub);
   const water = new THREE.Mesh(new THREE.CapsuleGeometry(0.3, 0.72, 6, 24), M('#d6e8ee', { roughness: 0.05, metalness: 0.1 }));
   water.rotation.z = Math.PI / 2; water.scale.set(0.12, 1, 1); water.position.set(19.15, 0.6, 0.5); world.add(water);
   addCol(18.45, 0.12, 19.88, 0.88);
   cyl(18.4, 0.5, 0.015, 0, 1.0, C.chrome, { seg: 10 });
-}
-vanity(19.45, 1.55, 19.92, 2.65, -1, 'x', false);
-toilet(17.72, 2.45, 'e');
-plant(19.7, 2.95, 0.7);
+});
+item(20, 2.1, () => vanity(19.45, 1.55, 19.92, 2.65, -1, 'x', false));
+item(17.4, 2.45, () => toilet(17.72, 2.45, 'e'));
 // Ebeveyn yatak odası (beyaz yatak, zeytin yeşili örtü, bej halı)
-bed(17.75, 4.75, 19.86, 6.85, 'e', C.olive, C.beige);
-for (const z of [4.45, 7.15]) { rbox(19.45, z - 0.22, 19.88, z + 0.22, 0, 0.5, C.walnut, 0.01, { col: true }); lamp(19.66, z, 0.5); }
-rbox(17.25, 5.15, 17.65, 6.45, 0, 0.45, C.olive, 0.06, { col: true });
-wardrobe(15.7, 5.25, 16.3, 7.15, 2.35, C.oak);
-rug(16.9, 4.4, 19.5, 7.3, C.rug);
-plant(19.65, 8.0, 1.0); plant(16.05, 3.65, 0.9);
-artwork(19.86, 5.8, 1.2, 0.6, 1.4, 'x', 2);
+item(20, 5.8, () => {
+  bed(17.75, 4.75, 19.86, 6.85, 'e', C.olive, C.beige);
+  for (const z of [4.45, 7.15]) { rbox(19.45, z - 0.22, 19.88, z + 0.22, 0, 0.5, C.walnut, 0.01, { col: true }); lamp(19.66, z, 0.5); }
+  rbox(17.25, 5.15, 17.65, 6.45, 0, 0.45, C.olive, 0.06, { col: true });
+  artwork(19.86, 5.8, 1.2, 0.6, 1.4, 'x', 2);
+});
+item(15.6, 6.2, () => wardrobe(15.7, 5.25, 16.3, 7.15, 2.35, C.oak));
+item(18.2, 5.85, () => rug(16.9, 4.4, 19.5, 7.3, C.rug));
+item(20, 8.4, () => plant(19.65, 8.0, 1.0));
+item(15.6, 3.2, () => plant(16.05, 3.65, 0.9));
 // Salon (bej L koltuk + zeytin yeşili yastıklar, yuvarlak sehpa, TV duvarı)
-for (let z = 5.1; z < 7.5; z += 0.06) box(0.125, z, 0.155, z + 0.04, 0, 2.62, C.walnut, { shadow: false });
-rbox(0.16, 5.4, 0.55, 7.2, 0.12, 0.5, C.walnut, 0.01, { col: true });
-box(0.16, 5.6, 0.2, 7.0, 1.0, 1.82, C.screen);
-box(0.2, 5.62, 0.201, 6.98, 1.02, 1.8, M('#05070a', { roughness: 0.05, metalness: 0.6 }), { shadow: false });
-rbox(0.2, 5.7, 0.42, 6.9, 0.5, 0.58, C.black, 0.02);
-rug(1.0, 5.0, 3.6, 7.75, C.rug);
-sofa(3.3, 4.85, 4.15, 7.7, 'e', C.beige, false, C.olive);
-sofa(1.3, 4.45, 3.3, 5.3, 'n', C.beige, false, C.olive);
-roundTable(2.25, 6.4, 0.5, 0.4, C.walnut);
-lathe(2.25, 6.4, 0.4, [[0, 0], [0.18, 0.005], [0.2, 0.04], [0.19, 0.045], [0, 0.03]], M('#2b2b2b', { roughness: 0.3 }));
-plant(2.25, 6.4, 0.35);
-{ // berjer
-  const x1 = 1.8, z1 = 7.35, x2 = 2.7, z2 = 8.15;
+item(0, 6.3, () => {
+  for (let z = 5.1; z < 7.5; z += 0.06) box(0.125, z, 0.155, z + 0.04, 0, 2.62, C.walnut, { shadow: false });
+  rbox(0.16, 5.4, 0.55, 7.2, 0.12, 0.5, C.walnut, 0.01, { col: true });
+  box(0.16, 5.6, 0.2, 7.0, 1.0, 1.82, C.screen);
+  box(0.2, 5.62, 0.201, 6.98, 1.02, 1.8, M('#05070a', { roughness: 0.05, metalness: 0.6 }), { shadow: false });
+  rbox(0.2, 5.7, 0.42, 6.9, 0.5, 0.58, C.black, 0.02);
+});
+item(2.3, 6.4, () => {
+  rug(1.0, 5.0, 3.6, 7.75, C.rug);
+  sofa(3.3, 4.85, 4.15, 7.7, 'e', C.beige, false, C.olive);
+  sofa(1.3, 4.45, 3.3, 5.3, 'n', C.beige, false, C.olive);
+  roundTable(2.25, 6.4, 0.5, 0.4, C.walnut);
+  lathe(2.25, 6.4, 0.4, [[0, 0], [0.18, 0.005], [0.2, 0.04], [0.19, 0.045], [0, 0.03]], M('#2b2b2b', { roughness: 0.3 }));
+  foliage(2.25, 0.62, 6.4, 0.12, 0.12, 0.12, 12, 0.14, leafMats.indoor, true);
+  const x1 = 1.8, z1 = 7.35, x2 = 2.7, z2 = 8.15; // berjer
   rbox(x1, z1, x2, z2, 0.1, 0.42, C.cream, 0.08, { col: true }); rbox(x1, z2 - 0.2, x2, z2, 0.42, 0.85, C.cream, 0.08);
   rbox(x1, z1, x1 + 0.15, z2, 0.42, 0.62, C.cream, 0.07); rbox(x2 - 0.15, z1, x2, z2, 0.42, 0.62, C.cream, 0.07);
-}
-cyl(4.9, 7.95, 0.15, 0, 0.02, C.black, { col: true }); cyl(4.9, 7.95, 0.012, 0, 1.55, C.black, { seg: 8 });
-cyl(4.9, 7.95, 0.2, 1.45, 1.7, M('#efe6d4', { roughness: 0.9, emissive: '#ffd9a0', emissiveIntensity: 0.4, side: THREE.DoubleSide }), { r2: 0.14 });
-plant(0.45, 4.75, 1.1); plant(0.45, 7.95, 1.2); plant(5.35, 4.75, 1.0); plant(5.35, 7.95, 1.1);
-artwork(5.73, 7.6, 0.9, 0.65, 1.3, 'x', 0);
+});
+item(5.8, 8.4, () => {
+  cyl(4.9, 7.95, 0.15, 0, 0.02, C.black, { col: true }); cyl(4.9, 7.95, 0.012, 0, 1.55, C.black, { seg: 8 });
+  cyl(4.9, 7.95, 0.2, 1.45, 1.7, M('#efe6d4', { roughness: 0.9, emissive: '#ffd9a0', emissiveIntensity: 0.4, side: THREE.DoubleSide }), { r2: 0.14 });
+  plant(5.35, 7.95, 1.1);
+});
+item(0, 4.3, () => plant(0.45, 4.75, 1.1)); item(0, 8.4, () => plant(0.45, 7.95, 1.2)); item(5.8, 4.3, () => plant(5.35, 4.75, 1.0));
+item(5.8, 7.6, () => artwork(5.73, 7.6, 0.9, 0.65, 1.3, 'x', 0));
 // Mutfak (beyaz alt dolap, siyah tezgah, ahşap üst dolap, ada + zeytin yeşili tabureler)
-box(7.0, 4.37, 10.2, 4.39, 0.92, 1.45, MAT.wallTile, { shadow: false });
-rbox(7.0, 4.38, 10.2, 4.98, 0.1, 0.88, C.lacquer, 0.005, { col: true });
-box(7.02, 4.9, 10.18, 4.99, 0, 0.1, C.anthracite);
-for (let x = 7.0; x < 10.19; x += 0.6) box(x + 0.002, 4.98, x + 0.006, 4.985, 0.1, 0.88, M('#d6d4ce'), { shadow: false });
-box(6.98, 4.36, 10.22, 5.02, 0.88, 0.92, M('#26282a', { roughness: 0.18 }));
-rbox(7.0, 4.38, 10.2, 4.73, 1.45, 2.3, C.oak, 0.005);
-box(7.02, 4.72, 10.18, 4.735, 1.44, 1.45, M('#fff3dc', { emissive: '#ffe2b0', emissiveIntensity: 0.8 }), { shadow: false });
-box(7.55, 4.48, 8.25, 4.92, 0.92, 0.925, C.black, { shadow: false });
-for (const [x, z, r] of [[7.72, 4.6, 0.09], [8.08, 4.6, 0.07], [7.72, 4.8, 0.07], [8.08, 4.8, 0.09]]) { const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.004, 4, 32), M('#444444')); ring.rotation.x = Math.PI / 2; ring.position.set(x, 0.927, z); world.add(ring); }
-lathe(7.9, 4.6, 1.45, [[0.32, 0], [0.12, 0.25], [0.12, 0.85], [0, 0.85]], C.steel, { seg: 4 }).rotation.y = Math.PI / 4;
-box(8.85, 4.5, 9.55, 4.88, 0.86, 0.922, C.steel, { shadow: false });
-{ const f = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.012, 8, 24, Math.PI), C.chrome); f.position.set(9.2, 1.12, 4.53); f.rotation.y = Math.PI / 2; world.add(f); cyl(9.2, 4.42, 0.016, 0.92, 1.12, C.chrome, { seg: 12 }); }
-rbox(10.28, 4.38, 11.03, 5.1, 0, 2.05, M('#b8bcbf', { roughness: 0.25, metalness: 0.9 }), 0.01, { col: true });
-box(10.27, 5.1, 10.29, 5.11, 0.9, 1.9, C.black, { shadow: false });
-rbox(10.55, 5.9, 11.03, 8.0, 0, 2.3, C.oak, 0.005, { col: true });
-for (let z = 5.9; z < 8.0; z += 0.525) box(10.548, z, 10.552, z + 0.004, 0.02, 2.28, C.walnut, { shadow: false });
-rbox(7.6, 5.9, 10.2, 6.6, 0, 0.9, C.lacquer, 0.01, { col: true });
-rbox(7.5, 5.85, 10.3, 6.72, 0.9, 0.95, MAT.marble, 0.01);
-for (const x of [8.0, 8.6, 9.2, 9.8]) stool(x, 7.0, fabric('#6e7650', 0.8));
-for (const x of [8.2, 8.9, 9.6]) { cyl(x, 6.25, 0.004, 1.75, H, C.black, { seg: 6 }); lathe(x, 6.25, 1.6, [[0.002, 0.17], [0.07, 0.15], [0.16, 0.02], [0.17, 0]], M('#1e2022', { roughness: 0.4, metalness: 0.6, side: THREE.DoubleSide })); sph(x, 1.64, 6.25, 0.04, M('#ffffff', { emissive: '#ffe5b8', emissiveIntensity: 2 }), 12); }
-lathe(9.3, 6.3, 0.95, [[0, 0], [0.12, 0.01], [0.16, 0.08], [0.15, 0.08], [0, 0.02]], M('#e8e2d6', { roughness: 0.3 }));
-instanced(new THREE.SphereGeometry(0.035, 14, 10), M('#f1c232', { roughness: 0.5 }), [[9.26, 1.0, 6.28, 1], [9.33, 1.0, 6.32, 1], [9.3, 1.05, 6.25, 1], [9.36, 1.0, 6.24, 1], [9.24, 1.0, 6.36, 1]]);
+item(11.1, 4.3, () => {
+  box(7.0, 4.37, 10.2, 4.39, 0.92, 1.45, MAT.wallTile, { shadow: false });
+  rbox(7.0, 4.38, 10.2, 4.98, 0.1, 0.88, C.lacquer, 0.005, { col: true });
+  box(7.02, 4.9, 10.18, 4.99, 0, 0.1, C.anthracite);
+  for (let x = 7.0; x < 10.19; x += 0.6) box(x + 0.002, 4.98, x + 0.006, 4.985, 0.1, 0.88, M('#d6d4ce'), { shadow: false });
+  box(6.98, 4.36, 10.22, 5.02, 0.88, 0.92, MAT.marble);
+  rbox(7.0, 4.38, 10.2, 4.73, 1.45, 2.3, C.oak, 0.005);
+  box(7.02, 4.72, 10.18, 4.735, 1.44, 1.45, M('#fff3dc', { emissive: '#ffe2b0', emissiveIntensity: 0.8 }), { shadow: false });
+  box(7.55, 4.48, 8.25, 4.92, 0.92, 0.925, C.black, { shadow: false });
+  for (const [x, z, r] of [[7.72, 4.6, 0.09], [8.08, 4.6, 0.07], [7.72, 4.8, 0.07], [8.08, 4.8, 0.09]]) { const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.004, 4, 32), M('#444444')); ring.rotation.x = Math.PI / 2; ring.position.set(x, 0.927, z); world.add(ring); }
+  // ada tipi olmayan duvar davlumbazı: ince gövde + baca
+  rbox(7.55, 4.38, 8.25, 4.88, 1.42, 1.5, C.steel, 0.01);
+  box(7.75, 4.38, 8.05, 4.6, 1.5, H - 0.01, C.steel);
+  box(8.85, 4.5, 9.55, 4.88, 0.86, 0.922, C.steel, { shadow: false });
+  const f = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.012, 8, 24, Math.PI), C.chrome); f.position.set(9.2, 1.12, 4.53); f.rotation.y = Math.PI / 2; world.add(f); cyl(9.2, 4.42, 0.016, 0.92, 1.12, C.chrome, { seg: 12 });
+  rbox(10.28, 4.38, 11.03, 5.1, 0, 2.05, M('#b8bcbf', { roughness: 0.25, metalness: 0.9 }), 0.01, { col: true });
+  box(10.27, 5.1, 10.29, 5.11, 0.9, 1.9, C.black, { shadow: false });
+});
+item(11.1, 6.95, () => {
+  rbox(10.55, 5.9, 11.03, 8.0, 0, 2.3, C.oak, 0.005, { col: true });
+  for (let z = 5.9; z < 8.0; z += 0.525) box(10.548, z, 10.552, z + 0.004, 0.02, 2.28, C.walnut, { shadow: false });
+});
+item(8.9, 6.3, () => {
+  rbox(7.6, 5.9, 10.2, 6.6, 0, 0.9, C.lacquer, 0.01, { col: true });
+  rbox(7.5, 5.85, 10.3, 6.72, 0.9, 0.95, MAT.marble, 0.01);
+  for (const x of [8.0, 8.6, 9.2, 9.8]) stool(x, 7.0, fabric('#6e7650', 0.8));
+  for (const x of [8.2, 8.9, 9.6]) { cyl(x, 6.25, 0.004, 1.75, H, C.black, { seg: 6 }); lathe(x, 6.25, 1.6, [[0.002, 0.17], [0.07, 0.15], [0.16, 0.02], [0.17, 0]], M('#1e2022', { roughness: 0.4, metalness: 0.6, side: THREE.DoubleSide })); sph(x, 1.64, 6.25, 0.04, M('#ffffff', { emissive: '#ffe5b8', emissiveIntensity: 2 }), 12); }
+  lathe(9.3, 6.3, 0.95, [[0, 0], [0.12, 0.01], [0.16, 0.08], [0.15, 0.08], [0, 0.02]], M('#e8e2d6', { roughness: 0.3 }));
+  instanced(new THREE.SphereGeometry(0.035, 14, 10), M('#f1c232', { roughness: 0.5 }), [[9.26, 1.0, 6.28, 1], [9.33, 1.0, 6.32, 1], [9.3, 1.05, 6.25, 1], [9.36, 1.0, 6.24, 1], [9.24, 1.0, 6.36, 1]]);
+});
 // Kahvaltı köşesi (yuvarlak meşe masa, beyaz sandalyeler)
-roundTable(8.9, 9.1, 0.55);
-for (const [x, z, f] of [[8.9, 8.42, 's'], [8.9, 9.78, 'n'], [8.18, 9.1, 'e'], [9.62, 9.1, 'w']]) chair(x, z, f, C.oak, M('#f4f3ef', { roughness: 0.4 }));
-plant(8.9, 9.1, 0.3);
+item(8.9, 9.1, () => {
+  roundTable(8.9, 9.1, 0.55);
+  for (const [x, z, f] of [[8.9, 8.42, 's'], [8.9, 9.78, 'n'], [8.18, 9.1, 'e'], [9.62, 9.1, 'w']]) chair(x, z, f, C.oak, M('#f4f3ef', { roughness: 0.4 }));
+  lathe(8.9, 9.1, 0.75, [[0, 0], [0.07, 0], [0.08, 0.14], [0, 0.13]], M('#e9e3d6', { roughness: 0.4 }));
+  foliage(8.9, 0.98, 9.1, 0.12, 0.1, 0.12, 12, 0.15, leafMats.indoor, true);
+});
 // Ana giriş
-rbox(12.15, 5.3, 12.52, 6.6, 0.12, 1.0, C.oak, 0.01, { col: true });
-box(12.5, 5.45, 12.52, 6.45, 1.25, 2.05, C.mirror, { shadow: false });
-for (const z of [6.9, 7.1, 7.3]) rod(12.42, z, 12.5, z, 1.72, 0.012, C.black);
-plant(11.4, 7.9, 0.9);
-rug(11.35, 7.6, 12.35, 8.25, fabric('#6e6355', 1));
+item(12.6, 6.3, () => {
+  rbox(12.15, 5.3, 12.52, 6.6, 0.12, 1.0, C.oak, 0.01, { col: true });
+  box(12.5, 5.45, 12.52, 6.45, 1.25, 2.05, C.mirror, { shadow: false });
+  for (const z of [6.9, 7.1, 7.3]) rod(12.42, z, 12.5, z, 1.72, 0.012, C.black);
+});
+item(11.1, 8.4, () => plant(11.4, 7.9, 0.9));
+item(11.85, 8.4, () => { rug(11.35, 7.6, 12.35, 8.25, fabric('#6e6355', 1)); rbox(11.15, 8.4, 12.55, 8.8, 0, 0.08, MAT.travertine, 0.01); });
 
-// ---------- dış mekân ----------
+// ---------- dış mekân (koordinatlar büyütülmüş dünyada) ----------
+const P = (x, z) => [MX(x), MZ(z)];
 function hedge(x1, z1, x2, z2, h = 1.6) {
   rbox(x1, z1, x2, z2, 0, h, MAT.hedge, 0.12, { col: true });
   const n = Math.round((Math.abs(x2 - x1) + Math.abs(z2 - z1)) * h * 14);
@@ -1153,85 +1252,99 @@ function lampPost(x, z, h = 0.7) {
   cbox(x, z, 0.13, 0.13, h, h + 0.16, warm);
   cbox(x, z, 0.15, 0.15, h + 0.16, h + 0.19, C.anthracite);
 }
-hedge(-0.65, -0.65, 20.65, -0.3);
-hedge(-0.65, -0.3, -0.3, 14.55);
-hedge(20.3, -0.3, 20.65, 14.55);
+const XW = MX(0) - 0.65, XE = MX(20) + 0.65, ZN = MZ(0) - 0.65;
+hedge(XW, ZN, XE, ZN + 0.35);
+hedge(XW, ZN + 0.35, XW + 0.35, ZF);
+hedge(XE - 0.35, ZN + 0.35, XE, ZF);
+// ön duvar: yaya ve araç kapısı boşlukları gerçek genişlikte kalır
 const coping = M('#d9d4c8', { roughness: 0.8 });
-function frontWall(x1, x2) { box(x1, 14.55, x2, 14.85, 0, 0.6, MAT.stoneWall, { col: true }); box(x1 - 0.02, 14.53, x2 + 0.02, 14.87, 0.6, 0.65, coping); hedge(x1 + 0.05, 14.25, x2 - 0.05, 14.53, 1.1); }
-frontWall(-0.65, 11.2); frontWall(12.5, 16.7); box(20.05, 14.55, 20.65, 14.85, 0, 0.6, MAT.stoneWall, { col: true });
-for (const x of [11.2, 12.5, 16.7, 20.05]) {
-  box(x - 0.2, 14.5, x + 0.2, 14.9, 0, 1.5, MAT.stoneWall, { col: true });
-  box(x - 0.22, 14.48, x + 0.22, 14.92, 1.5, 1.56, coping);
-  box(x - 0.06, 14.9, x + 0.06, 14.95, 1.1, 1.3, warm, { shadow: false });
+const G1 = MX(11.85), G2 = MX(18.4);
+function frontWall(x1, x2, withHedge = true) {
+  box(x1, ZF, x2, ZF + 0.3, 0, 0.6, MAT.stoneWall, { col: true });
+  box(x1 - 0.02, ZF - 0.02, x2 + 0.02, ZF + 0.32, 0.6, 0.65, coping);
+  if (withHedge) hedge(x1 + 0.05, ZF - 0.3, x2 - 0.05, ZF - 0.02, 1.1);
+}
+frontWall(XW, G1 - 0.65); frontWall(G1 + 0.65, G2 - 1.7); frontWall(G2 + 1.65, XE, false);
+for (const x of [G1 - 0.65, G1 + 0.65, G2 - 1.7, G2 + 1.65]) {
+  box(x - 0.2, ZF - 0.05, x + 0.2, ZF + 0.35, 0, 1.5, MAT.stoneWall, { col: true });
+  box(x - 0.22, ZF - 0.07, x + 0.22, ZF + 0.37, 1.5, 1.56, coping);
+  box(x - 0.06, ZF + 0.35, x + 0.06, ZF + 0.4, 1.1, 1.3, warm, { shadow: false });
 }
 // yaya kapısı: bahçeye doğru açılır
 {
-  const s = 11.4, e = 12.3, L = e - s - 0.01;
-  const pivot = new THREE.Group(); pivot.position.set(s, 0, 14.7); world.add(pivot);
+  const s = G1 - 0.45, e = G1 + 0.45, L = e - s - 0.01, zc = ZF + 0.15;
+  const pivot = new THREE.Group(); pivot.position.set(s, 0, zc); world.add(pivot);
   const leaf = doorLeaf('gate', L, 1.35); pivot.add(leaf);
-  const closedCol = addCol(s, 14.62, e, 14.78), openCol = addCol(s - 0.04, 14.7 - L, s + 0.04, 14.7); openCol.off = true;
-  registerDoor({ name: 'Bahçe kapısı', pivot, angle: Math.PI / 2 * 0.96, t: 0, target: 0, closedCol, openCol, center: [(s + e) / 2, 14.7] }, leaf);
+  const closedCol = addCol(s, zc - 0.08, e, zc + 0.08), openCol = addCol(s - 0.04, zc - L, s + 0.04, zc); openCol.off = true;
+  registerDoor({ pivot, angle: Math.PI / 2 * 0.96, t: 0, target: 0, closedCol, openCol, center: [G1, zc] }, leaf);
 }
 // sürgülü araç kapısı: batıya doğru kayar
 {
-  const g = new THREE.Group(); world.add(g);
-  const add = (x1, x2, y0, y1, w = 0.05) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x2 - x1, y1 - y0, w), C.frame); m.position.set((x1 + x2) / 2, (y0 + y1) / 2, 14.98); m.castShadow = true; g.add(m); return m; };
-  for (let x = 16.95; x < 19.9; x += 0.13) add(x, x + 0.05, 0.08, 1.6);
-  add(16.88, 19.92, 0.04, 0.12, 0.07); add(16.88, 19.92, 1.55, 1.62, 0.07);
-  const closedCol = addCol(16.88, 14.85, 19.95, 15.06);
-  registerDoor({ name: 'Araç kapısı', pivot: g, slide: -3.15, t: 0, target: 0, closedCol, openCol: null, center: [18.4, 14.9] }, g);
-  box(13.5, 15.06, 20.0, 15.1, 0, 0.02, C.steel, { shadow: false });
+  const g = new THREE.Group(); world.add(g); const zc = ZF + 0.43;
+  const add = (x1, x2, y0, y1, w = 0.05) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x2 - x1, y1 - y0, w), C.frame); m.position.set((x1 + x2) / 2, (y0 + y1) / 2, zc); m.castShadow = true; g.add(m); return m; };
+  for (let x = G2 - 1.45; x < G2 + 1.5; x += 0.13) add(x, x + 0.05, 0.08, 1.6);
+  add(G2 - 1.52, G2 + 1.52, 0.04, 0.12, 0.07); add(G2 - 1.52, G2 + 1.52, 1.55, 1.62, 0.07);
+  const closedCol = addCol(G2 - 1.52, ZF + 0.3, G2 + 1.55, ZF + 0.51);
+  registerDoor({ pivot: g, slide: -3.15, t: 0, target: 0, closedCol, openCol: null, center: [G2, ZF + 0.35] }, g);
+  box(G2 - 4.9, ZF + 0.51, G2 + 1.6, ZF + 0.55, 0, 0.02, C.steel, { shadow: false });
 }
 
 // iç bahçe (ağaç, yükseltilmiş sebze yatakları, çakıl yol)
-hedge(12.75, 8.3, 13.55, 8.7, 0.7); hedge(14.65, 8.3, 15.5, 8.7, 0.7);
-box(12.72, 5.22, 13.2, 8.3, 0, 0.025, MAT.gravel, { shadow: false });
-tree(14.1, 5.85, 0.75);
-for (const z of [6.55, 7.2, 7.85]) {
-  box(13.3, z - 0.25, 14.9, z + 0.25, 0, 0.38, C.oakDark, { col: true });
-  box(13.36, z - 0.2, 14.84, z + 0.2, 0.38, 0.385, MAT.soil, { shadow: false });
-  foliage(14.1, 0.5, z, 0.7, 0.1, 0.17, 60, 0.18, leafMats.bush, false);
-  const red = []; for (let i = 0; i < 10; i++) red.push([rnd(13.45, 14.75), 0.52, z + rnd(-0.12, 0.12), 1, pick(['#d63d2c', '#e8743b', '#d63d2c'])]);
-  instanced(new THREE.SphereGeometry(0.035, 10, 8), M('#ffffff', { roughness: 0.4 }), red);
-}
-hedge(15.7, 8.55, 20.2, 8.85, 0.65);
-flowers(15.8, 8.9, 20.1, 9.0, 30);
+hedge(...P(12.75, 8.3), ...P(13.55, 8.7), 0.7); hedge(...P(14.65, 8.3), ...P(15.5, 8.7), 0.7);
+box(MX(12.6) + 0.12, MZ(5.1) + 0.12, MX(12.6) + 0.7, MZ(8.4) - 0.1, 0, 0.025, MAT.gravel, { shadow: false });
+tree(...P(14.1, 5.85), 0.8);
+item(14.1, 7.2, () => {
+  for (const z of [6.55, 7.2, 7.85]) {
+    box(13.3, z - 0.25, 14.9, z + 0.25, 0, 0.38, C.oakDark, { col: true });
+    box(13.36, z - 0.2, 14.84, z + 0.2, 0.38, 0.385, MAT.soil, { shadow: false });
+    foliage(14.1, 0.5, z, 0.7, 0.1, 0.17, 60, 0.18, leafMats.bush, false);
+    const red = []; for (let i = 0; i < 10; i++) red.push([rnd(13.45, 14.75), 0.52, z + rnd(-0.12, 0.12), 1, pick(['#d63d2c', '#e8743b', '#d63d2c'])]);
+    instanced(new THREE.SphereGeometry(0.035, 10, 8), M('#ffffff', { roughness: 0.4 }), red);
+  }
+});
+hedge(MX(15.6) + 0.1, MZ(8.4) + 0.15, MX(20) + 0.2, MZ(8.4) + 0.45, 0.65);
+flowers(MX(15.6) + 0.2, MZ(8.4) + 0.5, MX(20) + 0.1, MZ(8.4) + 0.6, 40);
 
 // teras (ahşap deck, pergola + sarmaşık çiçekler, 8 kişilik masa, kanepe)
 const pergola = veneer('#5c4330', 0.8);
-for (const [x, z] of [[2.45, 9.2], [6.95, 9.2], [2.45, 12.45], [6.95, 12.45]]) cbox(x, z, 0.12, 0.12, 0.04, 2.6, pergola, { col: true });
-box(2.39, 9.14, 2.51, 12.51, 2.45, 2.62, pergola); box(6.89, 9.14, 7.01, 12.51, 2.45, 2.62, pergola);
-for (let z = 9.25; z < 12.5; z += 0.32) box(2.3, z, 7.1, z + 0.05, 2.62, 2.74, pergola);
-for (const [x, z] of [[2.45, 9.2], [6.95, 9.2], [2.45, 12.45], [6.95, 12.45]]) {
+const [PX1, PZ1] = P(2.45, 9.2), [PX2, PZ2] = P(6.95, 12.45);
+for (const [x, z] of [[PX1, PZ1], [PX2, PZ1], [PX1, PZ2], [PX2, PZ2]]) cbox(x, z, 0.12, 0.12, 0.04, 2.6, pergola, { col: true });
+box(PX1 - 0.06, PZ1 - 0.06, PX1 + 0.06, PZ2 + 0.06, 2.45, 2.62, pergola); box(PX2 - 0.06, PZ1 - 0.06, PX2 + 0.06, PZ2 + 0.06, 2.45, 2.62, pergola);
+for (let z = PZ1 + 0.05; z < PZ2 + 0.05; z += 0.32) box(PX1 - 0.15, z, PX2 + 0.15, z + 0.05, 2.62, 2.74, pergola);
+for (const [x, z] of [[PX1, PZ1], [PX2, PZ1], [PX1, PZ2], [PX2, PZ2]]) {
   foliage(x, 1.4, z, 0.25, 1.2, 0.25, 90, 0.26, leafMats.bush);
   const fl = []; for (let i = 0; i < 26; i++) fl.push([x + rnd(-0.25, 0.25), rnd(0.6, 2.6), z + rnd(-0.25, 0.25), rnd(0.8, 1.3), pick(['#d63d55', '#e4558f', '#c2185b'])]);
   instanced(new THREE.IcosahedronGeometry(0.05, 1), M('#ffffff', { roughness: 0.8 }), fl);
 }
-table(3.6, 10.15, 5.8, 11.05, 0.76, veneer('#9c7650', 0.7), C.anthracite);
-const outSeat = fabric('#cfd0cc');
-for (const x of [4.0, 4.7, 5.4]) { chair(x, 9.78, 's', C.anthracite, outSeat); chair(x, 11.42, 'n', C.anthracite, outSeat); }
-chair(3.22, 10.6, 'e', C.anthracite, outSeat); chair(6.18, 10.6, 'w', C.anthracite, outSeat);
-lathe(4.7, 10.6, 0.76, [[0, 0], [0.1, 0], [0.12, 0.1], [0, 0.09]], M('#e9e3d6', { roughness: 0.4 }));
-foliage(4.7, 0.98, 10.6, 0.15, 0.1, 0.15, 14, 0.16, leafMats.indoor, true);
-sofa(1.95, 9.7, 2.65, 11.6, 'w', C.cream, true, C.olive);
-plant(7.25, 8.65, 0.9); plant(10.95, 8.65, 0.8); plant(7.25, 12.5, 1.0);
-lampPost(7.3, 12.65, 0.6); lampPost(1.9, 12.65, 0.6);
+item(4.7, 10.6, () => {
+  table(3.6, 10.15, 5.8, 11.05, 0.76, veneer('#9c7650', 0.7), C.anthracite);
+  const outSeat = fabric('#cfd0cc');
+  for (const x of [4.0, 4.7, 5.4]) { chair(x, 9.78, 's', C.anthracite, outSeat); chair(x, 11.42, 'n', C.anthracite, outSeat); }
+  chair(3.22, 10.6, 'e', C.anthracite, outSeat); chair(6.18, 10.6, 'w', C.anthracite, outSeat);
+  lathe(4.7, 10.6, 0.76, [[0, 0], [0.1, 0], [0.12, 0.1], [0, 0.09]], M('#e9e3d6', { roughness: 0.4 }));
+  foliage(4.7, 0.98, 10.6, 0.15, 0.1, 0.15, 14, 0.16, leafMats.indoor, true);
+});
+item(2.3, 10.65, () => sofa(1.95, 9.7, 2.65, 11.6, 'w', C.cream, true, C.olive));
+plant(...P(7.25, 8.65), 0.9); plant(...P(10.95, 8.65), 0.8); plant(...P(7.25, 12.5), 1.0);
+lampPost(...P(7.3, 12.65), 0.6); lampPost(...P(1.9, 12.65), 0.6);
 // barbekü (taş tezgah, siyah ızgara, odun)
-rbox(0.15, 8.8, 0.8, 11.6, 0.04, 0.9, MAT.stoneWall, 0.01, { col: true });
-rbox(0.1, 8.75, 0.85, 11.65, 0.9, 0.95, M('#3f3d3a', { roughness: 0.35 }), 0.01);
-rbox(0.2, 9.8, 0.75, 10.6, 0.95, 1.2, C.black, 0.03);
-{ const hood = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.8, 24, 1, false, 0, Math.PI), M('#1d1e20', { roughness: 0.35, metalness: 0.5 })); hood.rotation.x = Math.PI / 2; hood.rotation.z = Math.PI / 2; hood.position.set(0.47, 1.2, 10.2); hood.castShadow = true; world.add(hood); }
-box(0.62, 9.0, 0.82, 9.6, 0.95, 0.97, C.steel, { shadow: false });
-{
+item(0, 10.2, () => {
+  rbox(0.15, 8.8, 0.8, 11.6, 0.04, 0.9, MAT.stoneWall, 0.01, { col: true });
+  rbox(0.1, 8.75, 0.85, 11.65, 0.9, 0.95, MAT.marble, 0.01);
+  rbox(0.2, 9.8, 0.75, 10.6, 0.95, 1.2, C.black, 0.03);
+  const hood = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.8, 24, 1, false, 0, Math.PI), M('#1d1e20', { roughness: 0.35, metalness: 0.5 })); hood.rotation.x = Math.PI / 2; hood.rotation.z = Math.PI / 2; hood.position.set(0.47, 1.2, 10.2); hood.castShadow = true; world.add(hood);
+  box(0.62, 9.0, 0.82, 9.6, 0.95, 0.97, C.steel, { shadow: false });
+});
+item(0, 12.0, () => {
   const logs = [];
   for (let i = 0; i < 18; i++) logs.push([0.42 + (i % 3) * 0.13, 0.08 + Math.floor(i / 3) * 0.1, 12.0]);
   const lm = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 10).rotateX(Math.PI / 2), bark, logs.length);
   logs.forEach(([x, y, z], i) => { _m4.compose(_p.set(x, y, z), _q.identity(), _s.set(1, 1, 1)); lm.setMatrixAt(i, _m4); });
   lm.castShadow = true; world.add(lm); addCol(0.3, 11.78, 0.8, 12.22);
-}
-plant(1.4, 11.9, 1.0);
+});
+item(1.4, 11.9, () => plant(1.4, 11.9, 1.0));
 // bahçe deposu (ahşap kulübe) ve bisiklet
-{
+item(0, 13.35, () => {
   const shed = veneer('#8c6a48', 0.85);
   box(0.1, 12.45, 1.7, 14.3, 0.04, 2.2, shed, { col: true });
   for (let z = 12.45; z < 14.3; z += 0.12) box(1.7, z, 1.715, z + 0.005, 0.04, 2.2, veneer('#5e4630'), { shadow: false });
@@ -1240,20 +1353,19 @@ plant(1.4, 11.9, 1.0);
   cbox(1.74, 13.82, 0.02, 0.03, 1.0, 1.06, C.black);
   for (const z of [12.6, 13.6]) { const w = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.025, 8, 36), C.black); w.position.set(1.88, 0.32, z); w.rotation.y = Math.PI / 2; w.castShadow = true; world.add(w); }
   rod(1.88, 12.6, 1.88, 13.6, 0.5, 0.02, M('#3f6a8a', { roughness: 0.3, metalness: 0.5 }));
-}
+});
 // bahçe: taş yol, aydınlatma, ağaçlar, çalılar, çiçekler, kaydırak
-for (let z = 8.85; z < 14.4; z += 0.62) rbox(11.5, z, 12.2, z + 0.45, 0, 0.05, MAT.travertine, 0.01, { shadow: false });
-rbox(11.15, 8.4, 12.55, 8.8, 0, 0.08, MAT.travertine, 0.01);
-for (const z of [9.4, 11.3, 13.2]) { lampPost(11.25, z); lampPost(12.45, z); }
-tree(2.9, 13.6, 1.0, '#f08a24');
-tree(8.3, 13.6, 0.95);
-tree(15.4, 11.2, 1.15, '#d23b2c');
-tree(14.3, 13.75, 0.85);
+for (let z = MZ(8.4) + 0.5; z < ZF - 0.3; z += 0.62) rbox(G1 - 0.35, z, G1 + 0.35, z + 0.45, 0, 0.05, MAT.travertine, 0.01, { shadow: false });
+for (const z of [9.4, 11.3, 13.2]) { lampPost(G1 - 0.6, MZ(z)); lampPost(G1 + 0.6, MZ(z)); }
+tree(...P(2.9, 13.6), 1.0, '#f08a24');
+tree(...P(8.3, 13.6), 0.95);
+tree(...P(15.4, 11.2), 1.15, '#d23b2c');
+tree(...P(14.3, 13.75), 0.85);
 for (const [x, z, f] of [[3.7, 14.05, '#f6f3ee'], [4.6, 14.05, '#e4558f'], [5.5, 14.05, '#f6f3ee'], [6.6, 14.05, '#d8c6e8'], [7.4, 13.3, null], [9.6, 14.05, '#f6f3ee'], [10.6, 14.05, '#e4558f'], [13.2, 14.05, '#f6f3ee'], [15.8, 14.05, null], [10.6, 9.4, '#f6f3ee'], [13.3, 9.3, '#d8c6e8'], [7.8, 11.3, null], [16.2, 9.4, '#e8743b']])
-  bush(x, z, rnd(0.85, 1.15), f);
-flowers(10.4, 12.2, 11.3, 14.0, 70); flowers(12.4, 8.9, 13.4, 10.6, 60); flowers(2.0, 13.0, 4.0, 14.0, 60); flowers(7.5, 10.7, 8.6, 11.1, 30);
-hedge(16.5, 10.2, 16.72, 14.25, 1.2);
-{ // kaydırak ve top
+  bush(...P(x, z), rnd(0.85, 1.15), f);
+flowers(...P(10.4, 12.2), ...P(11.3, 14.0), 80); flowers(...P(12.4, 8.9), ...P(13.4, 10.6), 70); flowers(...P(2.0, 13.0), ...P(4.0, 14.0), 70); flowers(...P(7.5, 10.7), ...P(8.6, 11.1), 35);
+hedge(...P(16.5, 10.2), MX(16.5) + 0.25, ZF - 0.3, 1.2);
+item(13.8, 11.2, () => { // kaydırak ve top
   const wood = veneer('#c79a62', 0.7), slideMat = M('#f2f2ef', { roughness: 0.25 });
   for (const z of [10.9, 11.5]) cyl(13.1, z, 0.03, 0, 1.25, wood, { seg: 10 });
   for (let y = 0.25; y < 1.2; y += 0.25) cbox(13.1, 11.2, 0.04, 0.6, y, y + 0.04, wood);
@@ -1262,13 +1374,16 @@ hedge(16.5, 10.2, 16.72, 14.25, 1.2);
   for (const s of [-1, 1]) { const rail = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.1, 0.03), wood); rail.position.set(13.85, 0.7, 11.2 + s * 0.26); rail.rotation.z = sl.rotation.z; rail.castShadow = true; world.add(rail); }
   addCol(13.0, 10.85, 14.6, 11.55);
   sph(14.9, 0.11, 11.9, 0.11, M('#f4f4f4', { roughness: 0.5 }), 24);
-}
+});
 // otopark (beton zemin, siyah çelik pergola, gümüş araç)
 const steelDark = M('#2c3134', { roughness: 0.45, metalness: 0.6 });
-for (const [x, z] of [[16.85, 9.1], [20.0, 9.1], [16.85, 14.4], [20.0, 14.4]]) cbox(x, z, 0.12, 0.12, 0.04, 2.5, steelDark, { col: true });
-box(16.79, 9.04, 20.06, 9.16, 2.4, 2.55, steelDark); box(16.79, 14.34, 20.06, 14.46, 2.4, 2.55, steelDark);
-for (let x = 16.85; x <= 20.0; x += 0.3) box(x - 0.025, 9.04, x + 0.025, 14.46, 2.55, 2.62, steelDark);
-function car(x, z) {
+const [OX1, OZ1] = P(16.85, 9.1), OX2 = MX(20) - 0.05, OZ2 = ZF - 0.15;
+for (const [x, z] of [[OX1, OZ1], [OX2, OZ1], [OX1, OZ2], [OX2, OZ2]]) cbox(x, z, 0.12, 0.12, 0.04, 2.5, steelDark, { col: true });
+box(OX1 - 0.06, OZ1 - 0.06, OX2 + 0.06, OZ1 + 0.06, 2.4, 2.55, steelDark); box(OX1 - 0.06, OZ2 - 0.06, OX2 + 0.06, OZ2 + 0.06, 2.4, 2.55, steelDark);
+for (let x = OX1; x <= OX2 + 0.01; x += 0.3) box(x - 0.025, OZ1 - 0.06, x + 0.025, OZ2 + 0.06, 2.55, 2.62, steelDark);
+for (const x of [OX1 + 0.1, OX2 - 0.1]) box(x - 0.04, (OZ1 + OZ2) / 2 - 0.08, x + 0.04, (OZ1 + OZ2) / 2 + 0.08, 1.8, 2.0, warm, { shadow: false });
+item(18.4, 11.9, () => {
+  const x = 18.4, z = 11.9;
   const paint = new THREE.MeshPhysicalMaterial({ color: '#b9bec2', roughness: 0.28, metalness: 0.85, clearcoat: 1, clearcoatRoughness: 0.08 });
   const win = M('#151b20', { roughness: 0.05, metalness: 0.8 });
   rbox(x - 0.9, z - 2.25, x + 0.9, z + 2.25, 0.3, 0.86, paint, 0.16, { col: true });
@@ -1284,9 +1399,7 @@ function car(x, z) {
   rbox(x - 0.82, z - 2.26, x - 0.45, z - 2.18, 0.68, 0.78, tl, 0.02); rbox(x + 0.45, z - 2.26, x + 0.82, z - 2.18, 0.68, 0.78, tl, 0.02);
   box(x - 0.6, z + 2.22, x + 0.6, z + 2.27, 0.38, 0.52, C.black);
   for (const sx of [-1, 1]) box(x + sx * 0.9, z + 0.55, x + sx * 1.0, z + 0.7, 0.98, 1.06, paint);
-}
-car(18.4, 11.9);
-for (const x of [16.95, 19.9]) box(x - 0.04, 12.0, x + 0.04, 12.15, 1.8, 2.0, warm, { shadow: false });
+});
 
 // çimen: tek tek ot öbekleri (yalnızca çim alanlarda)
 {
@@ -1304,9 +1417,10 @@ for (const x of [16.95, 19.9]) box(x - 0.04, 12.0, x + 0.04, 12.15, 1.8, 2.0, wa
   const nrm = new Float32Array(verts.length); for (let i = 1; i < nrm.length; i += 3) nrm[i] = 1;
   g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
   const gm = new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.9 });
-  const lawn = [[-0.25, 8.45, 20.25, 14.5], [12.7, 5.2, 15.5, 8.3]];
-  const skip = [[1.75, 8.35, 11.15, 12.75], [-0.3, 8.35, 1.85, 14.5], [11.4, 8.35, 12.3, 14.6], [16.45, 8.9, 20.3, 14.6], [15.55, 8.35, 20.3, 8.95], [12.7, 5.2, 13.22, 8.3], [13.25, 6.25, 14.95, 8.15], [10.3, 8.35, 12.6, 8.85]];
-  const count = HQ ? 40000 : 15000, list = [];
+  const R2 = (x1, z1, x2, z2) => [MX(x1), MZ(z1), MX(x2), MZ(z2)];
+  const lawn = [[XW + 0.4, MZ(8.4) + 0.05, XE - 0.4, ZF - 0.32], R2(12.6, 5.1, 15.6, 8.4)];
+  const skip = [R2(1.75, 8.35, 11.15, 12.75), [XW, MZ(8.35), MX(1.85), ZF], [G1 - 0.5, MZ(8.35), G1 + 0.5, ZF], [MX(16.45), MZ(8.9), XE, ZF], [MX(15.55), MZ(8.35), XE, MZ(8.4) + 0.65], [MX(12.6), MZ(5.1), MX(12.6) + 0.75, MZ(8.4)], [13.25 + MX(14.1) - 14.1, 6.25 + MZ(7.2) - 7.2, 14.95 + MX(14.1) - 14.1, 8.15 + MZ(7.2) - 7.2], R2(10.3, 8.35, 12.6, 8.85)];
+  const count = HQ ? 45000 : 15000, list = [];
   let guard = 0;
   while (list.length < count && guard++ < count * 4) {
     const r = Math.random() < 0.88 ? lawn[0] : lawn[1];
@@ -1321,11 +1435,13 @@ for (const x of [16.95, 19.9]) box(x - 0.04, 12.0, x + 0.04, 12.15, 1.8, 2.0, wa
   im.receiveShadow = true; im.castShadow = false; im.userData.noAO = true; world.add(im);
 }
 // uzak çevre: yolun karşısında ağaçlar
-for (let x = -24; x < 46; x += rnd(6, 10)) tree(x, rnd(27.5, 31), rnd(1.2, 1.6));
+for (let x = -24; x < 50; x += rnd(6, 10)) tree(x, ZF + rnd(13, 16.5), rnd(1.2, 1.6));
 
 // ---------- oyuncu ve kontroller ----------
-const player = { x: 11.85, z: 14.0, y: 0, vy: 0, eye: EYE, vx: 0, vz: 0, bob: 0 };
-let yaw = 0, pitch = -0.04, crouchHeld = false, crouchToggle = false;
+// başlangıç: salonun içinde, TV duvarına ve oturma grubuna bakarak
+const START = { x: MX(4.4), z: MZ(7.6), yaw: 0.9 };
+const player = { x: START.x, z: START.z, y: 0, vy: 0, eye: EYE, vx: 0, vz: 0, bob: 0 };
+let yaw = START.yaw, pitch = -0.06, crouchHeld = false, crouchToggle = false;
 const blocked = (x, z) => colliders.some(c => {
   if (c.off) return false;
   const cx = Math.max(c[0], Math.min(x, c[2])), cz = Math.max(c[1], Math.min(z, c[3]));
@@ -1333,7 +1449,7 @@ const blocked = (x, z) => colliders.some(c => {
 });
 function tryMove(dx, dz) {
   const stuck = blocked(player.x, player.z); // kapanan bir kapının içinde kalınırsa dışarı çıkabilsin
-  const nx = Math.max(-3, Math.min(23, player.x + dx)), nz = Math.max(-3, Math.min(25, player.z + dz));
+  const nx = Math.max(XW - 2, Math.min(XE + 2, player.x + dx)), nz = Math.max(ZN - 2, Math.min(ZF + 10, player.z + dz));
   if (stuck || !blocked(nx, player.z)) player.x = nx;
   if (stuck || !blocked(player.x, nz)) player.z = nz;
 }
@@ -1354,49 +1470,83 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { keys[e.code] = false; if (e.code === 'KeyC') crouchHeld = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; crouchHeld = false; });
 
+// ekran ↔ uygulama koordinatı: telefon dik tutulunca uygulama 90° döndürülmüştür
+let ROT = false;
+const localDelta = (dx, dy) => ROT ? { x: dy, y: -dx } : { x: dx, y: dy };
+function localInRect(e, el) {
+  const r = el.getBoundingClientRect();
+  return ROT ? { x: e.clientY - r.top, y: r.right - e.clientX, w: r.height, h: r.width } : { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+}
+
 const look = (dx, dy, k) => { yaw -= dx * k; pitch = Math.max(-1.4, Math.min(1.4, pitch - dy * k)); };
 const locked = () => document.pointerLockElement === canvas;
 const clampD = d => Math.max(-120, Math.min(120, d || 0));
 document.addEventListener('mousemove', e => { if (locked() && mode === 'walk') look(clampD(e.movementX), clampD(e.movementY), 0.0022); });
 const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
-let drag = null;
+
+// üstten bakış kamerası (sürükle: döndür, iki parmak / tekerlek: yakınlaştır, sağ tık: kaydır)
+const top = { az: 0, el: 0.95, dist: 24, tx: CX, tz: CZ };
+function applyTop() {
+  camera.position.set(top.tx + top.dist * Math.cos(top.el) * Math.sin(top.az), top.dist * Math.sin(top.el), top.tz + top.dist * Math.cos(top.el) * Math.cos(top.az));
+  camera.lookAt(top.tx, 0, top.tz);
+}
+const pointers = new Map();
+let drag = null, pinch = 0;
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('pointerdown', e => {
-  if (mode === 'top') { drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY }; return; }
-  if (e.pointerType === 'mouse' && locked()) { if (targetDoor) toggleDoor(targetDoor); return; }
-  if (e.pointerType === 'mouse') { try { const p = canvas.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (_) {} }
-  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY };
-  canvas.setPointerCapture(e.pointerId);
+  if (mode === 'walk' && e.pointerType === 'mouse' && locked()) { if (targetDoor) toggleDoor(targetDoor); return; }
+  if (mode === 'walk' && e.pointerType === 'mouse' && intro.hidden) { try { const p = canvas.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (_) {} }
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinch = Math.hypot(a.x - b.x, a.y - b.y); }
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, pan: e.button === 2 || e.shiftKey };
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
 });
 canvas.addEventListener('pointermove', e => {
-  if (!drag || drag.id !== e.pointerId || locked() || mode !== 'walk') return;
-  look(e.clientX - drag.x, e.clientY - drag.y, e.pointerType === 'touch' ? 0.005 : 0.004);
-  drag.x = e.clientX; drag.y = e.clientY;
-});
-canvas.addEventListener('pointerup', e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (mode === 'top' && pointers.size === 2) {
+    const [a, b] = [...pointers.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinch) top.dist = Math.max(6, Math.min(70, top.dist * pinch / d));
+    pinch = d; return;
+  }
   if (!drag || drag.id !== e.pointerId) return;
-  if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 6) {
+  const d = localDelta(e.clientX - drag.x, e.clientY - drag.y);
+  drag.x = e.clientX; drag.y = e.clientY;
+  if (mode === 'walk' && !locked()) look(d.x, d.y, e.pointerType === 'touch' ? 0.005 : 0.004);
+  if (mode === 'top') {
+    if (drag.pan) {
+      const k = top.dist * 0.0016, ca = Math.cos(top.az), sa = Math.sin(top.az);
+      top.tx -= (d.x * ca + d.y * sa) * k; top.tz -= (-d.x * sa + d.y * ca) * k;
+    } else { top.az -= d.x * 0.006; top.el = Math.max(0.25, Math.min(1.45, top.el + d.y * 0.004)); }
+  }
+});
+function endPointer(e) {
+  pointers.delete(e.pointerId); if (pointers.size < 2) pinch = 0;
+  if (!drag || drag.id !== e.pointerId) return;
+  if (e.type === 'pointerup' && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 6) {
     // kısa dokunma / tık: dokunulan kapıyı aç ya da kapat
-    const r = canvas.getBoundingClientRect();
-    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    const l = localInRect(e, canvas);
+    ndc.set(l.x / l.w * 2 - 1, -(l.y / l.h) * 2 + 1);
     raycaster.setFromCamera(ndc, camera); raycaster.far = mode === 'top' ? 200 : 3;
     const hit = raycaster.intersectObjects(doorMeshes, false)[0];
     if (hit) toggleDoor(hit.object.userData.door);
   }
   drag = null;
-});
-canvas.addEventListener('pointercancel', () => { drag = null; });
+}
+canvas.addEventListener('pointerup', endPointer); canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('wheel', e => { if (mode !== 'top') return; e.preventDefault(); top.dist = Math.max(6, Math.min(70, top.dist * (1 + e.deltaY * 0.001))); }, { passive: false });
 
 // sanal joystick ve dokunmatik düğmeler
 const joyEl = document.getElementById('joy'), knob = document.getElementById('knob');
 const joy = { x: 0, y: 0, id: null };
 function joyMove(e) {
   const r = joyEl.getBoundingClientRect(), max = r.width / 2 - 14;
-  let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+  let { x: dx, y: dy } = localDelta(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
   const l = Math.hypot(dx, dy); if (l > max) { dx *= max / l; dy *= max / l; }
   knob.style.transform = `translate(${dx}px, ${dy}px)`;
   joy.x = dx / max; joy.y = -dy / max;
 }
-joyEl.addEventListener('pointerdown', e => { joy.id = e.pointerId; joyEl.setPointerCapture(e.pointerId); joyMove(e); });
+joyEl.addEventListener('pointerdown', e => { joy.id = e.pointerId; try { joyEl.setPointerCapture(e.pointerId); } catch (_) {} joyMove(e); });
 joyEl.addEventListener('pointermove', e => { if (joy.id === e.pointerId) joyMove(e); });
 const joyEnd = e => { if (joy.id !== e.pointerId) return; joy.id = null; joy.x = joy.y = 0; knob.style.transform = ''; };
 joyEl.addEventListener('pointerup', joyEnd); joyEl.addEventListener('pointercancel', joyEnd);
@@ -1431,11 +1581,6 @@ function updateDoors(dt) {
   }
 }
 
-// üstten bakış
-const orbit = new OrbitControls(camera, canvas);
-orbit.enabled = false; orbit.enableDamping = true;
-orbit.target.set(10, 0, 7.5);
-orbit.maxPolarAngle = Math.PI * 0.47; orbit.minDistance = 4; orbit.maxDistance = 60;
 const marker = new THREE.Group();
 const mk = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.7, 20), M('#e0533d', { emissive: '#a02a18', emissiveIntensity: 0.6 }));
 mk.rotation.x = Math.PI; mk.position.y = 2.2; marker.add(mk);
@@ -1454,20 +1599,14 @@ const labelItems = ZONES.filter(z => !z.hide).map(zn => {
 
 const btnWalk = document.getElementById('btnWalk'), btnTop = document.getElementById('btnTop'), btnQuality = document.getElementById('btnQuality');
 const cross = document.getElementById('cross');
-const savedTop = { pos: new THREE.Vector3(10, 15, 21) };
 function setMode(m) {
-  if (mode === 'top' && m === 'walk') savedTop.pos.copy(camera.position);
   mode = m;
   btnWalk.setAttribute('aria-pressed', m === 'walk'); btnTop.setAttribute('aria-pressed', m === 'top');
   roof.visible = m === 'walk';
   marker.visible = m === 'top';
   labelsEl.hidden = m === 'walk';
   cross.hidden = m !== 'walk';
-  orbit.enabled = m === 'top';
-  if (m === 'top') {
-    if (locked()) document.exitPointerLock();
-    camera.position.copy(savedTop.pos); orbit.target.set(10, 0, 7.5); orbit.update();
-  }
+  if (m === 'top' && locked()) document.exitPointerLock();
   hud.last = null;
 }
 btnWalk.addEventListener('click', () => setMode('walk'));
@@ -1475,6 +1614,7 @@ btnTop.addEventListener('click', () => setMode('top'));
 
 // ---------- HUD ----------
 const hud = { name: document.getElementById('roomName'), area: document.getElementById('roomArea'), eyebrow: document.getElementById('roomEyebrow'), last: null };
+const PLOT = `Arsa ${(MX(20)).toFixed(0)} × ${(MZ(15)).toFixed(0)} m`;
 function updateHud() {
   const zn = zoneAt(player.x, player.z);
   const key = (zn ? zn.n : '') + mode;
@@ -1482,11 +1622,11 @@ function updateHud() {
   hud.last = key;
   hud.eyebrow.textContent = mode === 'walk' ? 'Bulunduğunuz yer' : 'Kuş bakışı · kırmızı işaret sizsiniz';
   hud.name.textContent = zn ? zn.n : 'Arsa';
-  hud.area.textContent = zn && zn.a ? `${zn.a} m² net alan` : (zn && zn.n === 'Sokak' ? 'Yaya girişi kuzeyde' : 'Arsa 20,00 × 15,00 m');
+  hud.area.textContent = zn && zn.a ? `≈ ${zn.a} m²` : PLOT;
 }
 
 // ---------- mini harita: sizin renkli planınız ----------
-// Plan görüntüsündeki piksel ↔ model metresi eşlemesi (duvar hizalarından ölçüldü)
+// Plan görüntüsündeki piksel ↔ plan metresi eşlemesi (duvar hizalarından ölçüldü)
 const AX = [[0, 97], [2.5, 245], [7.0, 520], [10.1, 722], [12.6, 850], [15.6, 1058], [17.4, 1200], [20, 1378]];
 const AZ = [[0, 62], [3.2, 262], [4.3, 310], [8.4, 555], [14.55, 888], [15.2, 950]];
 const CROP = { x: 30, y: 25, w: 1390, h: 935 };
@@ -1503,21 +1643,21 @@ function sizeMap() {
   mini.style.height = cssH + 'px'; mini.width = cssW * dpr; mini.height = cssH * dpr;
 }
 function drawMap() {
-  const W = mini.width, Hh = mini.height;
+  const Wd = mini.width, Hh = mini.height;
   mctx.setTransform(1, 0, 0, 1, 0, 0);
-  if (planReady) mctx.drawImage(planImg, 0, 0, W, Hh); else { mctx.fillStyle = '#d9dcd6'; mctx.fillRect(0, 0, W, Hh); }
-  const px = (lerpMap(player.x, AX) - CROP.x) / CROP.w * W, pz = (lerpMap(Math.min(player.z, 15.2), AZ) - CROP.y) / CROP.h * Hh;
-  const s = W / (mini.clientWidth || 260), a = -yaw - Math.PI / 2;
+  if (planReady) mctx.drawImage(planImg, 0, 0, Wd, Hh); else { mctx.fillStyle = '#d9dcd6'; mctx.fillRect(0, 0, Wd, Hh); }
+  const px = (lerpMap(player.x / SX, AX) - CROP.x) / CROP.w * Wd, pz = (lerpMap(Math.min(player.z / SZ, 15.2), AZ) - CROP.y) / CROP.h * Hh;
+  const s = Wd / (mini.clientWidth || 260), a = -yaw - Math.PI / 2;
   mctx.fillStyle = 'rgba(224,83,61,.32)';
   mctx.beginPath(); mctx.moveTo(px, pz); mctx.arc(px, pz, 26 * s, a - 0.55, a + 0.55); mctx.closePath(); mctx.fill();
   mctx.fillStyle = '#e0533d'; mctx.strokeStyle = '#fff'; mctx.lineWidth = 2 * s;
   mctx.beginPath(); mctx.arc(px, pz, 5 * s, 0, Math.PI * 2); mctx.fill(); mctx.stroke();
 }
 mini.addEventListener('click', e => {
-  const r = mini.getBoundingClientRect();
-  const ix = CROP.x + (e.clientX - r.left) / r.width * CROP.w, iy = CROP.y + (e.clientY - r.top) / r.height * CROP.h;
-  const x = lerpMap(ix, AX, true), z = lerpMap(iy, AZ, true);
-  if (x < 0 || x > 20 || z < 0 || z > 14.5) return;
+  const l = localInRect(e, mini);
+  const ix = CROP.x + l.x / l.w * CROP.w, iy = CROP.y + l.y / l.h * CROP.h;
+  const x = MX(lerpMap(ix, AX, true)), z = MZ(lerpMap(iy, AZ, true));
+  if (x < 0 || x > MX(20) || z < 0 || z > ZF) return;
   for (let rad = 0; rad < 1.2; rad += 0.1) for (let k = 0; k < 12; k++) {
     const tx = x + Math.cos(k / 12 * Math.PI * 2) * rad, tz = z + Math.sin(k / 12 * Math.PI * 2) * rad;
     if (!blocked(tx, tz)) { player.x = tx; player.z = tz; player.vx = player.vz = 0; if (mode !== 'walk') setMode('walk'); return; }
@@ -1554,25 +1694,44 @@ function setQuality(hq) {
 }
 btnQuality.addEventListener('click', () => setQuality(!HQ));
 
-// ---------- giriş ekranı ----------
-const intro = document.getElementById('intro'), startBtn = document.getElementById('startBtn'), startTop = document.getElementById('startTop');
-startBtn.disabled = startTop.disabled = false; startBtn.textContent = 'Gezmeye başla';
+// ---------- başlat ----------
+const intro = document.getElementById('intro'), startBtn = document.getElementById('startBtn'), startSub = document.getElementById('startSub');
+startBtn.disabled = false; startBtn.textContent = 'Başlat';
+startSub.textContent = COARSE ? 'Sol daire: yürü · kaydır: bak · düğmeler: zıpla, eğil, kapı' : 'W A S D yürü · fare ile bak · E kapı · Boşluk zıpla · C eğil';
 startBtn.addEventListener('click', () => {
   intro.hidden = true; setMode('walk');
+  player.x = START.x; player.z = START.z; yaw = START.yaw; pitch = -0.06;
   if (!COARSE) { try { const p = canvas.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (_) {} }
+  else {
+    // telefonda tam ekran + yatay kilit dene; olmazsa sahne CSS ile yatay döndürülür
+    const el = document.documentElement;
+    try {
+      const p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : null;
+      if (p && p.then) p.then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
+    } catch (_) {}
+  }
   canvas.focus();
 });
-startTop.addEventListener('click', () => { intro.hidden = true; setMode('top'); });
 
-// ---------- döngü ----------
+// ---------- yerleşim ve döngü ----------
+const portraitMQ = matchMedia('(orientation: portrait)');
+function layout() {
+  ROT = COARSE && portraitMQ.matches;
+  app.classList.toggle('rot', ROT);
+  if (ROT) { app.style.width = innerHeight + 'px'; app.style.height = innerWidth + 'px'; app.style.left = innerWidth + 'px'; }
+  else { app.style.width = app.style.height = app.style.left = ''; }
+  resize();
+}
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   if (composer) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); }
   sizeMap();
 }
-addEventListener('resize', resize);
+addEventListener('resize', layout);
+portraitMQ.addEventListener?.('change', layout);
 setQuality(HQ);
+layout();
 
 const clock = new THREE.Clock(), v = new THREE.Vector3();
 function frame() {
@@ -1601,7 +1760,7 @@ function frame() {
     camera.rotation.set(pitch, yaw, Math.sin(player.bob) * 0.003 * Math.min(1, sp / 2));
     targetDoor = intro.hidden ? findTargetDoor() : null;
   } else {
-    orbit.update(); targetDoor = null;
+    applyTop(); targetDoor = null;
     marker.position.set(player.x, 0, player.z);
     const w = canvas.clientWidth, h = canvas.clientHeight;
     for (const it of labelItems) {
@@ -1619,7 +1778,7 @@ function frame() {
 }
 setMode('walk');
 requestAnimationFrame(frame);
-window.__tour = { player, doors, state: () => ({ yaw, pitch, mode, HQ }), setYaw: y => { yaw = y; pitch = -0.08; } };
+window.__tour = { player, doors, state: () => ({ yaw, pitch, mode, HQ, ROT }), setYaw: y => { yaw = y; pitch = -0.08; } };
 </script>
 </body>
 </html>
