@@ -203,3 +203,34 @@ OVERRIDE.update({
                     "Saat Kulesi'nin önünde boyoz-gevrek yer, tarihî hanın avlusunda defterin sekseninci sayfasını okur ve akşam Elif'in ailesinin evine gider. "
                     "Yemekte Elif'in dedesi eski bir kasetçalar getirir."),
 })
+
+OVERRIDE.update({
+    81: dict(hikaye="Defterin kuralıyla çalışma günü: Kerem sabah erkenden balkonda dedesinin kasetini dinler ('önce yükünü taşı'), Görece'deki Nazarköy'de cam atölyesinde "
+                    "çalışıp yevmiye alır, Efes'te Celsus Kütüphanesi'nin önünde defterin seksen birinci sayfasını okur ve nazar boncuğu alır. "
+                    "Gece kasetin son saniyesinde dedesinin sesini duyar."),
+    82: dict(hikaye="Nazar boncuklarını Aydın çarşısında satar, Nazilli'de öğle yemeği yer, Afrodisias'ta defterin seksen ikinci sayfasını okur ve kuru incir alır. "
+                    "Gece Leyla arar: mahkeme öne alınmış, sekiz gün kalmıştır.",
+             son="Leyla: 'Mahkeme duruşmayı öne aldı. Sekiz gün kaldı. Ve Selim tedbir kararı istiyor: defter mahkemeye teslim edilsin.'"),
+    83: dict(hikaye="Aydın incirini Bodrum'da satar, Halikarnas Mozolesi'ni hatırlatan öğle yemeğini yer, Bodrum Kalesi'nde defterin seksen üçüncü sayfasını okur ve son "
+                    "kasalardan Bodrum mandalinası alır. Gece limanda Yaşar'ın sesli mesajını dinler.",
+             son="Yaşar sesli mesaj bırakır: 'Mahkemede ne diyeceğimi bilmiyorum. Cevdet'in yüzüne bakmadan konuşmam.'"),
+    84: dict(hikaye="Bodrum mandalinasını Denizli'de satar, Pamukkale'nin beyaz teraslarında defterin seksen dördüncü sayfasını okur ve Buldan bezi alır. "
+                    "Akşam dokumacının tezgâhında kopan ipin düğümlenişini izleyen Kerem fikrini değiştirir.",
+             son="Buldan dokumacısı kopan ipi düğümlerken Kerem fikrini değiştirir: 'Davayı kazanmak istemiyorum. Bitirmek istiyorum.'"),
+    85: dict(hikaye="Buldan bezini Burdur çarşısında satar, Salda Gölü'nün beyaz kıyısında defterin seksen beşinci sayfasını okur ve ceviz ezmesi alır. "
+                    "Akşam sokakta Necmi yalnız ve yorgun karşısına çıkar.",
+             son="Akşam sokakta Necmi karşısına çıkar; bu kez yalnız ve yorgun: 'Selim beni kovdu. Sana bir şey söylemem lazım.'"),
+    86: dict(hikaye="Ceviz ezmesini Antalya çarşısında satar, Kaleiçi'nde öğle yemeği yer. Hadrian Kapısı'nda defterin seksen altıncı sayfasını okur ve Necmi'yi dinler: "
+                    "Selim defteri yok etmek istiyormuş, çünkü babası ona sayfayı asla açtırmamasını söylemiş."),
+    87: dict(hikaye="Defterin kuralıyla çalışma günü: Aspendos Antik Tiyatrosu'nda akşamki konser için sahne kurulumunda çalışıp yevmiye alır, Necmi'yle birlikte kasa taşır, "
+                    "Antalya piyazı yer ve tiyatronun üst sırasında defterin seksen yedinci sayfasını okur. Akşam muz toptancısından Alanya muzu alırken yağmur başlar.",
+             son="Yağmur şiddetlenir ve Isparta yolu kapanır. Muzlar beklemez, saatler daralıyor."),
+    88: dict(hikaye="ALTINCI ZARAR: yol açılana kadar muzlar sararır, Kerem yarısı kararmış muzları ancak düşük fiyata satar. Eğirdir Gölü'nün kıyısında defterin seksen sekizinci "
+                    "sayfasını okur ve gül yağı atölyesinden gül yağı ve gül suyu alır. Akşam Hüseyin Usta hastaneden çıktığını haber verir.",
+             son="Hüseyin Usta hastaneden çıkmış: 'Kerem, yüzüğü sakın kaybetme; mührü o açacak.'"),
+    89: dict(hikaye="Gül ürünlerini Afyon'da satar, sucuklu yumurta yer, Kocatepe'de defterin seksen dokuzuncu sayfasını okur ve Afyon sucuğu alır (Kayseri sucuğuyla dostça kıyaslar). "
+                    "Gece Selim'in avukatı arar: defter yarın mahkemeye emanet edilmezse tedbir kararı istenecektir.",
+             son="Gece pansiyonda Selim'in avukatı arar: 'Yarın duruşmada defteri mahkemeye emanet etmezseniz tedbir kararıyla elinizden alırız.'"),
+    90: dict(hikaye="Sabah Anıtkabir'de defterin doksanıncı sayfasını okur, Afyon sucuğunu satar, avukatını öder. Duruşmada hâkim Elif'in getirdiği karşılıksız çek delilini dosyaya alır, "
+                    "tedbir talebini reddeder ve mührün on gün içinde Kayseri'de bilirkişi huzurunda açılmasına karar verir."),
+})
