@@ -138,7 +138,7 @@ def tr_upper(s):
 
 
 def kelime(s):
-    return len(re.findall(r"[A-Za-zÇĞİÖŞÜçğıöşü0-9]+", s))
+    return len(re.findall(r"[A-Za-zÇĞİÖŞÜçğıöşüâîûÂÎÛ0-9]+", s))
 
 
 def saat_dk(z):
