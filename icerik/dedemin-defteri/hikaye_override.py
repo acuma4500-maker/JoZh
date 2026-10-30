@@ -234,3 +234,24 @@ OVERRIDE.update({
     90: dict(hikaye="Sabah Anıtkabir'de defterin doksanıncı sayfasını okur, Afyon sucuğunu satar, avukatını öder. Duruşmada hâkim Elif'in getirdiği karşılıksız çek delilini dosyaya alır, "
                     "tedbir talebini reddeder ve mührün on gün içinde Kayseri'de bilirkişi huzurunda açılmasına karar verir."),
 })
+
+OVERRIDE.update({
+    91: dict(hikaye="Mahkemeden ertesi gün çalışma günü: Hamamönü'nde tarihî bir konağın restorasyonunda usta Şevket'in yanında çalışır. Leyla Devlet Arşivleri'nde 1979 kaza tutanağını "
+                    "bulur: Rıza hakkında hiçbir suçlama yoktur. Akşam yevmiyesini alır ve Beypazarı kurusu satın alır."),
+    92: dict(hikaye="Beypazarı kurusunu Kırıkkale'de satar, Kızılırmak kıyısında defterin doksan ikinci sayfasını okur ve Keskin'den üzüm pekmezi alır. "
+                    "Akşam köprü başında Yaşar otobüsüyle gelir."),
+    93: dict(hikaye="Pekmezi Çankırı'da satar, öğle yemeğinde Yaşar'la tuz ekmeğin hakkını konuşur, Tuz Mağarası'nda defterin doksan üçüncü sayfasını okur ve kaya tuzu alır. "
+                    "Gece telefonuna Selim'in hastane fotoğrafı düşer."),
+    94: dict(hikaye="Kaya tuzunu Çorum'da satar, İskilip dolması yer, Hattuşa'nın Aslanlı Kapısı'nda ilk yazılı barış antlaşmasının hikâyesini dinler: 'Barış da bir ticarettir; iki taraf da kazanır.' "
+                    "Çorum leblebisi alır. Gece Selim arar."),
+    95: dict(hikaye="Leblebiyi Amasya'da satar, Ferhat ile Şirin efsanesini dinler, Kral Kaya Mezarları'nda defterin doksan beşinci sayfasını okur ve misket elması alır. "
+                    "Akşam nehir kıyısında Hüseyin Usta'ya yüzüğünü geri verir."),
+    96: dict(hikaye="Amasya misket elmasını Tokat Bedesteni'nde satar, Necmi'yle Tokat kebabı yer, Ballıca Mağarası'nda acele etmeleri gerektiğini konuşur, yazma atölyesinde "
+                    "defterin doksan altıncı sayfasını okur ve Tokat yazması alır. Gece Selim'in sesi ilk kez kırıktır."),
+    97: dict(hikaye="Gece yolculuğuyla Divriği'ye varır, Tokat yazmasını satar, Ulu Camii'nin taş kapısı önünde defterin doksan yedinci sayfasını okur ve el yapımı bıçak alır. "
+                    "Gün batımında taş kapının önünde Cevdet ile karşılaşır."),
+    98: dict(hikaye="Sivas bıçaklarını Yozgat'ta satar, kadın kooperatifinde tarhana çorbası içip tarhana alır. Çamlık'ın kenarındaki mezarlıkta Yaşar, Cevdet ve Selim'in önünde "
+                    "1979 gecesini anlatır: kızının ameliyatı için kasayı alan Cevdet, suçu üstlenen Rıza."),
+    99: dict(hikaye="Yozgat tarhanasını Kırşehir'de satar, Ahi Evran Türbesi'nde defterin doksan dokuzuncu sayfasını okur ve Mucur el dokuması halı alır. "
+                    "Akşam avluda Hüseyin Usta onları bekler."),
+})

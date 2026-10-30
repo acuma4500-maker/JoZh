@@ -68,10 +68,22 @@ S("07:10 şafak", "A", ["kerem", "elif"],
 ## Karakter varlığı
 
 - Elif: B6'da tanışır, B14'te katılır, B34 sabahı gider, B39'da döner (itiraf), B40'ta yeniden ekipte. B46 Sc1'de kanıt toplamak için ayrılır; B47'de yok (Sc6'da telefondan dosya yollar), B48 Sc1'de döner, sonra hep var.
-- Yaşar: B7-8, 18-19, 25, 31-33, 43 (telefon), 46, 53, 62 (telefon), 66, 75-76, 83, 92-93, 97-100.
-- Leyla: B9-10, 15 (tel.), 20 (tel.), 27-28, 30 (tel.), 41 (tel.), 54 (tel.), 57-58, 68 (tel.), 82 (tel.), 91, 97-100.
-- Hüseyin Usta: B3 mezarlıkta uzaktan, B4-5, 41-42 (tel.), 48 (hasta), 49 (yüzük çalınır), 88 (tel.), 95, 99-100.
-- Necmi: B5 otobüs, B10, 24, 29, 37-38, 51-53, 63-66, 85-87, 93+, B100.
-- Selim: B4, 13, 56, 67, 90, 94-100.
+- Yaşar: B7-8, 18-19, 25, 31-33, 43 (telefon), 46, 53, 62 (telefon), 66, 75-76, 83 (sesli mesaj), 92-93, 98-100.
+- Leyla: B9-10, 15 (tel.), 20 (tel.), 27-28, 30 (tel.), 41 (tel.), 54 (tel.), 57-58, 68 (tel.), 82 (tel.), 91, 100 (bilirkişi).
+- Hüseyin Usta: B3 mezarlıkta uzaktan, B4-5, 41-42 (tel.), 48 (kalp krizi, hastane), 49 (yüzük çalınır), 88 (tel., taburcu), 95 (yüzüğü geri alır), 99-100.
+- Necmi: B5 otobüs, B10, 24, 29, 37-38, 51-53, 63-66, 85-87, 93-100.
+- Selim: B4, 13, 56, 67, 90, 93 (fotoğraf), 94 ve 96 (telefon), 97-100.
+- Cevdet: B97 (Divriği taş kapısı), 98 (Yozgat mezarlığı), 100. 1979 sahneleri: B98 anı.
+
+## Son kısım (B81-B100) akış notları
+
+- B80-81 İzmir: Elif'in dedesi kaseti verir; "önce onun yükünü taşı" (B81 Sc1), "Cevdet'e kızma" (B81 Sc6).
+- B82 Aydın: Leyla telefonda "duruşma öne alındı, 8 gün kaldı" (Gün 90). Selim tedbir istiyor.
+- B83-89: Yaşar'ın mesajı (B83), Kerem'in "bitirmek istiyorum" kararı (B84), Necmi yalnız kalır (B85), Selim'in defteri yok etmek istediğini anlatır (B86), ekibe katılır (B87), altıncı zarar (B88), mahkeme tehdidi (B89).
+- B90 Ankara: Hâkim çek delilini dosyaya alır, tedbir talebini reddeder, mührün 10 gün içinde Kayseri'de bilirkişi huzurunda açılmasına karar verir (Gün 100).
+- B91: Leyla 1979 kaza tutanağını bulur (14 Şubat 1979, Kayseri–Sivas yolu); tanık imzası Yaşar Demirci (15 yaşında).
+- B97 Divriği: Cevdet kısmen itiraf eder, Selim çıkagelir. B98 Yozgat: Yaşar 1979 gecesini anlatır (anı sahnesi), Cevdet'in kızı ameliyattan sonra bir yıl daha yaşamıştır; Selim "ablam mıydı?" diye sorar.
+- B100 Kayseri: 5.000 ₺ sermaye iade edilir, Hüseyin mührü yüzüğüyle kırar, iki anahtar yarısı kilidi açar, 1978 ortaklık senedi çıkar, dükkân "81 İl Yol Hanı", haritanın arkasında "İpek Yolu - Semerkant".
+- Uzun yolculuklarda ilk sahne 09:00-09:30 olabilir ("sabahın ilk otobüsü"); önceki bölümün son sahnesi sabaha sarkıyorsa varış saati yol süresine göre kaydırılır.
 - Gümüş anahtar: yarısı B26 Mardin'de, yarısı B50 Trabzon'da.
 - Hüseyin'in mühür yüzüğü: B49'da çalınır, B53'te geri alınır, B95'te Hüseyin'e verilir.
