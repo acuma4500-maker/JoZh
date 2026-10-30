@@ -11,8 +11,9 @@ Her karakter için:
   ses     : Flow'a giden SABİT İngilizce ses tarifi (kısa)
 """
 
-STIL = ("Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, soft cinematic lighting, "
-        "Pixar-like proportions with realistic skin, fabric and stone textures, consistent character design. "
+STIL = ("Vertical 9:16 video, 8 seconds, one continuous shot, semi-realistic stylized 3D animation, "
+        "Pixar-like proportions with realistic skin, fabric and stone textures, consistent character design, "
+        "natural cinematic lighting exactly as described under TIME AND LIGHT. "
         "No subtitles, no captions, no on-screen text, no logos.")
 
 K = {}

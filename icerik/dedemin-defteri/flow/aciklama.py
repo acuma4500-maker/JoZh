@@ -30,7 +30,7 @@ ACIKLAMA = {
         "Kaptan Yaşar yolda Niğde'yi anlattı ama defterin kapağındaki el yazısını görünce frene bastı. Bu yazıyı nereden tanıyor?\n\n"
         "Kasa: {kasa}",
         ["#DedeminDefteri", "#Niğde", "#GümüşlerManastırı", "#81İl"]),
-    8: ("Sultanhanı Kervansarayı'nda bir gece. 🌙 'Kervan nerede konaklarsa tüccar orada öğrenir.'\n\n"
+    8: ("Sultanhanı'nda bir gece. 🌙 'Kervan nerede konaklarsa tüccar orada öğrenir.'\n\n"
         "Taşpınar halılarını aldı ama gece biri defterin mührünü kazımaya çalıştı. Kim yaptı?\n\n"
         "Kasa: {kasa}",
         ["#DedeminDefteri", "#Aksaray", "#Sultanhanı", "#81İl"]),
@@ -46,7 +46,7 @@ ACIKLAMA = {
          "Yaşlı usta zarf uzattı: 'Hacı Rıza bana borçlu değildi, ben ona borçluydum.' Zarfta ne var?\n\n"
          "Kasa: {kasa}",
          ["#DedeminDefteri", "#Karaman", "#Peynir", "#81İl"]),
-    12: ("İlk büyük zarar! Mersin yolunda soğutucu bozuldu, peynirler gitti. 😔\n\n"
+    12: ("İlk büyük zarar! Mersin'e inince soğutucunun kablosu kesilmişti, peynirin bir kısmı gitti. 😔\n\n"
          "Ama Kerem dersi aldı: zararından ders almayan batar. Zarfı açtı: yırtık bir fotoğraf, 1979. Dedesinin yanındaki adam kim?\n\n"
          "Kasa: {kasa}",
          ["#DedeminDefteri", "#Mersin", "#Kızkalesi", "#81İl"]),
@@ -63,10 +63,10 @@ ACIKLAMA = {
          "Kasa: {kasa}",
          ["#DedeminDefteri", "#Osmaniye", "#Karatepe", "#81İl"]),
     16: ("Depremden sonra yeniden ayağa kalkan Antakya'da Uzun Çarşı'da dayanışmayı gördü. ❤️\n\n"
-         "Habib-i Neccar Camii'nin bağışçı listesinde bir isim: Hacı Rıza Aksoy, 1981. Dedesi her yerde izini bırakmış.\n\n"
+         "Habib-i Neccar Camii'nin yeniden inşa alanında enkazdan çıkan eski bir bağış levhasında bir isim: Hacı Rıza Aksoy, 1981. Dedesi her yerde izini bırakmış.\n\n"
          "Kasa: {kasa}",
          ["#DedeminDefteri", "#Hatay", "#Antakya", "#81İl"]),
-    17: ("Hatay Arkeoloji Müzesi'nin mozaikleri, künefe ustasının yanında bir gün, Harbiye'den defne sabunu. 🧼\n\n"
+    17: ("Künefe ustasının yanında bir gün çalıştı, Harbiye'den defne sabunu aldı. 🧼\n\n"
          "Gece gizli bir mesaj geldi: 'Kilis'e gitme. Seni bekliyorlar.' Gidecek mi?\n\n"
          "Kasa: {kasa}",
          ["#DedeminDefteri", "#Hatay", "#Künefe", "#81İl"]),

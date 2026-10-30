@@ -597,6 +597,13 @@ E(100, "Kayseri", "82. Adım: Mühür Açılıyor (FİNAL)",
   "Mucur el dokuması halı", "—", 130, 1500, m=1.35, f=0.0,
   son="Son satırın altında, sayfanın arkasında dedenin yeni bir haritası: 'İpek Yolu - Semerkant. Sermaye: Kasandaki her şey.' 2. SEZON.")
 
+try:
+    from hikaye_override import OVERRIDE
+except ImportError:
+    OVERRIDE = {}
+for _b in B:
+    _b.update(OVERRIDE.get(_b["no"], {}))
+
 # Bölüm 100'de Hüseyin Usta'ya iade edilen sermaye (masrafa eklenir)
 SERMAYE_IADE = 5000
 
