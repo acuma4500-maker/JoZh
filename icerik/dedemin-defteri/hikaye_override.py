@@ -174,3 +174,32 @@ OVERRIDE.update({
     70: dict(hikaye="Edirne'de hardaliyeyi satar, Elif'e fragmanı yayınlama izni verir, Selimiye'nin kubbesi altında defterin yetmişinci sayfasını okur ve badem ezmesi alır. "
                     "Ertesi sabah üç bin sipariş ve Selim'den bir mesaj gelir."),
 })
+
+OVERRIDE.update({
+    70: dict(hikaye="Edirne'de hardaliyeyi satar, Elif'e fragmanı yayınlama izni verir, Selimiye'nin kubbesi altında defterin yetmişinci sayfasını okur ve badem ezmesi alır. "
+                    "Gece fragman patlar: üç bin sipariş ve Selim'den bir mesaj gelir.",
+             son="Elif belgeselin fragmanını yayınlar. Gece telefonunda 3.000 sipariş mesajı… ve Selim'den tek kelime: 'Akıllıca.'"),
+    71: dict(hikaye="Sabahın ilk otobüsüyle Çanakkale'ye gelir, Edirne badem ezmesini fragmanı izleyen bir tatlıcıya satar, Çanakkale Şehitliği'nde defterin yetmiş birinci "
+                    "sayfasını okur ve Ezine peyniri alır. Akşam kordonda 'Ege Gıda' adlı bir firma dev sipariş teklif eder; adresi boş bir arsadır."),
+    72: dict(hikaye="Ege Gıda teklifini reddeder, Ezine peynirini şarküteriye satar, Edremit'te öğle yemeği yer, Kaz Dağları'nda dere kıyısında defterin yetmiş ikinci "
+                    "sayfasını okur ve Balıkesir höşmerimi alır. Gece pansiyonda imzasız bir mesaj düşer: Koza Han'da dedenin eski ortağı onu bekliyor."),
+    73: dict(hikaye="Höşmerimi Bursa çarşısında satar, İnegöl köftesi yer, Ulu Cami'nin kubbeleri altında defterin yetmiş üçüncü sayfasını okur. "
+                    "Akşamüstü Koza Han'da mesajı atan yaşlı ipekçiyle buluşur: Rıza ile Cevdet'i tanıştıran odur."),
+    74: dict(hikaye="Defterin kuralıyla çalışma günü: ipekçinin dükkânında eşarp katlamayı öğrenip yevmiye alır, İskender yer, Karagöz-Hacivat gölge oyununu izler ve "
+                    "defterin yetmiş dördüncü sayfasının sözünü duyar. Akşam ipekçiden Bursa ipeği eşarp alır; gece Selim'i arar."),
+    75: dict(hikaye="Bursa ipeği eşarpları Bilecik'te satar, Söğüt'te Ertuğrul Gazi Türbesi'nin çınarı altında defterin yetmiş beşinci sayfasını okur ve Bozüyük'ten seramik alır. "
+                    "Mahkemeye 21 gün kalmıştır; gece karşı tarafın tanığının Yaşar Demirci olduğunu öğrenir.",
+             son="Annesi arar: 'Avukat aradı. Karşı taraf tanık bulmuş: otobüs şoförü Yaşar Demirci.' Kerem donar: Yaşar Kaptan?!"),
+    76: dict(hikaye="Bozüyük seramiklerini Eskişehir'de satar, çibörek yer, Odunpazarı'nın renkli evleri arasında defterin yetmiş altıncı sayfasını okur ve lületaşı alır. "
+                    "Akşam Porsuk kıyısında Yaşar'la yüz yüze konuşur."),
+    77: dict(hikaye="Lületaşını Kütahya'da satar, Aizanoi'de Zeus Tapınağı'nın sütunları arasında defterin yetmiş yedinci sayfasını okur ve çini atölyesinden Kütahya çinisi alır. "
+                    "Çıkarken usta eski bir karonun arkasını çevirir."),
+    78: dict(hikaye="Kütahya çinilerini Uşak'ta satar, Uşak Müzesi'nde yıllarca yurt dışında kalıp geri dönen Karun Hazinesi'ni görür: 'Asıl hazine, döndüğü yere aittir.' "
+                    "Halı atölyesinden seccade boy Uşak halısı alır. Gece Elif'in annesinden sesli mesaj gelir."),
+    79: dict(hikaye="Uşak halılarını Manisa'da satar, Manisa kebabı yer, Sultan Camii'nin avlusunda defterin yetmiş dokuzuncu sayfasını okur ve mesir macunu alır. "
+                    "Gece pansiyonda telefonuna ihbar düşer: Kemeraltı'nda adıyla sahte mesir satılıyor.",
+             son="Gece pansiyonda Kerem'in telefonuna ihbar düşer: 'Kemeraltı'nda senin adınla sahte mesir satılıyor.'"),
+    80: dict(hikaye="BEŞİNCİ ZARAR: Kemeraltı'nda Kerem'in adıyla satılan sahte mesir piyasayı bozmuştur; Kerem asıl mesiri neredeyse maliyetine satar. "
+                    "Saat Kulesi'nin önünde boyoz-gevrek yer, tarihî hanın avlusunda defterin sekseninci sayfasını okur ve akşam Elif'in ailesinin evine gider. "
+                    "Yemekte Elif'in dedesi eski bir kasetçalar getirir."),
+})

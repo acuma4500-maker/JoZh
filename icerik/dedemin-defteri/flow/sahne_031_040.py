@@ -210,7 +210,7 @@ EP(35, {
     "D": ("Ahlat Selçuklu Meydan Mezarlığı", "the Ahlat Seljuk cemetery in winter: rows of tall carved stone tombstones with intricate patterns dusted with snow, Lake Van pale grey in the distance"),
     "E": ("Ahlat taşı atölyesi", "a stone carving workshop in Ahlat: reddish volcanic stone blocks, small carved souvenirs on a workbench, a small lamp, stone dust in the light"),
 }, [
-    S("08:30 sabah", "A", ["kerem"],
+    S("09:20 sabah", "A", ["kerem"],
       "Van'dan Bitlis'e inen Kerem yol parasını öder ve cebindeki Elif'in notunu bir kez daha okur.",
       "Kerem steps off the bus into the snow, pays the driver, pulls a folded note from his pocket, reads it and puts it back with a tight jaw.",
       [("kerem", "Güven mi? Önce güveni geri getir Elif.", "quiet, hurt")],
