@@ -124,3 +124,28 @@ OVERRIDE.update({
     50: dict(hikaye="Kerem hasır bilezik ustasını bulur, bir gün atölyede çalışıp yevmiye alır, ince gümüş tellerle hasır örmeyi öğrenir. Usta anahtarın ikinci "
                     "yarısını verir; iki yarı birleşir. Kerem gümüş hasır bilezik alır."),
 })
+
+OVERRIDE.update({
+    51: dict(alinan="Bayburt taşı hediyelik",
+             hikaye="Bayburt'ta gümüş hasır bilezikleri kuyumcuya satar, kale kahvehanesinde bir ozanı dinler, taş atölyesinden Bayburt taşı hediyelik alır. "
+                    "Gece pansiyonun kapısında Necmi, parmağında Hüseyin Usta'nın yüzüğüyle durur."),
+    52: dict(satilan="Bayburt taşı hediyelik",
+             hikaye="Gümüşhane'de Necmi'nin şartını okur: iki anahtar yarısı karşılığında yüzük. Bayburt taşlarını satar, Karaca Mağarası'nda damlayan suyun taşı oyuşunu "
+                    "görür, pestil ve köme alır. Gece Necmi buluşma yerini söyler."),
+    53: dict(hikaye="Giresun'da pestilleri satar, öğle yemeğinde Yaşar'la tuzağı planlar, fındık deposunda Giresun'un eski adının Kerasus olduğunu öğrenir. "
+                    "Gün batımında sahil yolunda tuzak işler ve yüzük geri alınır."),
+    54: dict(hikaye="DÖRDÜNCÜ ZARAR: Kerem fındığı fındığın başkenti Ordu'ya getirir ve zararına satar. Boztepe'ye teleferikle çıkar, fındık ezmesi alır. "
+                    "Gün batımında Yason Burnu'nda Leyla arar."),
+    55: dict(hikaye="Samsun'da fındık ezmesini satar, Bandırma Vapuru Müzesi'nde defterin elli beşinci sayfasını okur ve Bafra nokulu alır. "
+                    "Gece Selim'den Sinop'ta buluşma mesajı gelir."),
+    56: dict(hikaye="Sinop'ta nokulları satar, Tarihi Cezaevi'nin avlusunda Selim'le buluşur; Selim babasından duyduğu hikâyeyi anlatır. Kerem gemi maketi alır. "
+                    "Gün batımında Selim ona 1979 tarihli bir gazete kupürü uzatır."),
+    57: dict(hikaye="Kastamonu'da gemi maketini satar, çekme helva ustasını izler, bir banka arşivinde Leyla'yla dedenin izini sürer ve siyez bulguru alır. "
+                    "Akşam Rıza'nın 1980–1995 arasındaki ödeme dekontlarını bulurlar."),
+    58: dict(hikaye="Safranbolu'da siyez bulgurunu satar, Cinci Hanı'nda dekontları gözden geçirir ve safranlı lokum alır. "
+                    "Gece Leyla bir dekonttaki alıcıyı okur: Cevdet Karahan."),
+    59: dict(hikaye="Amasra'da lokumu satar, Amasra salatası yer, Ceneviz Kalesi'nin surlarında defterin elli dokuzuncu sayfasını okur ve ahşap el işi alır. "
+                    "Gece Elif'e tehdit mesajı gelir."),
+    60: dict(hikaye="Zonguldak'ta ahşap işleri satar, Uzun Mehmet Anıtı'nın önünde defterin altmışıncı sayfasını okur ve Devrek bastonu alır. "
+                    "Gece emekli bir madenci Rıza'nın emanet ettiği mektubu getirir."),
+})
