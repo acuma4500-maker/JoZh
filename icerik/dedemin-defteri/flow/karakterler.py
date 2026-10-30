@@ -28,7 +28,7 @@ kar("kerem", "KEREM", 20, "Bölüm 1 · Londra",
     "KEREM, a 20-year-old Turkish man, lean build, warm olive skin, oval face with a defined jawline, thick dark eyebrows, expressive dark brown eyes, short wavy black hair with a slightly messy fringe, light stubble, small silver hoop earring in his left ear; wears an oversized faded olive-green bomber jacket over a plain white crew-neck t-shirt, black slim cargo pants, worn white-and-grey sneakers with red laces, and a brown leather crossbody bag that holds an old worn brown leather notebook with a red wax seal on its last page",
     "young male voice, warm energetic tenor, fast casual Istanbul Turkish, playful but sincere")
 
-kar("riza", "HACI RIZA", 78, "Bölüm 3 · Kayseri (geri dönüş)",
+kar("riza", "HACI RIZA", 78, "Bölüm 3 · Kayseri (vasiyet kaydı)",
     "Kerem'in dedesi, Kayserili efsane tüccar. Defterdeki öğütler, kaset kaydı ve geri dönüşlerle hikâyeye girer.",
     "Ince ve dik duruşlu; derin çizgili, sevecen yüz. Kısa kesilmiş beyaz sakal ve bıyık, ela gözler. Gri yün kasket altında beyaz saç. Kahverengi tüvit ceket, krem örgü yelek, beyaz yakalı gömlek, gri yün pantolon, siyah rugan ayakkabı. Sağ elinde gümüş yüzük, elinde kehribar tespih.",
     "HACI RIZA, a 78-year-old Turkish man, slim and upright, deeply lined kind face, neatly trimmed short white beard and white mustache, bright hazel eyes with crow's feet, white hair under a grey wool flat cap; wears a dark brown tweed jacket over a cream knitted vest and white collared shirt, grey wool trousers, polished black leather shoes, a silver ring on his right hand, holding amber prayer beads",
@@ -46,7 +46,7 @@ kar("husey", "HÜSEYİN USTA", 74, "Bölüm 4 · Kayseri, Kapalı Çarşı",
     "HÜSEYİN USTA, a 74-year-old Turkish man, short and stocky, round friendly face, bushy grey eyebrows, thick grey walrus mustache, bald head with grey hair on the sides, small round reading glasses on the tip of his nose; wears a beige knitted cardigan over a striped collared shirt, a brown leather apron, dark trousers, and a large silver signet ring with an engraved seal on his right index finger",
     "elderly male voice, warm husky bass, slow grandfatherly Kayseri-accented Turkish")
 
-kar("ayse", "AYŞE", 46, "Bölüm 21 · Kayseri (telefon)",
+kar("ayse", "AYŞE", 46, "Bölüm 1 · Londra (telefon sesi), Bölüm 2 · Kayseri",
     "Kerem'in annesi. Kayseri'den telefonla haber getirir; finalde oradadır.",
     "Orta yapılı; yumuşak oval yüz, sıcak kahverengi gözler, hafif gülme çizgileri. Kısmen kırlaşmış koyu kahve saç ense topuz; gevşek bağlanmış açık mavi pamuk başörtüsü. Bej hırka, çiçekli bluz, uzun koyu etek, küçük altın küpe.",
     "AYŞE, a 46-year-old Turkish woman, medium build, gentle oval face, warm brown eyes, faint smile lines, dark brown hair with a few grey strands in a low bun under a loosely worn light-blue cotton headscarf; wears a beige cardigan over a floral blouse, a long dark skirt and small gold earrings",

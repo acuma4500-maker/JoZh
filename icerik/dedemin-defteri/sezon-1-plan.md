@@ -35,7 +35,7 @@ Londra'da batan Kerem Aksoy, Kayserili efsane tüccar dedesi Hacı Rıza'dan kal
 - **Ses:** `young adult male, 20 years old, warm mid-range tenor, fast and energetic delivery, casual modern Istanbul Turkish with occasional English words, playful and sarcastic but sincere, voice rises slightly when excited`
 
 ### 2. Hacı Rıza Aksoy — Dede (geri dönüş, kaset ve defter sesi)
-- **İlk görünüş:** Bölüm 3, Kayseri (geri dönüş)
+- **İlk görünüş:** Bölüm 3, Kayseri (vasiyet kaydı)
 - **Rol:** Kayserili efsane tüccar. Hikâyeye defterdeki öğütler, kaset kaydı ve geri dönüşlerle girer. 1979'da suçu üstlenip 81 ilde borç ödeyen kişidir.
 - **Görünüm prompt'u (yaşlı hâli):** `semi-realistic stylized 3D character, 78-year-old Turkish man, slim and upright, deeply lined kind face, neatly trimmed short white beard and white mustache, bright hazel eyes with crow's feet, white hair under a grey wool flat cap, dark brown tweed jacket over cream knitted vest and white collared shirt, grey wool trousers, polished black leather shoes, silver ring on right hand, holding amber prayer beads`
 - **Görünüm prompt'u (1979, genç hâli):** `semi-realistic stylized 3D character, 31-year-old Turkish man, slim and upright, olive skin, sharp hazel eyes, thick black mustache, short side-parted black hair, grey wool flat cap, dark brown leather jacket over white collared shirt, grey wool trousers, 1970s style, silver ring on right hand`
@@ -48,7 +48,7 @@ Londra'da batan Kerem Aksoy, Kayserili efsane tüccar dedesi Hacı Rıza'dan kal
 - **Ses:** `elderly male, mid 70s, warm husky bass, slow and grandfatherly Kayseri-accented Turkish, chuckles often, becomes stern and quiet when giving advice`
 
 ### 4. Ayşe Aksoy — Kerem'in annesi
-- **İlk görünüş:** Bu planda Bölüm 21 (telefon, Kayseri). Bölüm 2'de göründüyse o görünümle eşitleyin.
+- **İlk görünüş:** Bölüm 1, Londra (telefon sesi); yüz yüze Bölüm 2, Kayseri.
 - **Rol:** Kayseri'deki evden telefonla haber getirir: dava mektubu, Hüseyin Usta'nın hastalığı, yüzük hırsızlığı. Finalde oradadır.
 - **Görünüm prompt'u:** `semi-realistic stylized 3D character, 46-year-old Turkish woman, medium build, gentle oval face, warm brown eyes, faint smile lines, shoulder-length dark brown hair with a few grey strands tied in a low bun, light blue cotton headscarf loosely worn, beige cardigan over a floral blouse, long dark skirt, small gold earrings`
 - **Ses:** `middle-aged female, mid 40s, soft warm alto, caring and slightly worried tone, Kayseri-accented Turkish, speaks quickly when anxious`

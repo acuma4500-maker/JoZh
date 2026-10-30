@@ -114,3 +114,9 @@ KAPAK = {
     99: ("D", ["kerem", "husey"], "Kerem and Hüseyin Usta on the golden Central Anatolian steppe at sunset, Hüseyin's hand on Kerem's shoulder.", "Bozkırda gün batımı, usta ve çırak."),
     100: ("B", ["kerem", "husey", "selim"], "Climax: Hüseyin Usta pressing his silver ring into the red wax seal of the notebook in Kerem's hands, the seal cracking with a golden glow; Selim watching beside them; the Kayseri bazaar arches behind.", "Final: mühür kırılıyor, altın ışık."),
 }
+
+KAPAK.update({
+    1: ("A", ["kerem"], "Kerem alone in the empty rainy sneaker shop, standing between shelves of unsold sneakers with his head down, one warm lamp lighting him, rain streaming down the window behind him; melancholic and cinematic.", "Boş, yağmurlu sneaker dükkânında tek başına Kerem."),
+    2: ("D", ["kerem"], "Kerem at an airport gate with a suitcase and a shoebox hugged to his chest, looking at an old photo of his grandfather on his phone, a plane waiting outside the large window at dusk.", "Havalimanında valiz, ayakkabı kutusu ve dedenin fotoğrafı."),
+    3: ("B", ["kerem", "noter"], "Kerem staring in disbelief at the old leather notebook with a red wax seal placed on the notary's wooden desk, the notary standing behind with a folder, dramatic window light.", "Noterde masadaki mühürlü defter, şaşkın Kerem."),
+})

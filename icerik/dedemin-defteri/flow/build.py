@@ -15,7 +15,8 @@ sys.path.insert(0, os.path.dirname(HERE))
 import sezon1  # noqa: E402  kasa hesabı ve bölüm başlıkları
 from karakterler import K, STIL  # noqa: E402
 from ortak import EPS  # noqa: E402
-import sahne_04_20, sahne_21_40, sahne_41_60, sahne_61_80, sahne_81_100  # noqa: E402,F401
+import sahne_01_03, sahne_04_20, sahne_21_40, sahne_41_60, sahne_61_80, sahne_81_100  # noqa: E402,F401
+from aciklama import ACIKLAMA  # noqa: E402
 from kapak import KAPAK, KAPAK_STIL  # noqa: E402
 
 KAM_TEK = [
@@ -36,7 +37,7 @@ KAM_COK = [
 ]
 
 SEZONLAR = [
-    ("b4-20", "Bölüm 4–20", 4, 20, "Kayseri'den Gaziantep'e"),
+    ("b1-20", "Bölüm 1–20", 1, 20, "Londra'dan Gaziantep'e"),
     ("b21-40", "Bölüm 21–40", 21, 40, "Kahramanmaraş'tan Erzincan'a"),
     ("b41-60", "Bölüm 41–60", 41, 60, "Erzurum'dan Zonguldak'a"),
     ("b61-100", "Bölüm 61–100", 61, 100, "Düzce'den Kayseri'ye, final"),
@@ -171,8 +172,21 @@ def kapak_kur(ep, r):
          "SETTING: " + ep["yerler"][yer][1] + ".\n\n"
          "COMPOSITION: " + en + " Expressive faces, strong depth, dramatic rim light, "
          "the scene feels like a frozen moment just before something big happens.")
-    yazi = ["BÖLÜM %d" % ep["no"], r["baslik"], r["il"], "KASA: " + "{:,}".format(r["kapanis"]).replace(",", ".") + " ₺"]
+    yazi = ["BÖLÜM %d" % ep["no"], r["baslik"], r["il"]]
+    if ep["no"] >= 4:
+        yazi.append("KASA: " + tl(r["kapanis"]))
     return dict(tr=tr, yer=ep["yerler"][yer][0], prompt=p, yazi=yazi)
+
+
+def aciklama_kur(no, r):
+    if no not in ACIKLAMA:
+        return None
+    metin, tags = ACIKLAMA[no]
+    assert len(tags) == 4 and all(t.startswith("#") for t in tags), "Bölüm %d: tam 4 hashtag olmalı" % no
+    assert "#" not in metin, "Bölüm %d: hashtag sadece etiket listesinde olmalı" % no
+    if "{kasa}" in metin:
+        metin = metin.replace("{kasa}", tl(r["kapanis"]))
+    return dict(metin=metin, etiketler=tags, tam=metin + "\n\n" + " ".join(tags))
 
 
 def ad_tr(ep, cid):
@@ -184,11 +198,12 @@ def ad_tr(ep, cid):
 def derle():
     rows = {r["no"]: r for r in sezon1.hesapla()}
     sezon1.kontrol(list(rows.values()))
-    assert sorted(EPS) == list(range(4, 101)), "Eksik bölüm: %s" % sorted(set(range(4, 101)) - set(EPS))
+    assert sorted(EPS) == list(range(1, 101)), "Eksik bölüm: %s" % sorted(set(range(1, 101)) - set(EPS))
     bolumler = []
-    for no in range(4, 101):
-        ep, r = EPS[no], rows[no]
-        akis, parcalar = kasa_akisi(r, ep["sahneler"])
+    for no in range(1, 101):
+        ep = EPS[no]
+        r = rows.get(no) or sahne_01_03.META[no]
+        akis, parcalar = kasa_akisi(r, ep["sahneler"]) if no >= 4 else ([None] * 6, [None] * 6)
         sahneler = []
         for i, s in enumerate(ep["sahneler"]):
             prompt, yer_tr, gor, ses = prompt_kur(ep, s, i)
@@ -196,18 +211,19 @@ def derle():
                 n=i + 1, yer=yer_tr, olay=s["tr"],
                 dlg=[[ad_tr(ep, sp), line] for sp, line in s["dlg"]],
                 kasa=akis[i], kurgu=s["kurgu"], prompt=prompt,
-                kv=kasa_video(r["acilis"] if i == 0 else akis[i - 1], akis[i], parcalar[i], i + 1)))
+                kv=(kasa_video(r["acilis"] if i == 0 else akis[i - 1], akis[i], parcalar[i], i + 1) if no >= 4 else None)))
         bolumler.append(dict(
             no=no, il=r["il"], baslik=r["baslik"], ozet=r["hikaye"], son=r["son"],
             satilan=r["satilan"], alinan=r["alinan"],
-            kasa=dict(acilis=r["acilis"], yol=r["yol"], masraf=r["masraf_t"], satis=r["satis_t"],
-                      alis=r["alis_t"], kapanis=r["kapanis"]),
+            kasa=(dict(acilis=r["acilis"], yol=r["yol"], masraf=r["masraf_t"], satis=r["satis_t"],
+                       alis=r["alis_t"], kapanis=r["kapanis"]) if no >= 4 else None),
+            aciklama=aciklama_kur(no, r),
             konuk=[dict(ad=v[0], en=v[1], ses=v[2]) for v in ep["misafir"].values()],
             kapak=kapak_kur(ep, r),
             sahneler=sahneler))
     karakterler = [dict(id=k["id"], ad=k["ad"], yas=k["yas"], ilk=k["ilk"], rol=k["rol"], tr=k["tr"],
                         en=k["en"], ses=k["ses"], ana=k["ana"]) for k in K.values()]
-    assert sorted(KAPAK) == list(range(4, 101)), "Eksik kapak"
+    assert sorted(KAPAK) == list(range(1, 101)), "Eksik kapak"
     return dict(stil=STIL, kapak_stil=KAPAK_STIL, karakterler=karakterler, sezonlar=[
         dict(id=a, ad=b, ilk=c, son=d, alt=e) for a, b, c, d, e in SEZONLAR], bolumler=bolumler)
 
