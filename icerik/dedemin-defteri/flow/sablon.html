@@ -1,0 +1,285 @@
+<title>Dedemin Defteri</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: tüccar defteri — üstte sekmeli sicil, altta bölüm bölüm hesap satırları ve sahne kartları; kasa göstergesi mühür kırmızısı. */
+:root{
+  --paper:#f5f6f1;
+  --sheet:#ffffff;
+  --ink:#1d2433;
+  --ink-soft:#5b6372;
+  --rule:#d9dccf;
+  --ledger:#2f6f62;
+  --seal:#a8322d;
+  --seal-soft:#f6e3e1;
+  --code-bg:#eef0e8;
+  --f-display:"Alegreya", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
+    --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
+  --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{background:var(--sheet);border-bottom:1px solid var(--rule)}
+header.top .wrap{padding-block:28px 18px;display:grid;gap:6px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ledger)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,6vw,52px);line-height:1.02;margin:0;text-wrap:balance}
+.lede{color:var(--ink-soft);max-width:62ch;margin:0}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-bottom:1px solid var(--rule)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:thin}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--ink-soft);font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink);border-color:var(--rule)}
+nav.tabs a[aria-current="page"]{color:var(--sheet);background:var(--ink)}
+nav.tabs a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--ledger);outline-offset:2px}
+main .wrap{padding-block:28px 64px;display:grid;gap:28px}
+h2{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,34px);line-height:1.1;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:22px;margin:0}
+p{margin:0}
+.muted{color:var(--ink-soft)}
+.mono{font-family:var(--f-mono)}
+.recipe{display:grid;gap:10px;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:18px}
+.recipe ol{margin:0;padding-left:22px;display:grid;gap:4px}
+.chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:16px}
+.char{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.char .name{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.char .age{font-family:var(--f-mono);font-size:13px;color:var(--seal);border:1px solid var(--seal);border-radius:4px;padding:1px 8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px}
+.kv dt{color:var(--ink-soft);font-weight:600}
+.kv dd{margin:0;min-width:0}
+pre.prompt{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--f-mono);font-size:12.5px;line-height:1.55;background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:12px;max-height:420px;overflow:auto}
+.copyrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button.copy{font:600 13px var(--f-body);color:var(--ink);background:var(--sheet);border:1px solid var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
+button.copy:hover{background:var(--ink);color:var(--sheet)}
+button.copy.done{border-color:var(--ledger);color:var(--ledger);background:var(--sheet)}
+.jump{display:flex;flex-wrap:wrap;gap:6px}
+.jump button{font:600 13px var(--f-mono);color:var(--ink-soft);background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:5px 9px;cursor:pointer;min-width:44px}
+.jump button:hover{color:var(--ink);border-color:var(--ink)}
+.jump button.full{color:var(--ledger);border-color:var(--ledger)}
+section.ep{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;overflow:hidden;scroll-margin-top:72px}
+.ep-head{padding:20px 20px 16px;display:grid;gap:8px;border-bottom:1px solid var(--rule)}
+.ep-head .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ep-no{font-family:var(--f-mono);font-size:13px;letter-spacing:.06em;color:var(--ledger);text-transform:uppercase}
+.ep-prog{font-family:var(--f-mono);font-size:12px;color:var(--ink-soft)}
+.ledger{overflow-x:auto}
+.ledger table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:13px}
+.ledger th{font:600 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);text-align:right;padding:8px 10px;border-bottom:1px solid var(--rule)}
+.ledger td{text-align:right;padding:8px 10px}
+.ledger th:first-child,.ledger td:first-child{text-align:left}
+.ledger td.minus{color:var(--ink-soft)}
+.ledger td.close{color:var(--seal);font-weight:600}
+.trade{font-size:15px}
+.trade b{font-weight:600}
+details.guests{border-top:1px dashed var(--rule);padding-top:10px}
+details.guests summary{cursor:pointer;font-weight:600;color:var(--ink-soft)}
+.guest{display:grid;gap:4px;margin-top:10px}
+.scenes{display:grid}
+article.scene{padding:18px 20px;border-bottom:1px solid var(--rule);display:grid;gap:10px;min-width:0}
+article.scene.done{background:color-mix(in srgb,var(--ledger) 6%,var(--sheet))}
+.sc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sc-n{font-family:var(--f-display);font-weight:800;font-size:20px}
+.sc-place{color:var(--ink-soft);font-weight:600}
+.kasa{margin-left:auto;font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--seal);background:var(--seal-soft);border:1px solid var(--seal);border-radius:4px;padding:2px 8px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.made{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-soft);cursor:pointer}
+.made input{width:16px;height:16px;accent-color:var(--ledger)}
+.olay{font-size:16px}
+.dlg{display:grid;gap:3px;border-left:3px solid var(--ledger);padding-left:12px}
+.dlg p{font-size:15.5px}
+.dlg b{font-weight:700;font-size:12.5px;letter-spacing:.04em;margin-right:6px}
+.note{font-size:14px;color:var(--ink-soft)}
+.note b{color:var(--ink)}
+details.pr summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--ink-soft);list-style:none}
+details.pr summary::-webkit-details-marker{display:none}
+details.pr summary::before{content:"▸ ";font-family:var(--f-mono)}
+details.pr[open] summary::before{content:"▾ "}
+.pr-wrap{display:grid;gap:8px}
+.cliff{padding:16px 20px;background:var(--seal-soft);display:grid;gap:4px}
+.cliff .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
+.season-head{display:grid;gap:8px}
+@media (max-width:520px){
+  .kasa{margin-left:0}
+  .ep-head,article.scene,.cliff{padding-inline:14px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <span class="eyebrow">Instagram Reels · AI animasyon · Sezon 1</span>
+    <h1>Dedemin Defteri</h1>
+    <p class="lede">Bölüm 4'ten 100'e kadar Flow sahne prompt'ları. Her sahne kendi içinde tamdır: önce sahnedeki karakterlerin sabit tarifi, sonra mekân, olay, diyalog ve kamera.</p>
+  </div>
+</header>
+<nav class="tabs" aria-label="Bölümler"><div class="wrap" id="tabs"></div></nav>
+<main><div class="wrap" id="view"></div></main>
+
+<script>
+const DATA = /*__DATA__*/null;
+const fmt = n => n.toLocaleString("tr-TR") + " ₺";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ROUTES = [{id:"karakterler", ad:"Karakterler"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
+const KEY = "dd-flow-uretildi";
+let made = new Set();
+try { made = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...made])); } catch (e) {} };
+const PROMPTS = new Map();
+
+function copyBtn(id, label){ return `<button class="copy" type="button" data-copy="${id}">${label || "Kopyala"}</button>`; }
+
+function renderTabs(cur){
+  document.getElementById("tabs").innerHTML = ROUTES.map(r =>
+    `<a href="#${r.id}" ${r.id===cur?'aria-current="page"':""}>${esc(r.ad)}</a>`).join("");
+}
+
+function renderChars(){
+  PROMPTS.clear();
+  PROMPTS.set("stil", DATA.stil);
+  const ana = DATA.karakterler.filter(k => k.ana), gec = DATA.karakterler.filter(k => !k.ana);
+  const card = k => {
+    PROMPTS.set("k-"+k.id, k.en + ". Voice: " + k.ses + ".");
+    return `<article class="char">
+      <div class="name"><h3>${esc(k.ad)}</h3><span class="age">${k.yas} yaşında</span></div>
+      <dl class="kv">
+        <dt>İlk görünüş</dt><dd>${esc(k.ilk)}</dd>
+        <dt>Rolü</dt><dd>${esc(k.rol)}</dd>
+        <dt>Görünüm</dt><dd>${esc(k.tr)}</dd>
+      </dl>
+      <pre class="prompt">${esc(k.en)}.\nVoice: ${esc(k.ses)}.</pre>
+      <div class="copyrow">${copyBtn("k-"+k.id, "Sabit tarifi kopyala")}</div>
+    </article>`;
+  };
+  return `
+    <div class="season-head">
+      <span class="eyebrow">Sabit karakterler</span>
+      <h2>Karakterler</h2>
+      <p class="muted">Bu tarifler sezon boyunca hiç değişmez. Sahne prompt'larına aynen eklenmiş hâlde gelir; elle kopyalamanıza gerek yok.</p>
+    </div>
+    <div class="recipe">
+      <h3>Bir sahne prompt'u nasıl kurulur?</h3>
+      <ol>
+        <li><b>Stil:</b> dikey 9:16, 8 saniye, semi-realistic stylized 3D. Her prompt'un başında aynıdır.</li>
+        <li><b>Karakterler:</b> sahnede görünen herkesin sabit tarifi (yaş, yüz, saç, kıyafet) ve sesi. Telefondaki ya da dış sesteki kişi "görünmez" diye işaretlenir.</li>
+        <li><b>Mekân:</b> sahnenin geçtiği yer.</li>
+        <li><b>Olay:</b> sahnede ne olduğu, nasıl geliştiği.</li>
+        <li><b>Diyalog:</b> Türkçe replikler, 8 saniyeye sığacak kadar kısa.</li>
+        <li><b>Kamera ve ses:</b> çekim tipi ve ortam sesi.</li>
+      </ol>
+      <p class="muted">Ekrandaki "KASA: … ₺" yazısı ve mesaj metinleri prompt'a konmaz. Yapay zekâ yazıyı bozduğu için bunları kurgu programında eklemelisiniz; her sahnede değeri yazılı. Flow her klibi 8 saniye üretir, 6 sahne yaklaşık 48 saniye eder.</p>
+      <pre class="prompt">${esc(DATA.stil)}</pre>
+      <div class="copyrow">${copyBtn("stil", "Stil satırını kopyala")}</div>
+    </div>
+    <div class="chars">${ana.map(card).join("")}</div>
+    <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
+      <p class="muted">Sadece geri dönüş sahnelerinde kullanılır.</p></div>
+    <div class="chars">${gec.map(card).join("")}</div>`;
+}
+
+function epProgress(b){ return b.sahneler.filter(s => made.has(b.no+"-"+s.n)).length; }
+
+function renderSeason(id){
+  PROMPTS.clear();
+  const s = DATA.sezonlar.find(x => x.id === id);
+  const eps = DATA.bolumler.filter(b => b.no >= s.ilk && b.no <= s.son);
+  const jump = eps.map(b => `<button type="button" data-jump="${b.no}" class="${epProgress(b)===6?"full":""}" title="${esc(b.il)} · ${esc(b.baslik)}">${b.no}</button>`).join("");
+  const ep = b => {
+    const k = b.kasa;
+    const guests = b.konuk.length ? `<details class="guests"><summary>Bu bölümün konuk karakterleri (${b.konuk.length})</summary>
+      ${b.konuk.map(g => `<div class="guest"><b>${esc(g.ad)}</b><pre class="prompt">${esc(g.en)}.\nVoice: ${esc(g.ses)}.</pre></div>`).join("")}</details>` : "";
+    const scenes = b.sahneler.map(sc => {
+      const pid = b.no+"-"+sc.n;
+      PROMPTS.set(pid, sc.prompt);
+      const done = made.has(pid);
+      return `<article class="scene ${done?"done":""}" data-scene="${pid}">
+        <div class="sc-top">
+          <span class="sc-n">Sahne ${sc.n}</span>
+          <span class="sc-place">${esc(sc.yer)}</span>
+          <span class="kasa">KASA: ${fmt(sc.kasa)}</span>
+          <label class="made"><input type="checkbox" id="m-${pid}" data-made="${pid}" ${done?"checked":""}> Üretildi</label>
+        </div>
+        <p class="olay">${esc(sc.olay)}</p>
+        <div class="dlg">${sc.dlg.map(d => `<p><b>${esc(d[0])}:</b>“${esc(d[1])}”</p>`).join("")}</div>
+        ${sc.kurgu ? `<p class="note"><b>Kurgu notu:</b> ${esc(sc.kurgu)}</p>` : ""}
+        <div class="pr-wrap">
+          <div class="copyrow">${copyBtn(pid, "Flow prompt'unu kopyala")}</div>
+          <details class="pr"><summary>Prompt'u göster</summary><pre class="prompt">${esc(sc.prompt)}</pre></details>
+        </div>
+      </article>`;
+    }).join("");
+    return `<section class="ep" id="ep-${b.no}">
+      <div class="ep-head">
+        <div class="row"><span class="ep-no">Bölüm ${b.no} · ${esc(b.il)}</span><span class="ep-prog" data-prog="${b.no}">${epProgress(b)}/6 sahne üretildi</span></div>
+        <h2>${esc(b.baslik)}</h2>
+        <p class="muted">${esc(b.ozet)}</p>
+        <p class="trade"><b>Satılan:</b> ${esc(b.satilan)} &nbsp;·&nbsp; <b>Alınan:</b> ${esc(b.alinan)}</p>
+        <div class="ledger"><table>
+          <thead><tr><th>Açılış</th><th>Yol</th><th>Masraf</th><th>Satış</th><th>Alış</th><th>Kapanış</th></tr></thead>
+          <tbody><tr><td>${fmt(k.acilis)}</td><td class="minus">−${fmt(k.yol)}</td><td class="minus">−${fmt(k.masraf)}</td><td>+${fmt(k.satis)}</td><td class="minus">−${fmt(k.alis)}</td><td class="close">${fmt(k.kapanis)}</td></tr></tbody>
+        </table></div>
+        ${guests}
+      </div>
+      <div class="scenes">${scenes}</div>
+      <div class="cliff"><span class="lbl">Bölüm sonu</span><p>${esc(b.son)}</p></div>
+    </section>`;
+  };
+  return `<div class="season-head">
+      <span class="eyebrow">${esc(s.alt)}</span>
+      <h2>${esc(s.ad)}</h2>
+      <p class="muted">${eps.length} bölüm, ${eps.length*6} sahne. Bölüme gitmek için numaraya dokunun. Yeşil numaralar 6 sahnesi de üretilmiş bölümlerdir.</p>
+      <div class="jump">${jump}</div>
+    </div>
+    ${eps.map(ep).join("")}`;
+}
+
+function route(){
+  const id = (location.hash || "").slice(1);
+  const cur = ROUTES.some(r => r.id === id) ? id : "karakterler";
+  renderTabs(cur);
+  document.getElementById("view").innerHTML = cur === "karakterler" ? renderChars() : renderSeason(cur);
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-copy]");
+  if (c) {
+    const text = PROMPTS.get(c.dataset.copy) || "";
+    const ok = () => { const t = c.textContent; c.textContent = "Kopyalandı"; c.classList.add("done"); setTimeout(() => { c.textContent = t; c.classList.remove("done"); }, 1500); };
+    const fallback = () => {
+      const pre = c.closest(".pr-wrap, .char, .recipe")?.querySelector("pre");
+      const det = pre?.closest("details"); if (det) det.open = true;
+      if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      c.textContent = "Seçildi, kopyalayın";
+    };
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (err) { fallback(); }
+    return;
+  }
+  const j = e.target.closest("[data-jump]");
+  if (j) document.getElementById("ep-" + j.dataset.jump)?.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+});
+document.addEventListener("change", e => {
+  const m = e.target.closest("[data-made]");
+  if (!m) return;
+  const id = m.dataset.made;
+  m.checked ? made.add(id) : made.delete(id);
+  save();
+  m.closest("article.scene")?.classList.toggle("done", m.checked);
+  const no = +id.split("-")[0];
+  const b = DATA.bolumler.find(x => x.no === no);
+  const n = epProgress(b);
+  const p = document.querySelector(`[data-prog="${no}"]`); if (p) p.textContent = n + "/6 sahne üretildi";
+  const jb = document.querySelector(`[data-jump="${no}"]`); if (jb) jb.classList.toggle("full", n === 6);
+});
+window.addEventListener("hashchange", route);
+route();
+</script>

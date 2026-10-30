@@ -177,7 +177,7 @@ E(26, "Mardin", "Taş Şehrin Ustaları",
   "Isotu Mardin'in taş evleri arasındaki lokantalara satar. Deyrulzafaran Manastırı'nı gezer, Midyat'ta gümüş telleri örerek yapılan "
   "telkari sanatını öğrenir. Telkari takılar alır.",
   "Urfa isotu", "Midyat telkari gümüş takı", 185, 1050, m=1.35, f=0.75,
-  son="Telkari ustası çekmeceden küçük bir gümüş anahtar yarısı çıkarır: 'Deden 1985'te yaptırdı. Torunum gelirse ver, dedi.'")
+  son="Telkari ustası çekmeceden küçük bir gümüş anahtar yarısı çıkarır: 'Deden 2008'de yaptırdı. Torunum gelirse ver, dedi.'")
 
 E(27, "Diyarbakır", "Surların İçinde (1)",
   "Kerem telkari takıları tarihi Hasan Paşa Hanı'ndaki kuyumculara satar; handa kahvaltı ederken hanların ticaretteki yerini öğrenir. "
@@ -371,7 +371,7 @@ E(59, "Bartın", "Amasra'nın Ustaları",
 E(60, "Zonguldak", "Kara Elmasın Şehri",
   "Ahşap işleri satar. Kömürü 1829'da bulan Uzun Mehmet'in hikâyesini, Gökgöl Mağarası'nı, maden şehrinin dayanışmasını öğrenir. Devrek bastonu alır.",
   "Amasra ahşap el işleri", "Devrek bastonu", 90, 1100, m=1.35, f=0.75,
-  son="Emekli bir madenci, Rıza'nın 1979'da ona emanet ettiği mühürlü bir mektubu getirir: 'Kerem Aksoy'a.'")
+  son="Emekli bir madenci, Rıza'nın 2010'da ona emanet ettiği mühürlü bir mektubu getirir: 'Torunum Kerem'e.'")
 
 E(61, "Düzce", "Çerkez Peyniri",
   "Bastonları satar. Konuralp Antik Kenti'ni gezer, Çerkez kültürünü ve sofra geleneğini tanır. Çerkez peyniri alır. Mektubu okur.",
@@ -481,7 +481,7 @@ E(80, "İzmir", "Kemeraltı (1)",
   "BEŞİNCİ ZARAR: Necmi'nin adamları Kemeraltı'nda sahte ürünle piyasayı bozmuştur; Kerem mesiri düşük fiyata satar. Saat Kulesi'nde boyoz-gevrek, "
   "Elif'in ailesiyle akşam yemeği.",
   "Manisa mesir macunu (sahte ürün yüzünden ucuza)", "—", 40, 1800, m=1.05, f=0.0,
-  son="Elif'in dedesi eski bir kasetçalar getirir: 'Rıza bunu bana 1990'da bıraktı. Torunu gelirse dinlesin.'")
+  son="Elif'in dedesi eski bir kasetçalar getirir: 'Rıza bunu bana 2012'de bıraktı. Torunu gelirse dinlesin.'")
 
 E(81, "İzmir", "Efes'te Bir Gün (2)",
   "Kasette dedenin sesi: 'Kerem, bir gün birine kızarsan önce onun yükünü taşı.' Efes Antik Kenti'nde Celsus Kütüphanesi'ni gezer. "
