@@ -115,6 +115,13 @@ details.pr[open] summary::before{content:"▾ "}
 .cover .yazi{font-size:14px;color:var(--ink-soft)}
 .cover .yazi b{color:var(--ink)}
 @media (max-width:520px){.cover{grid-template-columns:72px 1fr;gap:12px}}
+.kvb{display:grid;gap:8px;border:1px solid var(--rule);border-left:4px solid var(--seal);border-radius:8px;background:var(--code-bg);padding:12px 14px}
+.kvb .top{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}
+.kvb .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
+.kvb .where{font-weight:700;font-size:15px}
+.kvb .val{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.kvb .val.up{color:var(--ledger)}
+.kvb .val.down{color:var(--seal)}
 .cliff{padding:16px 20px;background:var(--seal-soft);display:grid;gap:4px}
 .cliff .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
 .season-head{display:grid;gap:8px}
@@ -195,10 +202,31 @@ function renderChars(){
       <p class="muted">Her bölümün başında bir kapak prompt'u var. Flow'da görsel olarak üretilir: dikey 9:16, karakterler aynı sabit tariflerle. Ana unsur ortada tutulur ki profil ızgarasında 1:1 ya da 4:5 kırpılınca da görünsün. Üstteki %20'lik alan başlık için boş bırakılır. Başlık (BÖLÜM no, bölüm adı, il, KASA) kapağa kurgu ya da tasarım programında yazılır; her bölümde ne yazılacağı belirtilmiş.</p>
       <pre class="prompt">${esc(DATA.kapak_stil)}</pre>
     </div>
+    <div class="recipe">
+      <h3>Kasa videosu</h3>
+      <p class="muted">Her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Arka plan tamamen siyah, kasa göstergesi sadece sağ üst köşede. Sayı, sahnede para girip çıktıkça gerçekten artar ya da azalır ve yeni değerde durur. Para değişmeyen sahnelerde sayı sabit kalır. Videoyu indirip ilgili sahnenin üstüne koyun ve karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yapın; siyah kısım saydam olur, sadece kasa görünür.</p>
+      <p class="muted">Yapay zekâ rakamları bazen bozar. Üretilen klipte sayının doğru olup olmadığına bakın; bozuksa aynı prompt'u yeniden üretin.</p>
+    </div>
     <div class="chars">${ana.map(card).join("")}</div>
     <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
       <p class="muted">Sadece geri dönüş sahnelerinde kullanılır.</p></div>
     <div class="chars">${gec.map(card).join("")}</div>`;
+}
+
+function kvBox(b, sc){
+  const k = sc.kv, id = b.no + "-" + sc.n + "-k";
+  PROMPTS.set(id, k.prompt);
+  const val = k.tip === "sabit"
+    ? `<p class="val">Sabit: ${fmt(k.simdi)}</p>`
+    : `<p class="val ${k.fark>0?"up":"down"}">${fmt(k.onceki)} → ${fmt(k.simdi)} (${k.fark>0?"+":"−"}${fmt(Math.abs(k.fark))})</p>`;
+  const why = k.neden.length ? `<p class="note">${esc(k.neden.join(" · "))}</p>` : "";
+  return `<div class="kvb">
+    <div class="top"><span class="lbl">Kasa videosu · sağ üst · siyah arka plan</span><span class="where">Sahne ${sc.n}'e ekle</span></div>
+    ${val}${why}
+    <div class="copyrow">${copyBtn(id, "Kasa prompt'unu kopyala")}
+      <label class="made"><input type="checkbox" id="m-${id}" data-made="${id}" ${made.has(id)?"checked":""}> Kasa üretildi</label></div>
+    <details class="pr"><summary>Prompt'u göster</summary><pre class="prompt">${esc(k.prompt)}</pre></details>
+  </div>`;
 }
 
 function cover(b){
@@ -246,6 +274,7 @@ function renderSeason(id){
           <div class="copyrow">${copyBtn(pid, "Flow prompt'unu kopyala")}</div>
           <details class="pr"><summary>Prompt'u göster</summary><pre class="prompt">${esc(sc.prompt)}</pre></details>
         </div>
+        ${kvBox(b, sc)}
       </article>`;
     }).join("");
     return `<section class="ep" id="ep-${b.no}">

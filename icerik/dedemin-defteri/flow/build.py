@@ -52,20 +52,68 @@ def kasa_akisi(r, sahneler):
     ai = next((i for i, s in enumerate(sahneler) if s["k"] == "a"), 4)
     mi = min(si + 1, 5)
     v = r["acilis"]
-    out = []
+    out, parts = [], []
     for i in range(6):
-        if i == 1:
+        p = []
+        if i == 1 and r["yol"]:
             v -= r["yol"]
-        if i == si:
+            p.append(("yol (otobüs)", -r["yol"]))
+        if i == si and r["satis_t"]:
             v += r["satis_t"]
-        if i == mi:
+            p.append(("satış", r["satis_t"]))
+        if i == mi and r["masraf_t"]:
             v -= r["masraf_t"]
-        if i == ai:
+            p.append(("masraf", -r["masraf_t"]))
+        if i == ai and r["alis_t"]:
             v -= r["alis_t"]
+            p.append(("alış (mal)", -r["alis_t"]))
         assert v >= 0, "Bölüm %d sahne %d: kasa eksi" % (r["no"], i + 1)
         out.append(v)
+        parts.append(p)
     assert out[-1] == r["kapanis"], "Bölüm %d: kasa akışı kapanışı tutmuyor" % r["no"]
-    return out
+    return out, parts
+
+
+def tl(n):
+    return "{:,}".format(n).replace(",", ".") + " ₺"
+
+
+def isaretli(n):
+    return ("+" if n > 0 else "−") + tl(abs(n))
+
+
+KV_ORTAK = ("Vertical 9:16 video, 8 seconds, PURE SOLID BLACK background (#000000) filling the entire frame, "
+            "made to be layered over another video with a Screen / Lighten blend mode. "
+            "Absolutely nothing else in the frame: no scene, no characters, no gradient, no vignette, no texture, "
+            "no glow spilling across the screen, locked static camera, no camera movement, no sound, no music.\n\n"
+            "LAYOUT: only in the TOP RIGHT corner (about 6% from the top edge and 5% from the right edge) sits one compact "
+            "cash counter widget: a small flat banknote icon, the small label \"KASA\", and under it a large bold "
+            "odometer-style number followed by the Turkish lira sign. The widget is at most 38% of the frame width and 9% "
+            "of the frame height. All the rest of the frame stays pure black.\n\n")
+
+
+def kasa_video(onceki, simdi, parts, no):
+    fark = simdi - onceki
+    if fark == 0:
+        tip = "sabit"
+        anim = ("ANIMATION: the counter stays perfectly still for all 8 seconds showing exactly \"%s\" in clean white-gold "
+                "glowing digits, with only a very faint soft pulse of light. The digits never change." % tl(simdi))
+    else:
+        yon = "increasing" if fark > 0 else "decreasing"
+        renk = "bright green" if fark > 0 else "bright red"
+        tip = "artis" if fark > 0 else "azalis"
+        efekt = ("a few small gold coins and banknotes sparkle and fly into the widget" if fark > 0
+                 else "a few banknotes slide out of the widget and fade away")
+        anim = ("ANIMATION: seconds 0 to 1: the counter holds still on exactly \"%s\" in white-gold digits. "
+                "Seconds 1 to 5.5: the digits roll smoothly like a mechanical odometer, the value %s continuously through "
+                "intermediate values, the glow turns %s, and %s. At about second 5.5 the number lands exactly on \"%s\". "
+                "Seconds 5.5 to 8: the counter holds still on exactly \"%s\", glow returns to white-gold. "
+                "A tiny change label \"%s\" appears under the number from second 1 and fades out at second 6." % (
+                    tl(onceki), yon, renk, efekt, tl(simdi), tl(simdi), isaretli(fark)))
+    son = ("\n\nTEXT RULES: the only characters allowed in the whole video are \"KASA\", the numbers and the ₺ sign shown above; "
+           "digits must be sharp, perfectly legible, evenly spaced and never distorted or morphing into other characters.")
+    return dict(onceki=onceki, simdi=simdi, fark=fark, tip=tip, no=no,
+                neden=[a + " " + isaretli(d) for a, d in parts], prompt=KV_ORTAK + anim + son)
 
 
 def prompt_kur(ep, s, i):
@@ -140,14 +188,15 @@ def derle():
     bolumler = []
     for no in range(4, 101):
         ep, r = EPS[no], rows[no]
-        akis = kasa_akisi(r, ep["sahneler"])
+        akis, parcalar = kasa_akisi(r, ep["sahneler"])
         sahneler = []
         for i, s in enumerate(ep["sahneler"]):
             prompt, yer_tr, gor, ses = prompt_kur(ep, s, i)
             sahneler.append(dict(
                 n=i + 1, yer=yer_tr, olay=s["tr"],
                 dlg=[[ad_tr(ep, sp), line] for sp, line in s["dlg"]],
-                kasa=akis[i], kurgu=s["kurgu"], prompt=prompt))
+                kasa=akis[i], kurgu=s["kurgu"], prompt=prompt,
+                kv=kasa_video(r["acilis"] if i == 0 else akis[i - 1], akis[i], parcalar[i], i + 1)))
         bolumler.append(dict(
             no=no, il=r["il"], baslik=r["baslik"], ozet=r["hikaye"], son=r["son"],
             satilan=r["satilan"], alinan=r["alinan"],
