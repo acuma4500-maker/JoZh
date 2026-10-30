@@ -149,3 +149,28 @@ OVERRIDE.update({
     60: dict(hikaye="Zonguldak'ta ahşap işleri satar, Uzun Mehmet Anıtı'nın önünde defterin altmışıncı sayfasını okur ve Devrek bastonu alır. "
                     "Gece emekli bir madenci Rıza'nın emanet ettiği mektubu getirir."),
 })
+
+OVERRIDE.update({
+    61: dict(baslik="Çerkes Sofrası", alinan="Düzce Çerkes peyniri",
+             hikaye="Düzce'de Devrek bastonlarını satar, öğle yemeğinde Çerkes bir ailenin sofrasına misafir olur, Konuralp Antik Kenti'nde defterin altmış birinci "
+                    "sayfasını okur ve tütsülenmiş Çerkes peyniri alır. Gece sahilde Rıza'nın mektubunu açar."),
+    62: dict(satilan="Düzce Çerkes peyniri",
+             hikaye="Bolu'da Çerkes peynirini satar, Mengenli bir aşçıdan 'tencereye iyi niyet koy' dersini alır, Abant Gölü'nde mektuptaki çırağı düşünür ve "
+                    "Mudurnu tavuğu alır. Gece Yaşar'ı arar; Yaşar telefonu kapatır."),
+    63: dict(hikaye="Sakarya'da Mudurnu tavuğunu ıslama köftecisine satar, Sapanca Gölü kıyısında defterin altmış üçüncü sayfasını okur ve Geyve ayvası alır. "
+                    "Akşam minibüsün yan aynasında Necmi'yi görür."),
+    64: dict(hikaye="Kocaeli'de ayvayı satar, SEKA Kâğıt Müzesi'nde defterin altmış dördüncü sayfasını okur ve İzmit pişmaniyesi alır. Akşam otogarda biri "
+                    "Kerem'e çarpar; defter çantasından kaybolmuştur."),
+    65: dict(hikaye="Defter olmadan ilk gün: Kerem Yalova'da pişmaniyeleri dalgınca satar, Yürüyen Köşk'ün önünde düşünür ve kesme çiçek alır. "
+                    "Elif, Necmi'nin paylaşımlarından defterin yerini bulur."),
+    66: dict(hikaye="Eminönü'nde kısmen solmuş çiçekleri satar, Yaşar'ın minibüsüyle Galata'ya gider. Necmi defterle kaçar; Kapalıçarşı'nın boyalı koridorlarında "
+                    "kovalamaca yaşanır ve Kerem defteri geri alır."),
+    67: dict(hikaye="Selim, Galata Kulesi'nde babasının her şeyini kaybettiğini anlatır. Kerem Mısır Çarşısı'nda bir baharatçının yanında çalışıp yevmiye alır, "
+                    "UNESCO listesindeki Türk kahvesi kültürünü öğrenip kahve alır. Akşam Selim son sözünü söyler."),
+    68: dict(hikaye="Tekirdağ'da Türk kahvesini satar, Rákóczi Müzesi'nde defterin altmış sekizinci sayfasını okur ve peynir helvası alır. "
+                    "Gece Leyla, mahkemenin 1978 tarihli ortaklık senedini isteyeceğini söyler."),
+    69: dict(hikaye="Kırklareli'nde peynir helvasını satar, İğneada Longoz Ormanı'nın sessizliğinde defterin altmış dokuzuncu sayfasını okur ve hardaliye alır. "
+                    "Gece mührün üstüne bıçağı koyar; Hüseyin Usta tam o anda arar."),
+    70: dict(hikaye="Edirne'de hardaliyeyi satar, Elif'e fragmanı yayınlama izni verir, Selimiye'nin kubbesi altında defterin yetmişinci sayfasını okur ve badem ezmesi alır. "
+                    "Ertesi sabah üç bin sipariş ve Selim'den bir mesaj gelir."),
+})
