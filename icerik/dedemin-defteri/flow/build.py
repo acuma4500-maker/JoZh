@@ -16,6 +16,7 @@ import sezon1  # noqa: E402  kasa hesabı ve bölüm başlıkları
 from karakterler import K, STIL  # noqa: E402
 from ortak import EPS  # noqa: E402
 import sahne_04_20, sahne_21_40, sahne_41_60, sahne_61_80, sahne_81_100  # noqa: E402,F401
+from kapak import KAPAK, KAPAK_STIL  # noqa: E402
 
 KAM_TEK = [
     "medium tracking shot following the character, eye level",
@@ -106,6 +107,26 @@ def prompt_kur(ep, s, i):
     return p, yer_tr, [etiket(bilgi(c)[0]) for c in gorunen], [etiket(bilgi(c)[0]) for c in sesli]
 
 
+def kapak_kur(ep, r):
+    yer, kim, en, tr = KAPAK[ep["no"]]
+    mis = ep["misafir"]
+    satir = []
+    for cid in kim:
+        if cid in K:
+            satir.append("- " + K[cid]["en"] + ".")
+        elif cid in mis:
+            satir.append("- " + mis[cid][1] + ".")
+        else:
+            raise KeyError("Kapak %d: bilinmeyen karakter '%s'" % (ep["no"], cid))
+    p = (KAPAK_STIL + "\n\n"
+         "CHARACTERS (same fixed design as in the episode):\n" + "\n".join(satir) + "\n\n"
+         "SETTING: " + ep["yerler"][yer][1] + ".\n\n"
+         "COMPOSITION: " + en + " Expressive faces, strong depth, dramatic rim light, "
+         "the scene feels like a frozen moment just before something big happens.")
+    yazi = ["BÖLÜM %d" % ep["no"], r["baslik"], r["il"], "KASA: " + "{:,}".format(r["kapanis"]).replace(",", ".") + " ₺"]
+    return dict(tr=tr, yer=ep["yerler"][yer][0], prompt=p, yazi=yazi)
+
+
 def ad_tr(ep, cid):
     if cid in K:
         return K[cid]["ad"]
@@ -133,10 +154,12 @@ def derle():
             kasa=dict(acilis=r["acilis"], yol=r["yol"], masraf=r["masraf_t"], satis=r["satis_t"],
                       alis=r["alis_t"], kapanis=r["kapanis"]),
             konuk=[dict(ad=v[0], en=v[1], ses=v[2]) for v in ep["misafir"].values()],
+            kapak=kapak_kur(ep, r),
             sahneler=sahneler))
     karakterler = [dict(id=k["id"], ad=k["ad"], yas=k["yas"], ilk=k["ilk"], rol=k["rol"], tr=k["tr"],
                         en=k["en"], ses=k["ses"], ana=k["ana"]) for k in K.values()]
-    return dict(stil=STIL, karakterler=karakterler, sezonlar=[
+    assert sorted(KAPAK) == list(range(4, 101)), "Eksik kapak"
+    return dict(stil=STIL, kapak_stil=KAPAK_STIL, karakterler=karakterler, sezonlar=[
         dict(id=a, ad=b, ilk=c, son=d, alt=e) for a, b, c, d, e in SEZONLAR], bolumler=bolumler)
 
 

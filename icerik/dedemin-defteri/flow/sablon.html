@@ -105,6 +105,16 @@ details.pr summary::-webkit-details-marker{display:none}
 details.pr summary::before{content:"▸ ";font-family:var(--f-mono)}
 details.pr[open] summary::before{content:"▾ "}
 .pr-wrap{display:grid;gap:8px}
+.cover{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:start;border-top:1px dashed var(--rule);padding-top:14px}
+.cover .frame{aspect-ratio:9/16;max-width:100%;border:1.5px solid var(--seal);border-radius:8px;background:var(--seal-soft);display:grid;align-content:start;justify-items:center;gap:2px;padding:10px 6px;text-align:center}
+.cover .frame .t1{font:600 9px var(--f-mono);letter-spacing:.06em;color:var(--seal)}
+.cover .frame .t2{font:800 12px/1.1 var(--f-display);color:var(--ink)}
+.cover .frame .t3{font:600 8.5px var(--f-mono);color:var(--seal);margin-top:auto}
+.cover .body{display:grid;gap:8px;min-width:0}
+.cover .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
+.cover .yazi{font-size:14px;color:var(--ink-soft)}
+.cover .yazi b{color:var(--ink)}
+@media (max-width:520px){.cover{grid-template-columns:72px 1fr;gap:12px}}
 .cliff{padding:16px 20px;background:var(--seal-soft);display:grid;gap:4px}
 .cliff .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
 .season-head{display:grid;gap:8px}
@@ -180,10 +190,31 @@ function renderChars(){
       <pre class="prompt">${esc(DATA.stil)}</pre>
       <div class="copyrow">${copyBtn("stil", "Stil satırını kopyala")}</div>
     </div>
+    <div class="recipe">
+      <h3>Kapak fotoğrafı prompt'u</h3>
+      <p class="muted">Her bölümün başında bir kapak prompt'u var. Flow'da görsel olarak üretilir: dikey 9:16, karakterler aynı sabit tariflerle. Ana unsur ortada tutulur ki profil ızgarasında 1:1 ya da 4:5 kırpılınca da görünsün. Üstteki %20'lik alan başlık için boş bırakılır. Başlık (BÖLÜM no, bölüm adı, il, KASA) kapağa kurgu ya da tasarım programında yazılır; her bölümde ne yazılacağı belirtilmiş.</p>
+      <pre class="prompt">${esc(DATA.kapak_stil)}</pre>
+    </div>
     <div class="chars">${ana.map(card).join("")}</div>
     <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
       <p class="muted">Sadece geri dönüş sahnelerinde kullanılır.</p></div>
     <div class="chars">${gec.map(card).join("")}</div>`;
+}
+
+function cover(b){
+  const c = b.kapak, pid = b.no + "-k";
+  PROMPTS.set(pid, c.prompt);
+  return `<div class="cover">
+    <div class="frame" aria-hidden="true"><span class="t1">${esc(c.yazi[0])}</span><span class="t2">${esc(c.yazi[1])}</span><span class="t3">${esc(c.yazi[3])}</span></div>
+    <div class="body">
+      <span class="lbl">Kapak fotoğrafı · ${esc(c.yer)}</span>
+      <p>${esc(c.tr)}</p>
+      <p class="yazi"><b>Kapağa yazılacak:</b> ${c.yazi.map(esc).join(" · ")}</p>
+      <div class="copyrow">${copyBtn(pid, "Kapak prompt'unu kopyala")}
+        <label class="made"><input type="checkbox" id="m-${pid}" data-made="${pid}" ${made.has(pid)?"checked":""}> Kapak üretildi</label></div>
+      <details class="pr"><summary>Prompt'u göster</summary><pre class="prompt">${esc(c.prompt)}</pre></details>
+    </div>
+  </div>`;
 }
 
 function epProgress(b){ return b.sahneler.filter(s => made.has(b.no+"-"+s.n)).length; }
@@ -228,6 +259,7 @@ function renderSeason(id){
           <tbody><tr><td>${fmt(k.acilis)}</td><td class="minus">−${fmt(k.yol)}</td><td class="minus">−${fmt(k.masraf)}</td><td>+${fmt(k.satis)}</td><td class="minus">−${fmt(k.alis)}</td><td class="close">${fmt(k.kapanis)}</td></tr></tbody>
         </table></div>
         ${guests}
+        ${cover(b)}
       </div>
       <div class="scenes">${scenes}</div>
       <div class="cliff"><span class="lbl">Bölüm sonu</span><p>${esc(b.son)}</p></div>
@@ -256,7 +288,7 @@ document.addEventListener("click", e => {
     const text = PROMPTS.get(c.dataset.copy) || "";
     const ok = () => { const t = c.textContent; c.textContent = "Kopyalandı"; c.classList.add("done"); setTimeout(() => { c.textContent = t; c.classList.remove("done"); }, 1500); };
     const fallback = () => {
-      const pre = c.closest(".pr-wrap, .char, .recipe")?.querySelector("pre");
+      const pre = c.closest(".pr-wrap, .char, .recipe, .cover .body")?.querySelector("pre");
       const det = pre?.closest("details"); if (det) det.open = true;
       if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
       c.textContent = "Seçildi, kopyalayın";
