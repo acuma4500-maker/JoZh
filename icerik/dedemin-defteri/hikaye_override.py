@@ -98,3 +98,29 @@ OVERRIDE.update({
              hikaye="Erzincan'da tereyağını satar, Elif'e bir şans daha verir, buz tutmuş Girlevik Şelalesi'nin önünde defterin kırkıncı sayfasını okur ve tulum peyniri alır. "
                     "Gece Selim'den mesaj gelir."),
 })
+
+OVERRIDE.update({
+    41: dict(hikaye="Erzurum'da Erzincan tulum peynirini satar, cağ kebabı ustasından ateşi eşit yakmayı öğrenir, Çifte Minareli Medrese'nin önünde defterin "
+                    "kırk birinci sayfasını okur. Gece Leyla, listenin son isminin Hüseyin Usta olduğunu söyler."),
+    42: dict(hikaye="Kerem Hüseyin Usta'yı arar ama usta konuşmak istemez. Defterin kuralı gereği çalışma günü: Oltu taşı atölyesinde tesbih ipliği takıp yevmiye alır, "
+                    "Oltu taşı tesbih alır. Gece usta sonunda konuşur."),
+    43: dict(hikaye="Doğubayazıt'ta Oltu tesbihlerini satar, abdigör köftesi yer, İshak Paşa Sarayı'nda Ağrı Dağı'nın karşısında defterin kırk üçüncü sayfasını okur "
+                    "ve el dokuması kilim alır. Gece Yaşar'ın uyarı telefonu kesilir."),
+    44: dict(alinan="Iğdır kuru kayısısı",
+             hikaye="Iğdır'da kilimi satar, Aras Kuş Cenneti'nde kışlayan kuşları izler, Iğdır ile Malatya kayısısının farkını öğrenip kuru kayısı alır. "
+                    "Gece Kars'tan bir toptancı iki katı fiyat teklif eder: ödeme çekle."),
+    45: dict(satilan="Iğdır kuru kayısısı (çekle satıldı, nakit girmedi)",
+             hikaye="Sabah Ani Harabeleri'ni gezen Kerem, öğleden sonra kayısıları çek karşılığı toptancıya teslim eder, nakitle Kars gravyeri alır. "
+                    "Bankanın kapanmasına on dakika kala çeki yatırır."),
+    46: dict(satilan="Kars gravyeri",
+             hikaye="ÜÇÜNCÜ ZARAR: kayısıların parası yoktur; Elif karşılıksız çekin izini sürmek için ayrılır. Kerem gravyeri satar, donmuş Çıldır Gölü'nde buz "
+                    "balıkçısına yardım eder ve kurutulmuş kaz alır. Akşam Yaşar çıkagelir."),
+    47: dict(hikaye="Artvin'de kurutulmuş kazı satar, Macahel ormanında defterin kırk yedinci sayfasını okur ve Kafkas arısının Macahel balını alır. "
+                    "Gece Elif, Selim'in karşılıksız çek yazışmalarını gönderir."),
+    48: dict(hikaye="Rize'de Macahel balını satar, Zil Kale'nin sisli manzarasına bakar, çay bahçesinde 'iki yaprak bir tomurcuk' kuralını öğrenip Rize çayı alır. "
+                    "Elif kanıt dosyasıyla yeniden yanındadır. Gece annesi Hüseyin Usta'nın kalp krizi geçirdiğini bildirir."),
+    49: dict(hikaye="Trabzon'da Rize çayını düşük kârla satar: ait olduğu yerden uzağa sat. Hamsi yer, sisler içindeki Sümela Manastırı'na tırmanır, kemençe ustasıyla "
+                    "horon dener. Gece annesi Hüseyin Usta'nın dükkânına girildiğini ve mühür yüzüğünün çalındığını bildirir."),
+    50: dict(hikaye="Kerem hasır bilezik ustasını bulur, bir gün atölyede çalışıp yevmiye alır, ince gümüş tellerle hasır örmeyi öğrenir. Usta anahtarın ikinci "
+                    "yarısını verir; iki yarı birleşir. Kerem gümüş hasır bilezik alır."),
+})

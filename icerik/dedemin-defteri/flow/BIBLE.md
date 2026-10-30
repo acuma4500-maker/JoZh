@@ -67,7 +67,7 @@ S("07:10 şafak", "A", ["kerem", "elif"],
 
 ## Karakter varlığı
 
-- Elif: B6'da tanışır, B14'te katılır, B34 sabahı gider (B34 Sc6'da yok), B39'da döner, sonra hep var.
+- Elif: B6'da tanışır, B14'te katılır, B34 sabahı gider, B39'da döner (itiraf), B40'ta yeniden ekipte. B46 Sc1'de kanıt toplamak için ayrılır; B47'de yok (Sc6'da telefondan dosya yollar), B48 Sc1'de döner, sonra hep var.
 - Yaşar: B7-8, 18-19, 25, 31-33, 43 (telefon), 46, 53, 62 (telefon), 66, 75-76, 83, 92-93, 97-100.
 - Leyla: B9-10, 15 (tel.), 20 (tel.), 27-28, 30 (tel.), 41 (tel.), 54 (tel.), 57-58, 68 (tel.), 82 (tel.), 91, 97-100.
 - Hüseyin Usta: B3 mezarlıkta uzaktan, B4-5, 41-42 (tel.), 48 (hasta), 49 (yüzük çalınır), 88 (tel.), 95, 99-100.
