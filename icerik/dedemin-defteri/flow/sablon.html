@@ -12,6 +12,13 @@
   --ink-soft:#5b6372;
   --rule:#d9dccf;
   --ledger:#2f6f62;
+  --ledger-soft:#e1efe9;
+  --warn:#8a5a00;
+  --screen:#000000;
+  --screen-ink:#ffffff;
+  --screen-label:#a0a0a0;
+  --screen-up:#00e676;
+  --screen-down:#ff1744;
   --seal:#a8322d;
   --seal-soft:#f6e3e1;
   --code-bg:#eef0e8;
@@ -22,12 +29,12 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
-    --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+    --ledger:#6fbfad; --ledger-soft:#1b2f2a; --warn:#e3b04b; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
-  --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+  --ledger:#6fbfad; --ledger-soft:#1b2f2a; --warn:#e3b04b; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
@@ -147,6 +154,46 @@ details.pr[open] summary::before{content:"▾ "}
 .kvb .val{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .kvb .val.up{color:var(--ledger)}
 .kvb .val.down{color:var(--seal)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ka-entry{display:grid;gap:12px}
+.ka-lbl{font-weight:700;font-size:17px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.ka-lbl small{font-weight:400;font-size:14px;color:var(--ink-soft)}
+.ka-entry textarea{width:100%;display:block;font-family:var(--f-mono);font-size:16px;line-height:1.7;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);border-radius:8px;padding:12px 14px;resize:vertical;min-height:7.2rem}
+.ka-entry textarea:focus-visible{outline:2px solid var(--ledger);outline-offset:2px;border-color:var(--ledger)}
+.ka-ornek{font-weight:600;color:var(--warn)}
+.ka-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ka-h{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.1;margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.ka-h .note{font-family:var(--f-mono);font-weight:400;font-size:13px}
+.ka-clips{display:grid;gap:14px}
+.ka-clip{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:14px;display:grid;gap:12px;min-width:0}
+.ka-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px}
+.ka-head h3{font-size:20px}
+.ka-meta{font-family:var(--f-mono);font-size:12px;color:var(--ink-soft)}
+.ka-main{display:flex;gap:16px;align-items:flex-start;min-width:0}
+.ka-shot{display:grid;gap:6px;justify-items:center;flex:none;max-width:100%}
+.ka-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.ka-frame{--fw:170px;--fh:calc(var(--fw)*16/9);width:var(--fw);aspect-ratio:9/16;background:var(--screen);border:1px solid var(--rule);border-radius:10px;position:relative;overflow:hidden;max-width:100%}
+.ka-counter{position:absolute;top:6%;right:5%;display:grid;justify-items:end;gap:calc(var(--fh)*.004);font-family:var(--f-mono);color:var(--screen-ink);text-align:right}
+.ka-counter .k{font-size:calc(var(--fh)*.02);letter-spacing:.14em;font-weight:600;line-height:1.1;color:var(--screen-label)}
+.ka-counter .b{font-size:calc(var(--fh)*.044);font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ka-counter .c{font-size:calc(var(--fh)*.029);font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ka-counter .c.up{color:var(--screen-up)}
+.ka-counter .c.down{color:var(--screen-down)}
+.ka-facts{margin:0;display:grid;gap:10px;align-content:start;min-width:0;flex:1}
+.ka-facts dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft)}
+.ka-facts dd{margin:2px 0 0;font-family:var(--f-mono);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.ka-facts .dir{font-family:var(--f-body);font-weight:600;font-size:14px;color:var(--ink-soft)}
+.ka-chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-family:var(--f-mono);font-weight:700;font-size:14px;white-space:nowrap}
+.ka-chip.up{background:var(--ledger-soft);color:var(--ledger)}
+.ka-chip.down{background:var(--seal-soft);color:var(--seal)}
+.ka-chip.hold{background:var(--code-bg);color:var(--ink-soft)}
+.ka-actions{display:flex;flex-wrap:wrap;gap:8px}
+.ka-err{border-color:var(--warn)}
+.ka-err h3{color:var(--warn)}
+.ka-raw{font-family:var(--f-mono);font-size:14px;background:var(--code-bg);padding:8px 10px;border-radius:8px;overflow-wrap:anywhere}
+.ka-msg{font-weight:600}
+@media (min-width:720px){.ka-frame{--fw:200px}}
+@media (max-width:359px){.ka-main{flex-wrap:wrap}}
 .kayar{border:1px solid var(--rule);border-radius:8px;background:var(--sheet)}
 .kayar>summary{cursor:pointer;min-height:44px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:6px 12px;font-weight:600;list-style:none}
 .kayar>summary::-webkit-details-marker{display:none}
@@ -189,7 +236,7 @@ const DATA = /*__DATA__*/null;
 /*__KASA_MOTOR__*/
 const fmt = n => n.toLocaleString("tr-TR") + " ₺";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ROUTES = [{id:"karakterler", ad:"Karakterler"}, {id:"takvim", ad:"Takvim"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
+const ROUTES = [{id:"karakterler", ad:"Karakterler"}, {id:"takvim", ad:"Takvim"}, {id:"kasa", ad:"Kasa aracı"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
 const KEY = "dd-flow-uretildi";
 let made = new Set();
 try { made = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) {}
@@ -287,7 +334,7 @@ function renderChars(){
     </div>
     <div class="recipe">
       <h3>Kasa videosu</h3>
-      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Prompt sabittir, yalnızca sayılar değişir: arka plan siyah, kasa sağ üst köşede. Para girince altında yeşil "+" fark, çıkınca kırmızı "−" fark yazar ve bakiye yeni değere gider. Para efekti yoktur. Kasası değişmeyen sahnelerde "sabit kasa" prompt'u var: bakiye 8 saniye boyunca aynı kalır, altında yazı çıkmaz. Aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Para birimi, rakam geçişi ve KASA yazısı ayarları her bölüm listesinin en üstünde. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa "Anında değişir"i dene ya da yeniden üret.</p>
+      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Prompt sabittir, yalnızca sayılar değişir: arka plan siyah, kasa sağ üst köşede. Para girince altında yeşil "+" fark, çıkınca kırmızı "−" fark yazar ve bakiye yeni değere gider. Para efekti yoktur. Kasası değişmeyen sahnelerde "sabit kasa" prompt'u var: bakiye 8 saniye boyunca aynı kalır, altında yazı çıkmaz. Aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Para birimi, rakam geçişi ve KASA yazısı ayarları her bölüm listesinin en üstünde. Kendi rakamını yazmak istersen "Kasa aracı" sekmesi var. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa "Anında değişir"i dene ya da yeniden üret.</p>
     </div>
     <div class="chars">${ana.map(card).join("")}</div>
     <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
@@ -451,12 +498,152 @@ function renderSeason(id){
     ${eps.map(ep).join("")}`;
 }
 
+/* ---------- Kasa aracı sekmesi: serbest giriş ---------- */
+const KA_KEY = "kasa-prompt-giris";
+const KA_ORNEK = "7.000 ₺ → 6.700 ₺ (−300 ₺)\n15.300 ₺ → 16.500 ₺ (+1.200 ₺)\nSabit: 16.500 ₺";
+const KA_EKLE = { down: "7.000 ₺ → 6.700 ₺ (−300 ₺)", up: "15.300 ₺ → 16.500 ₺ (+1.200 ₺)", hold: "Sabit: 16.500 ₺" };
+const KA = { metin: null, clips: [], sigs: [], prev: [], durum: "", timer: 0 };
+function kaYukle(){
+  if (KA.metin === null) { KA.metin = KA_ORNEK; try { const t = localStorage.getItem(KA_KEY); if (t !== null) KA.metin = t; } catch (e) {} }
+  return KA.metin;
+}
+function kaKaydet(t){ KA.metin = t; try { localStorage.setItem(KA_KEY, t); } catch (e) {} }
+const kaPara = n => KasaMotor.fmt(n) + " " + KC.birim;
+
+function kaKart(no, i, o){
+  const sabit = !!o.sabit, cls = o.up ? "up" : "down";
+  const chg = sabit ? "" : (o.up ? "+" : "−") + kaPara(o.abs);
+  const aria = "Önizleme: sağ üstte " + (KC.etiket !== "yok" ? "KASA " : "") + kaPara(o.neu) + (sabit ? ", altında yazı yok" : ", altında " + (o.up ? "yeşil " : "kırmızı ") + chg);
+  const facts = sabit
+    ? `<div><dt>Bakiye</dt><dd>${esc(kaPara(o.neu))}</dd></div><div><dt>Altta yazacak</dt><dd><span class="ka-chip hold">Hiçbir şey</span><span class="dir">sabit kasa</span></dd></div>`
+    : `<div><dt>Başlangıç</dt><dd>${esc(kaPara(o.old))}</dd></div><div><dt>Bitiş</dt><dd>${esc(kaPara(o.neu))}</dd></div><div><dt>Altta yazacak</dt><dd><span class="ka-chip ${cls}">${esc(chg)}</span><span class="dir">${o.up ? "artış" : "azalış"}</span></dd></div>`;
+  return `<article class="ka-clip" data-ka="${i}">
+    <header class="ka-head"><h3>Klip ${no}</h3><span class="ka-meta">${sabit ? "sabit kasa · " : ""}8 sn · 9:16 · siyah zemin</span></header>
+    <div class="ka-main">
+      <div class="ka-shot"><div class="ka-frame" role="img" aria-label="${esc(aria)}"><div class="ka-counter">${KC.etiket !== "yok" ? '<span class="k">KASA</span>' : ""}<span class="b">${esc(kaPara(o.neu))}</span>${sabit ? "" : `<span class="c ${cls}">${esc(chg)}</span>`}</div></div><span class="ka-cap">Önizleme</span></div>
+      <dl class="ka-facts">${facts}</dl>
+    </div>
+    <div class="ka-actions">${copyBtn("ka-" + i, "Prompt'u kopyala")}${sabit ? "" : `<button class="copy alt" type="button" data-kaplay="${i}">Yeniden oynat</button>`}</div>
+    <details class="pr" data-pid="ka-${i}"><summary>Prompt metnini göster</summary><pre class="prompt"></pre></details>
+  </article>`;
+}
+
+function kaHata(it){
+  const fx = (it.r.fixes || []).map(f => `<button class="copy alt" type="button" data-kafix="${it.idx}" data-text="${esc(f.text)}">${esc(f.label)}</button>`).join("");
+  return `<article class="ka-clip ka-err" role="group" aria-label="Satır ${it.idx + 1} düzeltilmeli">
+    <header class="ka-head"><h3>Satır ${it.idx + 1} düzeltilmeli</h3></header>
+    <p class="ka-raw">${esc(it.raw.trim())}</p><p class="ka-msg">${esc(it.r.msg)}</p>${fx ? `<div class="ka-actions">${fx}</div>` : ""}
+  </article>`;
+}
+
+function kaSonucHtml(){
+  const items = [];
+  kaYukle().split(/\r?\n/).forEach((raw, idx) => { if (raw.trim()) items.push({ raw: raw, idx: idx, r: KasaMotor.parseLine(raw) }); });
+  KA.clips.length = 0; KA.sigs = [];
+  let html = "", no = 0, errs = 0;
+  items.forEach(it => {
+    if (it.r && it.r.ok) {
+      const i = KA.clips.length;
+      KA.clips.push(it.r); KA.sigs.push(it.raw.trim() + "|" + KC.birim + KC.gecis + KC.etiket);
+      PROMPTS.set("ka-" + i, KasaMotor.buildPrompt(it.r, KC));
+      html += kaKart(++no, i, it.r);
+    } else { errs++; html += kaHata(it); }
+  });
+  KA.durum = (no ? no + " klip hazır" : "") + (no && errs ? ", " : "") + (errs ? errs + " satır düzeltilmeli" : "");
+  return html || '<p class="note">Henüz satır yok. Yukarıya bir bakiye değişimi yaz ya da örnek ekle.</p>';
+}
+
+function renderKasa(){
+  PROMPTS.clear(); KA.prev = [];
+  const sonuc = kaSonucHtml();
+  return `<div class="season-head">
+      <span class="eyebrow">Serbest giriş</span>
+      <h2>Kasa aracı</h2>
+      <p class="muted">Bakiye değişimini yaz, sahne kutularındaki aynı sabit kasa prompt'u hazır olsun. Her satır bir klip. Kasa değişmiyorsa tek sayı yaz.</p>
+    </div>
+    <div class="ka-entry">
+      <label class="ka-lbl" for="ka-giris">Bakiye değişimi <small>her satır bir klip</small></label>
+      <textarea id="ka-giris" rows="${Math.max(3, Math.min(8, kaYukle().split(/\r?\n/).length + 1))}" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="7.000 ₺ → 6.700 ₺ (−300 ₺)">${esc(kaYukle())}</textarea>
+      <p class="note">Eski bakiye → yeni bakiye (fark) şeklinde yaz. Farkı yazmasan da olur, sayfa hesaplar. Kasa değişmiyorsa tek sayı yaz, örnek: Sabit: 16.500 ₺.</p>
+      <p class="note ka-ornek" id="ka-ornek" ${kaYukle().trim() === KA_ORNEK.trim() ? "" : "hidden"}>Örnek satırlar yüklü. Silip kendi bakiye değişimini yaz.</p>
+      <div class="ka-chips">
+        <button class="copy alt" type="button" data-kaadd="down">Düşüş örneği ekle</button>
+        <button class="copy alt" type="button" data-kaadd="up">Artış örneği ekle</button>
+        <button class="copy alt" type="button" data-kaadd="hold">Sabit kasa örneği ekle</button>
+        <button class="copy alt" type="button" id="ka-temizle">Temizle</button>
+      </div>
+      ${kasaAyarHtml()}
+    </div>
+    <h3 class="ka-h">Promptlar <span class="note" id="ka-adet">${esc(KA.durum)}</span></h3>
+    <div class="ka-clips" id="ka-sonuc">${sonuc}</div>
+    <p class="sr" id="ka-durum" aria-live="polite">${esc(KA.durum)}</p>`;
+}
+
+function kaOynat(frame, o){
+  if (!frame || !o || o.sabit) return;
+  const bal = frame.querySelector(".b"), chg = frame.querySelector(".c");
+  const set = v => { bal.textContent = kaPara(v); };
+  cancelAnimationFrame(frame._raf || 0);
+  const bitir = () => { set(o.neu); chg.style.opacity = "1"; };
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { bitir(); return; }
+  set(o.old); chg.style.opacity = "0";
+  const t0 = performance.now();
+  const adim = now => {
+    const t = (now - t0) / 1000;
+    chg.style.opacity = String(Math.max(0, Math.min(1, (t - 1.0) / 0.4)));
+    if (t < 1.4) set(o.old);
+    else if (KC.gecis === "anlik" || t >= 3.4) set(o.neu);
+    else { const p = (t - 1.4) / 2, e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; set(Math.round(o.old + (o.neu - o.old) * e)); }
+    if (t < 3.5) frame._raf = requestAnimationFrame(adim); else bitir();
+  };
+  frame._raf = requestAnimationFrame(adim);
+}
+
+function kaBaslat(){
+  document.querySelectorAll(".ka-clip[data-ka]").forEach(card => {
+    const i = +card.dataset.ka;
+    if (KA.prev[i] !== KA.sigs[i]) kaOynat(card.querySelector(".ka-frame"), KA.clips[i]);
+  });
+  KA.prev = KA.sigs.slice();
+}
+
+function kaYenile(){
+  const alan = document.getElementById("ka-sonuc");
+  if (!alan) return;
+  [...PROMPTS.keys()].forEach(k => { if (k.startsWith("ka-")) PROMPTS.delete(k); });
+  const ta = document.getElementById("ka-giris");
+  ta.rows = Math.max(3, Math.min(8, KA.metin.split(/\r?\n/).length + 1));
+  alan.innerHTML = kaSonucHtml();
+  document.getElementById("ka-adet").textContent = KA.durum;
+  document.getElementById("ka-durum").textContent = KA.durum;
+  document.getElementById("ka-ornek").hidden = KA.metin.trim() !== KA_ORNEK.trim();
+  kaBaslat();
+}
+
+document.addEventListener("input", e => {
+  if (e.target.id !== "ka-giris") return;
+  kaKaydet(e.target.value);
+  document.getElementById("ka-ornek").hidden = KA.metin.trim() !== KA_ORNEK.trim();
+  clearTimeout(KA.timer); KA.timer = setTimeout(kaYenile, 280);
+});
+document.addEventListener("click", e => {
+  const ta = document.getElementById("ka-giris");
+  const ekle = e.target.closest("[data-kaadd]");
+  if (ekle && ta) { const v = ta.value.replace(/\s+$/, ""); ta.value = (v ? v + "\n" : "") + KA_EKLE[ekle.dataset.kaadd]; kaKaydet(ta.value); kaYenile(); return; }
+  if (e.target.closest("#ka-temizle") && ta) { ta.value = ""; kaKaydet(""); kaYenile(); ta.focus(); return; }
+  const fx = e.target.closest("[data-kafix]");
+  if (fx && ta) { const l = ta.value.split(/\r?\n/); l[+fx.dataset.kafix] = fx.dataset.text; ta.value = l.join("\n"); kaKaydet(ta.value); kaYenile(); return; }
+  const pl = e.target.closest("[data-kaplay]");
+  if (pl) kaOynat(pl.closest(".ka-clip").querySelector(".ka-frame"), KA.clips[+pl.dataset.kaplay]);
+});
+
 function route(){
   const id = (location.hash || "").slice(1);
   const cur = ROUTES.some(r => r.id === id) ? id : "karakterler";
   renderTabs(cur);
   const v = document.getElementById("view");
-  v.innerHTML = cur === "karakterler" ? renderChars() : cur === "takvim" ? renderCal() : renderSeason(cur);
+  v.innerHTML = cur === "karakterler" ? renderChars() : cur === "takvim" ? renderCal() : cur === "kasa" ? renderKasa() : renderSeason(cur);
+  if (cur === "kasa") kaBaslat();
   if (pending) { document.getElementById("ep-" + pending)?.scrollIntoView(); pending = null; }
   else window.scrollTo(0, 0);
 }

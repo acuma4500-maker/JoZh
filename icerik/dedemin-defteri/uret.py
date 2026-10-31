@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Bütün sayfaları sırayla üretir: Kasa Prompt Aracı, Dedemin Defteri sayfası, GitHub Pages kopyaları.
+"""Sayfayı baştan üretir: Dedemin Defteri sayfası (kasa motoru içinde), sonra GitHub Pages kopyası.
 
 Kullanım: python3 icerik/dedemin-defteri/uret.py
 """
@@ -9,7 +9,6 @@ import sys
 
 KOK = os.path.dirname(os.path.abspath(__file__))
 ADIMLAR = [
-    ("kasa", "kasa_uret.py"),
     ("flow", "build.py"),
     (".", "yayin_hazirla.py"),
 ]
