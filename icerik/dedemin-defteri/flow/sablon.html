@@ -12,6 +12,13 @@
   --ink-soft:#5b6372;
   --rule:#d9dccf;
   --ledger:#2f6f62;
+  --ledger-soft:#e1efe9;
+  --warn:#8a5a00;
+  --screen:#000000;
+  --screen-ink:#ffffff;
+  --screen-label:#a0a0a0;
+  --screen-up:#00e676;
+  --screen-down:#ff1744;
   --seal:#a8322d;
   --seal-soft:#f6e3e1;
   --code-bg:#eef0e8;
@@ -22,12 +29,12 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
-    --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+    --ledger:#6fbfad; --ledger-soft:#1b2f2a; --warn:#e3b04b; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#141922; --sheet:#1b212c; --ink:#e7e9e2; --ink-soft:#a3a9b4; --rule:#2e3644;
-  --ledger:#6fbfad; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
+  --ledger:#6fbfad; --ledger-soft:#1b2f2a; --warn:#e3b04b; --seal:#e0706a; --seal-soft:#3a2022; --code-bg:#11161e; color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
@@ -147,6 +154,62 @@ details.pr[open] summary::before{content:"▾ "}
 .kvb .val{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .kvb .val.up{color:var(--ledger)}
 .kvb .val.down{color:var(--seal)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ka-entry{display:grid;gap:12px}
+.ka-lbl{font-weight:700;font-size:17px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.ka-lbl small{font-weight:400;font-size:14px;color:var(--ink-soft)}
+.ka-entry textarea{width:100%;display:block;font-family:var(--f-mono);font-size:16px;line-height:1.7;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);border-radius:8px;padding:12px 14px;resize:vertical;min-height:7.2rem}
+.ka-entry textarea:focus-visible{outline:2px solid var(--ledger);outline-offset:2px;border-color:var(--ledger)}
+.ka-ornek{font-weight:600;color:var(--warn)}
+.ka-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ka-h{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.1;margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.ka-h .note{font-family:var(--f-mono);font-weight:400;font-size:13px}
+.ka-clips{display:grid;gap:14px}
+.ka-clip{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:14px;display:grid;gap:12px;min-width:0}
+.ka-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px}
+.ka-head h3{font-size:20px}
+.ka-meta{font-family:var(--f-mono);font-size:12px;color:var(--ink-soft)}
+.ka-main{display:flex;gap:16px;align-items:flex-start;min-width:0}
+.ka-shot{display:grid;gap:6px;justify-items:center;flex:none;max-width:100%}
+.ka-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.ka-frame{--fw:170px;--fh:calc(var(--fw)*16/9);width:var(--fw);aspect-ratio:9/16;background:var(--screen);border:1px solid var(--rule);border-radius:10px;position:relative;overflow:hidden;max-width:100%}
+.ka-counter{position:absolute;top:6%;right:5%;display:grid;justify-items:end;gap:calc(var(--fh)*.004);font-family:var(--f-mono);color:var(--screen-ink);text-align:right}
+.ka-counter .k{font-size:calc(var(--fh)*.02);letter-spacing:.14em;font-weight:600;line-height:1.1;color:var(--screen-label)}
+.ka-counter .b{font-size:calc(var(--fh)*.044);font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ka-counter .c{font-size:calc(var(--fh)*.029);font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ka-counter .c.up{color:var(--screen-up)}
+.ka-counter .c.down{color:var(--screen-down)}
+.ka-facts{margin:0;display:grid;gap:10px;align-content:start;min-width:0;flex:1}
+.ka-facts dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft)}
+.ka-facts dd{margin:2px 0 0;font-family:var(--f-mono);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.ka-facts .dir{font-family:var(--f-body);font-weight:600;font-size:14px;color:var(--ink-soft)}
+.ka-chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;font-family:var(--f-mono);font-weight:700;font-size:14px;white-space:nowrap}
+.ka-chip.up{background:var(--ledger-soft);color:var(--ledger)}
+.ka-chip.down{background:var(--seal-soft);color:var(--seal)}
+.ka-chip.hold{background:var(--code-bg);color:var(--ink-soft)}
+.ka-actions{display:flex;flex-wrap:wrap;gap:8px}
+.ka-err{border-color:var(--warn)}
+.ka-err h3{color:var(--warn)}
+.ka-raw{font-family:var(--f-mono);font-size:14px;background:var(--code-bg);padding:8px 10px;border-radius:8px;overflow-wrap:anywhere}
+.ka-msg{font-weight:600}
+@media (min-width:720px){.ka-frame{--fw:200px}}
+@media (max-width:359px){.ka-main{flex-wrap:wrap}}
+.kayar{border:1px solid var(--rule);border-radius:8px;background:var(--sheet)}
+.kayar>summary{cursor:pointer;min-height:44px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:6px 12px;font-weight:600;list-style:none}
+.kayar>summary::-webkit-details-marker{display:none}
+.kayar>summary::before{content:"▸";color:var(--ink-soft)}
+.kayar[open]>summary::before{content:"▾"}
+.kayar .sum{font-family:var(--f-mono);font-size:12.5px;font-weight:400;color:var(--ink-soft)}
+.kayar-body{display:grid;gap:14px;padding:4px 12px 14px}
+.kseg{display:grid;gap:6px;justify-items:start}
+.kseg-lbl{font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+.kseg-help{font-size:13.5px;color:var(--ink-soft)}
+.kopts{position:relative;display:inline-flex;max-width:100%;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);overflow:hidden}
+.kopts input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.kopts label{display:grid;place-items:center;min-height:44px;padding:0 14px;font-weight:600;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+.kopts label+input+label{border-left:1px solid var(--rule)}
+.kopts input:checked+label{background:var(--ink);color:var(--sheet)}
+.kopts input:focus-visible+label{outline:2px solid var(--ledger);outline-offset:-3px}
 .cliff{padding:16px 20px;background:var(--seal-soft);display:grid;gap:4px}
 .cliff .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
 .season-head{display:grid;gap:8px}
@@ -170,15 +233,24 @@ details.pr[open] summary::before{content:"▾ "}
 
 <script>
 const DATA = /*__DATA__*/null;
+/*__KASA_MOTOR__*/
 const fmt = n => n.toLocaleString("tr-TR") + " ₺";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ROUTES = [{id:"karakterler", ad:"Karakterler"}, {id:"takvim", ad:"Takvim"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
+const ROUTES = [{id:"karakterler", ad:"Karakterler"}, {id:"takvim", ad:"Takvim"}, {id:"kasa", ad:"Kasa aracı"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
 const KEY = "dd-flow-uretildi";
 let made = new Set();
 try { made = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...made])); } catch (e) {} };
 const PROMPTS = new Map();
 let pending = null;
+/* Kasa prompt ayarları. Kasa Prompt Aracı sayfasıyla aynı anahtarı paylaşır. */
+const KC_KEY = "kasa-prompt-ayar";
+const KC = { birim: "₺", gecis: "akici", etiket: "var" };
+try { const c = JSON.parse(localStorage.getItem(KC_KEY) || "null"); if (c) { if (c.birim === "TL") KC.birim = "TL"; if (c.gecis === "anlik") KC.gecis = "anlik"; if (c.etiket === "yok") KC.etiket = "yok"; } } catch (e) {}
+const saveKC = () => { try { localStorage.setItem(KC_KEY, JSON.stringify(KC)); } catch (e) {} };
+const kcOzet = () => [KC.birim, KC.gecis === "anlik" ? "anında değişir" : "akıcı sayar", KC.etiket === "yok" ? "KASA yazısı yok" : "KASA yazısı var"].join(" · ");
+let kcAcik = false;
+const DAT = {1:"e", 2:"ye", 3:"e", 4:"e", 5:"e", 6:"ya"}, LOK = {1:"deki", 2:"deki", 3:"teki", 4:"teki", 5:"teki", 6:"daki"};
 
 const RULES = [
   ["Sahneyi net tanımla", "Mekânı, zamanı ve ana eylemi açık yaz.", "Her prompt'ta LOCATION, TIME AND LIGHT ve ACTION ayrı satırlar. Sahne kartında saat ve yer en üstte."],
@@ -262,7 +334,7 @@ function renderChars(){
     </div>
     <div class="recipe">
       <h3>Kasa videosu</h3>
-      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Arka plan siyah, kasa sağ üst köşede. Sayı, para girip çıktıkça artar ya da azalır ve yeni değerde durur; değişmeyen sahnelerde sabit kalır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa yeniden üret.</p>
+      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Prompt sabittir, yalnızca sayılar değişir: arka plan siyah, kasa sağ üst köşede. Para girince altında yeşil "+" fark, çıkınca kırmızı "−" fark yazar ve bakiye yeni değere gider. Para efekti yoktur. Kasası değişmeyen sahnelerde "sabit kasa" prompt'u var: bakiye 8 saniye boyunca aynı kalır, altında yazı çıkmaz. Aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Para birimi, rakam geçişi ve KASA yazısı ayarları her bölüm listesinin en üstünde. Kendi rakamını yazmak istersen "Kasa aracı" sekmesi var. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa "Anında değişir"i dene ya da yeniden üret.</p>
     </div>
     <div class="chars">${ana.map(card).join("")}</div>
     <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
@@ -286,17 +358,43 @@ function renderCal(){
       <tbody>${rows}</tbody></table></div>`;
 }
 
+function kasaAyarHtml(){
+  const opt = (ad, val, etiket, id) => `<input type="radio" name="kc-${ad}" id="kc-${id}" value="${val}" data-kc="${ad}" ${KC[ad] === val ? "checked" : ""}><label for="kc-${id}">${etiket}</label>`;
+  const grup = (no, baslik, secenekler, yardim) => `<div class="kseg" role="radiogroup" aria-labelledby="kc-l${no}"><span class="kseg-lbl" id="kc-l${no}">${baslik}</span><div class="kopts">${secenekler}</div><span class="kseg-help">${yardim}</span></div>`;
+  return `<details class="kayar" id="kc-ayar" ${kcAcik ? "open" : ""}>
+    <summary>Kasa prompt ayarları <span class="sum">${esc(kcOzet())}</span></summary>
+    <div class="kayar-body">
+      ${grup(1, "Para birimi", opt("birim", "₺", "₺", "try") + opt("birim", "TL", "TL", "tl"), "₺ işareti videoda bozuk çıkarsa TL seç.")}
+      ${grup(2, "Rakamlar", opt("gecis", "akici", "Akıcı sayar", "akici") + opt("gecis", "anlik", "Anında değişir", "anlik"), "Sayarken rakamlar bozuluyorsa anında değişen sürümü dene.")}
+      ${grup(3, "KASA yazısı", opt("etiket", "var", "Var", "var") + opt("etiket", "yok", "Yok", "yok"), "Sayacın üstündeki küçük gri KASA yazısı.")}
+      <p class="note">Ayar değişince bu sayfadaki bütün kasa prompt'ları buna göre güncellenir. Sahne prompt'larına dokunmaz.</p>
+    </div>
+  </details>`;
+}
+
+function sahneListe(a){ return a.length < 2 ? String(a[0]) : a.slice(0, -1).join(", ") + " ve " + a[a.length - 1]; }
+
 function kvBox(b, sc){
   const k = sc.kv, id = b.no + "-" + sc.n + "-k";
-  PROMPTS.set(id, k.prompt);
-  const val = k.tip === "sabit"
-    ? `<p class="val">Sabit: ${fmt(k.simdi)}</p>`
+  const sabit = k.tip === "sabit";
+  const o = sabit ? { sabit: true, old: k.simdi, neu: k.simdi } : { sabit: false, old: k.onceki, neu: k.simdi, abs: Math.abs(k.fark), up: k.fark > 0 };
+  PROMPTS.set(id, KasaMotor.buildPrompt(o, KC));
+  let where = `Sahne ${sc.n}'${DAT[sc.n]} ekle`, same = "";
+  if (sabit) {
+    const g = b.sahneler.filter(x => x.kv && x.kv.tip === "sabit" && x.kv.simdi === k.simdi).map(x => x.n);
+    if (g.length > 1) {
+      if (g[0] === sc.n) where = `Sahne ${sahneListe(g)}'${DAT[g[g.length - 1]]} ekle (aynı klip)`;
+      else { where = `Sahne ${g[0]}'${LOK[g[0]]} klibi kullan`; same = `<p class="note">Bakiye Sahne ${g[0]} ile aynı: o sahne için ürettiğin sabit kasa klibini buraya da koy, yeniden üretme.</p>`; }
+    }
+  }
+  const val = sabit
+    ? `<p class="val">Sabit: ${fmt(k.simdi)} · altta fark yazısı yok</p>`
     : `<p class="val ${k.fark>0?"up":"down"}">${fmt(k.onceki)} → ${fmt(k.simdi)} (${k.fark>0?"+":"−"}${fmt(Math.abs(k.fark))})</p>`;
   const why = k.neden.length ? `<p class="note">${esc(k.neden.join(" · "))}</p>` : "";
   return `<div class="kvb">
-    <div class="top"><span class="lbl">Kasa videosu · sağ üst · siyah arka plan</span><span class="where">Sahne ${sc.n}'e ekle</span></div>
-    ${val}${why}
-    <div class="copyrow">${copyBtn(id, "Kasa prompt'unu kopyala")}
+    <div class="top"><span class="lbl">${sabit ? "Sabit kasa" : "Kasa videosu"} · sağ üst · siyah arka plan</span><span class="where">${esc(where)}</span></div>
+    ${val}${why}${same}
+    <div class="copyrow">${copyBtn(id, sabit ? "Sabit kasa prompt'unu kopyala" : "Kasa prompt'unu kopyala")}
       <label class="made"><input type="checkbox" id="m-${id}" data-made="${id}" ${made.has(id)?"checked":""}> Kasa üretildi</label></div>
     <details class="pr" data-pid="${id}"><summary>Prompt'u göster</summary><pre class="prompt"></pre></details>
   </div>`;
@@ -395,16 +493,157 @@ function renderSeason(id){
       <h2>${esc(s.ad)}</h2>
       <p class="muted">${eps.length} bölüm, ${eps.length*6} sahne. Bölüme gitmek için numaraya dokun. Yeşil numaralar 6 sahnesi de üretilmiş bölümlerdir.</p>
       <div class="jump">${jump}</div>
+      ${kasaAyarHtml()}
     </div>
     ${eps.map(ep).join("")}`;
 }
+
+/* ---------- Kasa aracı sekmesi: serbest giriş ---------- */
+const KA_KEY = "kasa-prompt-giris";
+const KA_ORNEK = "7.000 ₺ → 6.700 ₺ (−300 ₺)\n15.300 ₺ → 16.500 ₺ (+1.200 ₺)\nSabit: 16.500 ₺";
+const KA_EKLE = { down: "7.000 ₺ → 6.700 ₺ (−300 ₺)", up: "15.300 ₺ → 16.500 ₺ (+1.200 ₺)", hold: "Sabit: 16.500 ₺" };
+const KA = { metin: null, clips: [], sigs: [], prev: [], durum: "", timer: 0 };
+function kaYukle(){
+  if (KA.metin === null) { KA.metin = KA_ORNEK; try { const t = localStorage.getItem(KA_KEY); if (t !== null) KA.metin = t; } catch (e) {} }
+  return KA.metin;
+}
+function kaKaydet(t){ KA.metin = t; try { localStorage.setItem(KA_KEY, t); } catch (e) {} }
+const kaPara = n => KasaMotor.fmt(n) + " " + KC.birim;
+
+function kaKart(no, i, o){
+  const sabit = !!o.sabit, cls = o.up ? "up" : "down";
+  const chg = sabit ? "" : (o.up ? "+" : "−") + kaPara(o.abs);
+  const aria = "Önizleme: sağ üstte " + (KC.etiket !== "yok" ? "KASA " : "") + kaPara(o.neu) + (sabit ? ", altında yazı yok" : ", altında " + (o.up ? "yeşil " : "kırmızı ") + chg);
+  const facts = sabit
+    ? `<div><dt>Bakiye</dt><dd>${esc(kaPara(o.neu))}</dd></div><div><dt>Altta yazacak</dt><dd><span class="ka-chip hold">Hiçbir şey</span><span class="dir">sabit kasa</span></dd></div>`
+    : `<div><dt>Başlangıç</dt><dd>${esc(kaPara(o.old))}</dd></div><div><dt>Bitiş</dt><dd>${esc(kaPara(o.neu))}</dd></div><div><dt>Altta yazacak</dt><dd><span class="ka-chip ${cls}">${esc(chg)}</span><span class="dir">${o.up ? "artış" : "azalış"}</span></dd></div>`;
+  return `<article class="ka-clip" data-ka="${i}">
+    <header class="ka-head"><h3>Klip ${no}</h3><span class="ka-meta">${sabit ? "sabit kasa · " : ""}8 sn · 9:16 · siyah zemin</span></header>
+    <div class="ka-main">
+      <div class="ka-shot"><div class="ka-frame" role="img" aria-label="${esc(aria)}"><div class="ka-counter">${KC.etiket !== "yok" ? '<span class="k">KASA</span>' : ""}<span class="b">${esc(kaPara(o.neu))}</span>${sabit ? "" : `<span class="c ${cls}">${esc(chg)}</span>`}</div></div><span class="ka-cap">Önizleme</span></div>
+      <dl class="ka-facts">${facts}</dl>
+    </div>
+    <div class="ka-actions">${copyBtn("ka-" + i, "Prompt'u kopyala")}${sabit ? "" : `<button class="copy alt" type="button" data-kaplay="${i}">Yeniden oynat</button>`}</div>
+    <details class="pr" data-pid="ka-${i}"><summary>Prompt metnini göster</summary><pre class="prompt"></pre></details>
+  </article>`;
+}
+
+function kaHata(it){
+  const fx = (it.r.fixes || []).map(f => `<button class="copy alt" type="button" data-kafix="${it.idx}" data-text="${esc(f.text)}">${esc(f.label)}</button>`).join("");
+  return `<article class="ka-clip ka-err" role="group" aria-label="Satır ${it.idx + 1} düzeltilmeli">
+    <header class="ka-head"><h3>Satır ${it.idx + 1} düzeltilmeli</h3></header>
+    <p class="ka-raw">${esc(it.raw.trim())}</p><p class="ka-msg">${esc(it.r.msg)}</p>${fx ? `<div class="ka-actions">${fx}</div>` : ""}
+  </article>`;
+}
+
+function kaSonucHtml(){
+  const items = [];
+  kaYukle().split(/\r?\n/).forEach((raw, idx) => { if (raw.trim()) items.push({ raw: raw, idx: idx, r: KasaMotor.parseLine(raw) }); });
+  KA.clips.length = 0; KA.sigs = [];
+  let html = "", no = 0, errs = 0;
+  items.forEach(it => {
+    if (it.r && it.r.ok) {
+      const i = KA.clips.length;
+      KA.clips.push(it.r); KA.sigs.push(it.raw.trim() + "|" + KC.birim + KC.gecis + KC.etiket);
+      PROMPTS.set("ka-" + i, KasaMotor.buildPrompt(it.r, KC));
+      html += kaKart(++no, i, it.r);
+    } else { errs++; html += kaHata(it); }
+  });
+  KA.durum = (no ? no + " klip hazır" : "") + (no && errs ? ", " : "") + (errs ? errs + " satır düzeltilmeli" : "");
+  return html || '<p class="note">Henüz satır yok. Yukarıya bir bakiye değişimi yaz ya da örnek ekle.</p>';
+}
+
+function renderKasa(){
+  PROMPTS.clear(); KA.prev = [];
+  const sonuc = kaSonucHtml();
+  return `<div class="season-head">
+      <span class="eyebrow">Serbest giriş</span>
+      <h2>Kasa aracı</h2>
+      <p class="muted">Bakiye değişimini yaz, sahne kutularındaki aynı sabit kasa prompt'u hazır olsun. Her satır bir klip. Kasa değişmiyorsa tek sayı yaz.</p>
+    </div>
+    <div class="ka-entry">
+      <label class="ka-lbl" for="ka-giris">Bakiye değişimi <small>her satır bir klip</small></label>
+      <textarea id="ka-giris" rows="${Math.max(3, Math.min(8, kaYukle().split(/\r?\n/).length + 1))}" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="7.000 ₺ → 6.700 ₺ (−300 ₺)">${esc(kaYukle())}</textarea>
+      <p class="note">Eski bakiye → yeni bakiye (fark) şeklinde yaz. Farkı yazmasan da olur, sayfa hesaplar. Kasa değişmiyorsa tek sayı yaz, örnek: Sabit: 16.500 ₺.</p>
+      <p class="note ka-ornek" id="ka-ornek" ${kaYukle().trim() === KA_ORNEK.trim() ? "" : "hidden"}>Örnek satırlar yüklü. Silip kendi bakiye değişimini yaz.</p>
+      <div class="ka-chips">
+        <button class="copy alt" type="button" data-kaadd="down">Düşüş örneği ekle</button>
+        <button class="copy alt" type="button" data-kaadd="up">Artış örneği ekle</button>
+        <button class="copy alt" type="button" data-kaadd="hold">Sabit kasa örneği ekle</button>
+        <button class="copy alt" type="button" id="ka-temizle">Temizle</button>
+      </div>
+      ${kasaAyarHtml()}
+    </div>
+    <h3 class="ka-h">Promptlar <span class="note" id="ka-adet">${esc(KA.durum)}</span></h3>
+    <div class="ka-clips" id="ka-sonuc">${sonuc}</div>
+    <p class="sr" id="ka-durum" aria-live="polite">${esc(KA.durum)}</p>`;
+}
+
+function kaOynat(frame, o){
+  if (!frame || !o || o.sabit) return;
+  const bal = frame.querySelector(".b"), chg = frame.querySelector(".c");
+  const set = v => { bal.textContent = kaPara(v); };
+  cancelAnimationFrame(frame._raf || 0);
+  const bitir = () => { set(o.neu); chg.style.opacity = "1"; };
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { bitir(); return; }
+  set(o.old); chg.style.opacity = "0";
+  const t0 = performance.now();
+  const adim = now => {
+    const t = (now - t0) / 1000;
+    chg.style.opacity = String(Math.max(0, Math.min(1, (t - 1.0) / 0.4)));
+    if (t < 1.4) set(o.old);
+    else if (KC.gecis === "anlik" || t >= 3.4) set(o.neu);
+    else { const p = (t - 1.4) / 2, e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; set(Math.round(o.old + (o.neu - o.old) * e)); }
+    if (t < 3.5) frame._raf = requestAnimationFrame(adim); else bitir();
+  };
+  frame._raf = requestAnimationFrame(adim);
+}
+
+function kaBaslat(){
+  document.querySelectorAll(".ka-clip[data-ka]").forEach(card => {
+    const i = +card.dataset.ka;
+    if (KA.prev[i] !== KA.sigs[i]) kaOynat(card.querySelector(".ka-frame"), KA.clips[i]);
+  });
+  KA.prev = KA.sigs.slice();
+}
+
+function kaYenile(){
+  const alan = document.getElementById("ka-sonuc");
+  if (!alan) return;
+  [...PROMPTS.keys()].forEach(k => { if (k.startsWith("ka-")) PROMPTS.delete(k); });
+  const ta = document.getElementById("ka-giris");
+  ta.rows = Math.max(3, Math.min(8, KA.metin.split(/\r?\n/).length + 1));
+  alan.innerHTML = kaSonucHtml();
+  document.getElementById("ka-adet").textContent = KA.durum;
+  document.getElementById("ka-durum").textContent = KA.durum;
+  document.getElementById("ka-ornek").hidden = KA.metin.trim() !== KA_ORNEK.trim();
+  kaBaslat();
+}
+
+document.addEventListener("input", e => {
+  if (e.target.id !== "ka-giris") return;
+  kaKaydet(e.target.value);
+  document.getElementById("ka-ornek").hidden = KA.metin.trim() !== KA_ORNEK.trim();
+  clearTimeout(KA.timer); KA.timer = setTimeout(kaYenile, 280);
+});
+document.addEventListener("click", e => {
+  const ta = document.getElementById("ka-giris");
+  const ekle = e.target.closest("[data-kaadd]");
+  if (ekle && ta) { const v = ta.value.replace(/\s+$/, ""); ta.value = (v ? v + "\n" : "") + KA_EKLE[ekle.dataset.kaadd]; kaKaydet(ta.value); kaYenile(); return; }
+  if (e.target.closest("#ka-temizle") && ta) { ta.value = ""; kaKaydet(""); kaYenile(); ta.focus(); return; }
+  const fx = e.target.closest("[data-kafix]");
+  if (fx && ta) { const l = ta.value.split(/\r?\n/); l[+fx.dataset.kafix] = fx.dataset.text; ta.value = l.join("\n"); kaKaydet(ta.value); kaYenile(); return; }
+  const pl = e.target.closest("[data-kaplay]");
+  if (pl) kaOynat(pl.closest(".ka-clip").querySelector(".ka-frame"), KA.clips[+pl.dataset.kaplay]);
+});
 
 function route(){
   const id = (location.hash || "").slice(1);
   const cur = ROUTES.some(r => r.id === id) ? id : "karakterler";
   renderTabs(cur);
   const v = document.getElementById("view");
-  v.innerHTML = cur === "karakterler" ? renderChars() : cur === "takvim" ? renderCal() : renderSeason(cur);
+  v.innerHTML = cur === "karakterler" ? renderChars() : cur === "takvim" ? renderCal() : cur === "kasa" ? renderKasa() : renderSeason(cur);
+  if (cur === "kasa") kaBaslat();
   if (pending) { document.getElementById("ep-" + pending)?.scrollIntoView(); pending = null; }
   else window.scrollTo(0, 0);
 }
@@ -437,11 +676,20 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("toggle", e => {
   const d = e.target;
+  if (d && d.id === "kc-ayar") { kcAcik = d.open; return; }
   if (!d || d.tagName !== "DETAILS" || !d.open || !d.dataset.pid) return;
   const pre = d.querySelector("pre");
   if (pre && !pre.textContent) pre.textContent = PROMPTS.get(d.dataset.pid) || "";
 }, true);
 document.addEventListener("change", e => {
+  const kc = e.target.closest("[data-kc]");
+  if (kc) {
+    KC[kc.dataset.kc] = kc.value; saveKC(); kcAcik = true;
+    const y = window.scrollY, fid = kc.id;
+    route(); window.scrollTo(0, y);
+    document.getElementById(fid)?.focus({ preventScroll: true });
+    return;
+  }
   const m = e.target.closest("[data-made]");
   if (!m) return;
   const id = m.dataset.made;

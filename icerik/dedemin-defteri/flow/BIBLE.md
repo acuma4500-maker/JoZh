@@ -88,8 +88,18 @@ S("07:10 şafak", "A", ["kerem", "elif"],
 - Gümüş anahtar: yarısı B26 Mardin'de, yarısı B50 Trabzon'da.
 - Hüseyin'in mühür yüzüğü: B49'da çalınır, B53'te geri alınır, B95'te Hüseyin'e verilir.
 
-## GitHub Pages yayını
+## Tek sayfa ve GitHub Pages yayını
 
-- Artifact biçimindeki sayfalar (`flow/dedemin-defteri-flow.html`, `kasa/kasa-prompt.html`) tam HTML iskeleti taşımaz. GitHub'dan telefonda doğru açılsınlar diye `python3 icerik/dedemin-defteri/yayin_hazirla.py` bunları `yayin/` klasörüne tam sayfa olarak yazar (build.py'den sonra çalıştır).
+- Tek sayfa vardır: Dedemin Defteri (sahne promptları, sahne kasa kutuları ve "Kasa aracı" sekmesi içinde). Ayrı kasa sayfası yoktur.
+- Artifact biçimindeki sayfa (`flow/dedemin-defteri-flow.html`) tam HTML iskeleti taşımaz. GitHub'dan telefonda doğru açılsın diye `yayin_hazirla.py` onu `yayin/index.html` olarak tam sayfa yazar. Eski adresler (`yayin/dedemin-defteri.html`, `yayin/kasa-prompt.html`) küçük yönlendirme sayfalarıdır.
+- Her şeyi sırayla üretmek için: `python3 icerik/dedemin-defteri/uret.py` (build.py, sonra yayin_hazirla.py).
 - Adres: `https://acuma4500-maker.github.io/JoZh/icerik/dedemin-defteri/yayin/`. `main`'e birleşince Pages kendiliğinden yayınlar.
-- Depo herkese açıktır; sayfalarda `noindex` var ama adresi bilen herkes görebilir.
+- Depo herkese açıktır; sayfada `noindex` var ama adresi bilen herkes görebilir.
+
+## Kasa prompt'u (sabit şablon)
+
+- Tek kaynak: `kasa/kasa-motor.js`. build.py bu dosyayı sayfaya aynen gömer; sahne kasa kutuları ve "Kasa aracı" sekmesi aynı motoru kullanır. Prompt metni Python'da üretilmez.
+- Değişen kasa: siyah zemin, sağ üstte KASA + bakiye, altında yeşil `+` ya da kırmızı `-` fark. Para efekti yok. Süre 8 sn: 1 sn eski bakiye, 1-1,4 sn fark belirir, 1,4-3,4 sn bakiye yeni değere gider, kalanı sabit.
+- Sabit kasa (kasası değişmeyen sahne): aynı sayaç, 8 sn boyunca aynı bakiye, altında yazı yok. Aynı bölümde aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır, sahne kutusu bunu yazar.
+- Ayarlar (para birimi ₺/TL, rakamlar akıcı/anında, KASA yazısı var/yok) `localStorage` anahtarı `kasa-prompt-ayar` ile saklanır; tüm kasa promptlarını birlikte değiştirir.
+- Sahne video prompt'larına dokunulmaz; kasa kutusu her sahne kartının en altında ayrı durur.
