@@ -87,3 +87,9 @@ S("07:10 şafak", "A", ["kerem", "elif"],
 - Uzun yolculuklarda ilk sahne 09:00-09:30 olabilir ("sabahın ilk otobüsü"); önceki bölümün son sahnesi sabaha sarkıyorsa varış saati yol süresine göre kaydırılır.
 - Gümüş anahtar: yarısı B26 Mardin'de, yarısı B50 Trabzon'da.
 - Hüseyin'in mühür yüzüğü: B49'da çalınır, B53'te geri alınır, B95'te Hüseyin'e verilir.
+
+## GitHub Pages yayını
+
+- Artifact biçimindeki sayfalar (`flow/dedemin-defteri-flow.html`, `kasa/kasa-prompt.html`) tam HTML iskeleti taşımaz. GitHub'dan telefonda doğru açılsınlar diye `python3 icerik/dedemin-defteri/yayin_hazirla.py` bunları `yayin/` klasörüne tam sayfa olarak yazar (build.py'den sonra çalıştır).
+- Adres: `https://acuma4500-maker.github.io/JoZh/icerik/dedemin-defteri/yayin/`. `main`'e birleşince Pages kendiliğinden yayınlar.
+- Depo herkese açıktır; sayfalarda `noindex` var ama adresi bilen herkes görebilir.
