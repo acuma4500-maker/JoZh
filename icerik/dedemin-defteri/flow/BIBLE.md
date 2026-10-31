@@ -90,6 +90,14 @@ S("07:10 şafak", "A", ["kerem", "elif"],
 
 ## GitHub Pages yayını
 
-- Artifact biçimindeki sayfalar (`flow/dedemin-defteri-flow.html`, `kasa/kasa-prompt.html`) tam HTML iskeleti taşımaz. GitHub'dan telefonda doğru açılsınlar diye `python3 icerik/dedemin-defteri/yayin_hazirla.py` bunları `yayin/` klasörüne tam sayfa olarak yazar (build.py'den sonra çalıştır).
+- Artifact biçimindeki sayfalar (`flow/dedemin-defteri-flow.html`, `kasa/kasa-prompt.html`) tam HTML iskeleti taşımaz. GitHub'dan telefonda doğru açılsınlar diye `yayin_hazirla.py` bunları `yayin/` klasörüne tam sayfa olarak yazar. Hepsini sırayla üretmek için: `python3 icerik/dedemin-defteri/uret.py` (Kasa Prompt Aracı, Dedemin Defteri sayfası, `yayin/` kopyaları).
 - Adres: `https://acuma4500-maker.github.io/JoZh/icerik/dedemin-defteri/yayin/`. `main`'e birleşince Pages kendiliğinden yayınlar.
 - Depo herkese açıktır; sayfalarda `noindex` var ama adresi bilen herkes görebilir.
+
+## Kasa prompt'u (sabit şablon)
+
+- Tek kaynak: `kasa/kasa-motor.js`. Dedemin Defteri sayfasındaki sahne kasa kutuları ve Kasa Prompt Aracı bu dosyayı build sırasında içine alır; prompt metni artık Python'da üretilmez.
+- Değişen kasa: siyah zemin, sağ üstte KASA + bakiye, altında yeşil `+` ya da kırmızı `-` fark. Para efekti yok. Süre 8 sn: 1 sn eski bakiye, 1-1,4 sn fark belirir, 1,4-3,4 sn bakiye yeni değere gider, kalanı sabit.
+- Sabit kasa (kasası değişmeyen sahne): aynı sayaç, 8 sn boyunca aynı bakiye, altında yazı yok. Aynı bölümde aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır, sahne kutusu bunu yazar.
+- Ayarlar (para birimi ₺/TL, rakamlar akıcı/anında, KASA yazısı var/yok) `localStorage` anahtarı `kasa-prompt-ayar` ile iki sayfada ortaktır (aynı adreste).
+- Sahne video prompt'larına dokunulmaz; kasa kutusu her sahne kartının en altında ayrı durur.

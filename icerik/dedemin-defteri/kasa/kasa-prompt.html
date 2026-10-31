@@ -102,6 +102,7 @@ details.settings[open]>summary::before{transform:rotate(90deg)}
 .chip{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:999px;font-family:var(--f-mono);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .chip.up{background:var(--up-soft);color:var(--up)}
 .chip.down{background:var(--down-soft);color:var(--down)}
+.chip.hold{background:var(--code-bg);color:var(--ink-soft)}
 .actions{display:grid;grid-template-columns:1fr auto;gap:8px}
 details.pr>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--ink-soft)}
 pre.prompt{margin:4px 0 0;padding:12px;background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
@@ -145,11 +146,12 @@ pre.prompt{margin:4px 0 0;padding:12px;background:var(--code-bg);border:1px soli
   <section class="entry" aria-labelledby="lg-giris">
     <label class="big" for="giris"><span id="lg-giris">Bakiye değişimi</span> <small>her satır bir klip</small></label>
     <textarea id="giris" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="7.000 ₺ → 6.700 ₺ (−300 ₺)"></textarea>
-    <p class="hint">Eski bakiye → yeni bakiye (fark) şeklinde yaz. Farkı yazmasan da olur, sayfa hesaplar. Ok yerine -> da kullanabilirsin.</p>
+    <p class="hint">Eski bakiye → yeni bakiye (fark) şeklinde yaz. Farkı yazmasan da olur, sayfa hesaplar. Kasa değişmiyorsa tek sayı yaz, örnek: Sabit: 16.500 ₺. Ok yerine -> da kullanabilirsin.</p>
     <p class="example" id="ornek" hidden>Örnek satırlar yüklü. Silip kendi bakiye değişimini yaz.</p>
     <div class="row">
       <button class="btn" type="button" data-add="down">Düşüş örneği ekle</button>
       <button class="btn" type="button" data-add="up">Artış örneği ekle</button>
+      <button class="btn" type="button" data-add="hold">Sabit kasa örneği ekle</button>
       <button class="btn" type="button" id="temizle">Temizle</button>
     </div>
     <details class="settings" id="ayarlar">
@@ -195,6 +197,7 @@ pre.prompt{margin:4px 0 0;padding:12px;background:var(--code-bg);border:1px soli
         <div><dt>Süre</dt><dd>8 sn, kamera sabit, ses yok.</dd></div>
         <div><dt>Yer</dt><dd>Sağ üst köşe. Sağdan %5, yukarıdan %6.</dd></div>
         <div><dt>Sıra</dt><dd>İlk saniye eski bakiye. 1 sn'de altında fark belirir. 1,4 ile 3,4 sn arasında bakiye yeni değere gider. Kalan süre sabit durur.</dd></div>
+        <div><dt>Sabit kasa</dt><dd>Kasa değişmiyorsa bakiye 8 sn boyunca aynı kalır, altında yazı çıkmaz.</dd></div>
         <div><dt>Renk</dt><dd>Bakiye beyaz. Artış yeşil (+), azalış kırmızı (−).</dd></div>
         <div><dt>Yok</dt><dd>Para efekti, banknot, parıltı, ok, ikon ve ek yazı.</dd></div>
       </dl>
@@ -216,16 +219,15 @@ pre.prompt{margin:4px 0 0;padding:12px;background:var(--code-bg);border:1px soli
 <p class="sr" id="durum" aria-live="polite"></p>
 
 <script>
-(function(){
+/* Kasa promptu motoru. Tek kaynak: "Dedemin Defteri" sayfası ve "Kasa Prompt Aracı" bu dosyayı build sırasında aynen içine alır.
+   parseLine(satır) -> {ok:true, sabit, old, neu, delta, abs, up} ya da {ok:false, msg, fixes?}
+   buildPrompt(o, cfg) -> Flow'a yapıştırılacak sabit İngilizce prompt.
+   cfg = {birim:"₺"|"TL", gecis:"akici"|"anlik", etiket:"var"|"yok"} */
+const KasaMotor = (function(){
 "use strict";
-const DEFAULT_TEXT = "7.000 ₺ → 6.700 ₺ (−300 ₺)\n15.300 ₺ → 16.500 ₺ (+1.200 ₺)";
-const ADD = { down: "7.000 ₺ → 6.700 ₺ (−300 ₺)", up: "15.300 ₺ → 16.500 ₺ (+1.200 ₺)" };
 const MAX = 999999999;
-const K_TEXT = "kasa-prompt-giris", K_CFG = "kasa-prompt-ayar";
-const $ = id => document.getElementById(id);
 const fmt = n => String(Math.abs(Math.trunc(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const sg = n => (n < 0 ? "−" : "+") + fmt(n);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const bad = (msg, extra) => Object.assign({ ok: false, msg: msg }, extra || {});
 const canon = (a, b) => fmt(a) + " ₺ → " + fmt(b) + " ₺ (" + sg(b - a) + " ₺)";
 
@@ -235,6 +237,7 @@ function norm(raw){
     .replace(/[-−–—‒]{1,2}>|=+>|[→➜➝➔⇒>]/g, " → ")
     .replace(/[−–—‒]/g, "-")
     .replace(/₺|\bTRY\b|\bTL\b|\blira\b/gi, " ")
+    .replace(/\b(?:s[aA]b[iİıI]t|k[aA]s[aA])\b:?/gi, " ")
     .replace(/[()\[\]{}]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -267,59 +270,77 @@ function parseLine(raw){
     if (R.length < 1 || R.length > 2 || R[0].sign) return bad("Okun sağına yeni bakiyeyi, istersen parantez içinde farkı yaz: 7.000 ₺ → 6.700 ₺ (−300 ₺)");
     old = L[0].val; neu = R[0].val;
     if (R[1]) typed = { sign: R[1].sign === "-" ? -1 : R[1].sign === "+" ? 1 : 0, val: R[1].val };
+  } else if (toks.length === 1 && !toks[0].sign) {
+    old = neu = toks[0].val;
   } else if (toks.length === 2 && !toks[0].sign && toks[1].sign) {
     old = toks[0].val;
     typed = { sign: toks[1].sign === "-" ? -1 : 1, val: toks[1].val };
     neu = old + typed.sign * typed.val;
   } else {
-    return bad("Eski ve yeni bakiyenin arasına → koy. Örnek: 7.000 ₺ → 6.700 ₺ (−300 ₺)");
+    return bad("Eski ve yeni bakiyenin arasına → koy. Örnek: 7.000 ₺ → 6.700 ₺ (−300 ₺). Kasa değişmiyorsa tek sayı yaz: 7.000 ₺");
   }
 
   if (old > MAX || neu > MAX || (typed && typed.val > MAX)) return bad("Sayı çok büyük. En fazla " + fmt(MAX) + " ₺ yazabilirsin.");
   if (neu < 0) return bad("Yeni bakiye eksiye düşüyor (" + sg(neu) + " ₺). Kasa eksiye inmez, sayıları kontrol et.");
   const calc = neu - old;
-  if (calc === 0) return bad("Fark 0 ₺. Kasa değişmiyor, bu satır için klip gerekmiyor.");
-  if (typed) {
-    const t = typed.sign === 0 ? Math.sign(calc) * typed.val : typed.sign * typed.val;
-    if (t !== calc) {
-      const fixes = [{ label: "Bakiyeleri kullan (" + sg(calc) + " ₺)", text: canon(old, neu) }];
-      if (old + t >= 0 && t !== 0 && old + t <= MAX) fixes.push({ label: "Farkı kullan (yeni bakiye " + fmt(old + t) + " ₺)", text: canon(old, old + t) });
-      return bad("Fark tutmuyor: " + fmt(old) + " ₺ ile " + fmt(neu) + " ₺ arası " + sg(calc) + " ₺, ama sen " + sg(t) + " ₺ yazmışsın.", { fixes: fixes });
-    }
+  const t = !typed ? calc : typed.sign !== 0 ? typed.sign * typed.val : (calc === 0 ? typed.val : Math.sign(calc) * typed.val);
+  if (t !== calc) {
+    const fixes = [{
+      label: calc === 0 ? "Bakiyeleri kullan (sabit kasa)" : "Bakiyeleri kullan (" + sg(calc) + " ₺)",
+      text: calc === 0 ? fmt(old) + " ₺" : canon(old, neu)
+    }];
+    if (t !== 0 && old + t >= 0 && old + t <= MAX) fixes.push({ label: "Farkı kullan (yeni bakiye " + fmt(old + t) + " ₺)", text: canon(old, old + t) });
+    return bad("Fark tutmuyor: " + fmt(old) + " ₺ ile " + fmt(neu) + " ₺ arası " + (calc === 0 ? "fark yok" : sg(calc) + " ₺") + ", ama sen " + sg(t) + " ₺ yazmışsın.", { fixes: fixes });
   }
-  return { ok: true, old: old, neu: neu, delta: calc, abs: Math.abs(calc), up: calc > 0 };
+  if (calc === 0) return { ok: true, sabit: true, old: old, neu: neu, delta: 0, abs: 0, up: false };
+  return { ok: true, sabit: false, old: old, neu: neu, delta: calc, abs: Math.abs(calc), up: calc > 0 };
 }
 
 /* ---------- sabit prompt ---------- */
 function buildPrompt(o, cfg){
-  const U = cfg.birim === "TL" ? "TL" : "₺";
-  const lab = cfg.etiket !== "yok";
+  const U = cfg && cfg.birim === "TL" ? "TL" : "₺";
+  const lab = !(cfg && cfg.etiket === "yok");
+  const anlik = !!(cfg && cfg.gecis === "anlik");
   const money = n => fmt(n) + " " + U;
   const b0 = money(o.old), b1 = money(o.neu);
+  const sabit = !!o.sabit;
   const chg = (o.up ? "+" : "-") + money(o.abs);
   const colorTxt = o.up ? "bright GREEN (#00E676)" : "bright RED (#FF1744)";
   const colorWord = o.up ? "green" : "red";
   const dir = o.up ? "UP" : "DOWN";
+  const balSize = "Its digits are about 3.2% of the frame height tall and it is the largest element";
 
   const stack = [];
   if (lab) stack.push("the label \"KASA\" in light grey (#A0A0A0), tiny capital letters, about 45% of the balance size");
-  stack.push("the BALANCE in bold white (#FFFFFF) monospaced cash-register digits followed by the currency sign, written exactly \"" + b0 + "\" at the start. Its digits are about 3.2% of the frame height tall and it is the largest element");
-  stack.push("directly under the balance, with a small gap, the CHANGE line in " + colorTxt + ": \"" + chg + "\". Bold, same monospaced font, about 65% of the balance size");
-  const layout = stack.map((t, i) => (i + 1) + ") " + t + (i < stack.length - 1 ? ";" : ".")).join("\n");
-
-  const first = lab ? "only \"KASA\" and the balance \"" + b0 + "\" are visible" : "only the balance \"" + b0 + "\" is visible";
-  const tl = [
-    "0.0-1.0 s: " + first + ", perfectly still. The change line is not visible yet.",
-    "1.0-1.4 s: the change line \"" + chg + "\" fades in directly under the balance. Nothing else moves."
-  ];
-  if (cfg.gecis === "anlik") {
-    tl.push("1.4 s: the balance changes instantly, in a single frame, from \"" + b0 + "\" to \"" + b1 + "\". No counting, no rolling, no fade, no animation.");
-    tl.push("1.4-8.0 s: everything stays frozen. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+  if (sabit) {
+    stack.push("the BALANCE in bold white (#FFFFFF) monospaced cash-register digits followed by the currency sign, written exactly \"" + b0 + "\". " + balSize);
   } else {
-    tl.push("1.4-3.4 s: the balance counts smoothly " + dir + " from \"" + b0 + "\" to \"" + b1 + "\": the digits roll in place like a simple counter, in one direction only, without flicker and without overshooting.");
-    tl.push("3.4-8.0 s: everything freezes. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+    stack.push("the BALANCE in bold white (#FFFFFF) monospaced cash-register digits followed by the currency sign, written exactly \"" + b0 + "\" at the start. " + balSize);
+    stack.push("directly under the balance, with a small gap, the CHANGE line in " + colorTxt + ": \"" + chg + "\". Bold, same monospaced font, about 65% of the balance size");
   }
-  const texts = (lab ? "\"KASA\", " : "") + "\"" + b0 + "\", \"" + b1 + "\" and \"" + chg + "\"";
+  const layout = stack.map((t, i) => (i + 1) + ") " + t + (i < stack.length - 1 ? ";" : ".")).join("\n")
+    + (sabit ? "\nThere is no change line: nothing appears under the balance." : "");
+
+  let tl;
+  if (sabit) {
+    tl = ["0.0-8.0 s: " + (lab ? "\"KASA\" and the balance \"" + b0 + "\" are" : "the balance \"" + b0 + "\" is") + " visible and perfectly still for the entire video. Nothing changes, nothing moves and nothing else appears."];
+  } else {
+    const first = lab ? "only \"KASA\" and the balance \"" + b0 + "\" are visible" : "only the balance \"" + b0 + "\" is visible";
+    tl = [
+      "0.0-1.0 s: " + first + ", perfectly still. The change line is not visible yet.",
+      "1.0-1.4 s: the change line \"" + chg + "\" fades in directly under the balance. Nothing else moves."
+    ];
+    if (anlik) {
+      tl.push("1.4 s: the balance changes instantly, in a single frame, from \"" + b0 + "\" to \"" + b1 + "\". No counting, no rolling, no fade, no animation.");
+      tl.push("1.4-8.0 s: everything stays frozen. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+    } else {
+      tl.push("1.4-3.4 s: the balance counts smoothly " + dir + " from \"" + b0 + "\" to \"" + b1 + "\": the digits roll in place like a simple counter, in one direction only, without flicker and without overshooting.");
+      tl.push("3.4-8.0 s: everything freezes. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+    }
+  }
+  const texts = sabit
+    ? (lab ? "\"KASA\" and \"" + b0 + "\"" : "\"" + b0 + "\"")
+    : (lab ? "\"KASA\", " : "") + "\"" + b0 + "\", \"" + b1 + "\" and \"" + chg + "\"";
 
   return [
     "Vertical 9:16 video, 8 seconds. Flat 2D motion-graphics overlay, not a cinematic scene. PURE SOLID BLACK background (#000000) filling the entire frame, made to be layered over another video with a Screen / Lighten blend mode. Locked static camera: no movement, no zoom, no cuts, no transitions. Silent: no sound, no music.",
@@ -329,6 +350,17 @@ function buildPrompt(o, cfg){
     "AVOID: money effects, banknotes, coins, particles, sparkles, glow, light rays, shine, bloom, confetti, arrows, icons, boxes, borders, shadows, gradients, vignette, film grain, textures, characters, hands, objects, scenery, extra text, subtitles, logos, watermarks."
   ].join("\n\n");
 }
+
+return { MAX: MAX, fmt: fmt, sg: sg, canon: canon, parseLine: parseLine, buildPrompt: buildPrompt };
+})();
+(function(){
+"use strict";
+const { fmt, parseLine, buildPrompt } = KasaMotor;
+const DEFAULT_TEXT = "7.000 ₺ → 6.700 ₺ (−300 ₺)\n15.300 ₺ → 16.500 ₺ (+1.200 ₺)\nSabit: 16.500 ₺";
+const ADD = { down: "7.000 ₺ → 6.700 ₺ (−300 ₺)", up: "15.300 ₺ → 16.500 ₺ (+1.200 ₺)", hold: "Sabit: 16.500 ₺" };
+const K_TEXT = "kasa-prompt-giris", K_CFG = "kasa-prompt-ayar";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 /* ---------- ayar ve kayıt ---------- */
 const ta = $("giris"), res = $("sonuc");
@@ -350,7 +382,7 @@ function restore(){
 
 /* ---------- önizleme animasyonu (prompt'taki sıranın aynısı) ---------- */
 function play(frame, o, c){
-  if (!frame) return;
+  if (!frame || o.sabit) return;
   const bal = frame.querySelector(".b"), chg = frame.querySelector(".c");
   const U = c.birim === "TL" ? "TL" : "₺";
   const set = v => { bal.textContent = fmt(v) + " " + U; };
@@ -380,22 +412,25 @@ let prevSigs = [];
 function clipCard(no, i, o, c){
   const U = c.birim === "TL" ? "TL" : "₺";
   const m = n => fmt(n) + " " + U;
+  const sabit = !!o.sabit;
   const cls = o.up ? "up" : "down";
-  const chg = (o.up ? "+" : "−") + m(o.abs);
-  const aria = "Önizleme: sağ üstte " + (c.etiket !== "yok" ? "KASA " : "") + m(o.neu) + ", altında " + (o.up ? "yeşil " : "kırmızı ") + chg;
+  const chg = sabit ? "" : (o.up ? "+" : "−") + m(o.abs);
+  const aria = "Önizleme: sağ üstte " + (c.etiket !== "yok" ? "KASA " : "") + m(o.neu) + (sabit ? ", altında yazı yok" : ", altında " + (o.up ? "yeşil " : "kırmızı ") + chg);
+  const facts = sabit
+    ? '<div><dt>Bakiye</dt><dd>' + esc(m(o.neu)) + '</dd></div>' +
+      '<div><dt>Altta yazacak</dt><dd><span class="chip hold">Hiçbir şey</span><span class="dir">sabit kasa</span></dd></div>'
+    : '<div><dt>Başlangıç</dt><dd>' + esc(m(o.old)) + '</dd></div>' +
+      '<div><dt>Bitiş</dt><dd>' + esc(m(o.neu)) + '</dd></div>' +
+      '<div><dt>Altta yazacak</dt><dd><span class="chip ' + cls + '">' + esc(chg) + '</span><span class="dir">' + (o.up ? "artış" : "azalış") + '</span></dd></div>';
   return '<article class="clip" data-i="' + i + '">' +
-    '<header class="clip-head"><h3>Klip ' + no + '</h3><span class="meta">8 sn · 9:16 · siyah zemin</span></header>' +
+    '<header class="clip-head"><h3>Klip ' + no + '</h3><span class="meta">' + (sabit ? "sabit kasa · " : "") + '8 sn · 9:16 · siyah zemin</span></header>' +
     '<div class="clip-main">' +
       '<div class="shot"><div class="frame" role="img" aria-label="' + esc(aria) + '"><div class="counter">' +
         (c.etiket !== "yok" ? '<span class="k">KASA</span>' : '') +
-        '<span class="b">' + esc(m(o.neu)) + '</span><span class="c ' + cls + '">' + esc(chg) + '</span></div></div><span class="cap">Önizleme</span></div>' +
-      '<dl class="facts">' +
-        '<div><dt>Başlangıç</dt><dd>' + esc(m(o.old)) + '</dd></div>' +
-        '<div><dt>Bitiş</dt><dd>' + esc(m(o.neu)) + '</dd></div>' +
-        '<div><dt>Altta yazacak</dt><dd><span class="chip ' + cls + '">' + esc(chg) + '</span><span class="dir">' + (o.up ? "artış" : "azalış") + '</span></dd></div>' +
-      '</dl>' +
+        '<span class="b">' + esc(m(o.neu)) + '</span>' + (sabit ? '' : '<span class="c ' + cls + '">' + esc(chg) + '</span>') + '</div></div><span class="cap">Önizleme</span></div>' +
+      '<dl class="facts">' + facts + '</dl>' +
     '</div>' +
-    '<div class="actions"><button class="btn primary" type="button" data-copy="' + i + '">Prompt\'u kopyala</button><button class="btn" type="button" data-play="' + i + '">Yeniden oynat</button></div>' +
+    '<div class="actions"><button class="btn primary" type="button" data-copy="' + i + '">Prompt\'u kopyala</button>' + (sabit ? '' : '<button class="btn" type="button" data-play="' + i + '">Yeniden oynat</button>') + '</div>' +
     '<details class="pr"><summary>Prompt metnini göster</summary><pre class="prompt" tabindex="0" data-pre="' + i + '"></pre></details>' +
   '</article>';
 }
@@ -498,6 +533,6 @@ document.addEventListener("click", e => {
 
 restore();
 render();
-window.KasaPrompt = { parseLine: parseLine, buildPrompt: buildPrompt, fmt: fmt };
+window.KasaPrompt = KasaMotor;
 })();
 </script>

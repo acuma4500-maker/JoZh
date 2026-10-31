@@ -147,6 +147,22 @@ details.pr[open] summary::before{content:"▾ "}
 .kvb .val{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .kvb .val.up{color:var(--ledger)}
 .kvb .val.down{color:var(--seal)}
+.kayar{border:1px solid var(--rule);border-radius:8px;background:var(--sheet)}
+.kayar>summary{cursor:pointer;min-height:44px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:6px 12px;font-weight:600;list-style:none}
+.kayar>summary::-webkit-details-marker{display:none}
+.kayar>summary::before{content:"▸";color:var(--ink-soft)}
+.kayar[open]>summary::before{content:"▾"}
+.kayar .sum{font-family:var(--f-mono);font-size:12.5px;font-weight:400;color:var(--ink-soft)}
+.kayar-body{display:grid;gap:14px;padding:4px 12px 14px}
+.kseg{display:grid;gap:6px;justify-items:start}
+.kseg-lbl{font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+.kseg-help{font-size:13.5px;color:var(--ink-soft)}
+.kopts{position:relative;display:inline-flex;max-width:100%;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);overflow:hidden}
+.kopts input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.kopts label{display:grid;place-items:center;min-height:44px;padding:0 14px;font-weight:600;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+.kopts label+input+label{border-left:1px solid var(--rule)}
+.kopts input:checked+label{background:var(--ink);color:var(--sheet)}
+.kopts input:focus-visible+label{outline:2px solid var(--ledger);outline-offset:-3px}
 .cliff{padding:16px 20px;background:var(--seal-soft);display:grid;gap:4px}
 .cliff .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--seal)}
 .season-head{display:grid;gap:8px}
@@ -170,6 +186,7 @@ details.pr[open] summary::before{content:"▾ "}
 
 <script>
 const DATA = /*__DATA__*/null;
+/*__KASA_MOTOR__*/
 const fmt = n => n.toLocaleString("tr-TR") + " ₺";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ROUTES = [{id:"karakterler", ad:"Karakterler"}, {id:"takvim", ad:"Takvim"}].concat(DATA.sezonlar.map(s => ({id:s.id, ad:s.ad})));
@@ -179,6 +196,14 @@ try { made = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e)
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...made])); } catch (e) {} };
 const PROMPTS = new Map();
 let pending = null;
+/* Kasa prompt ayarları. Kasa Prompt Aracı sayfasıyla aynı anahtarı paylaşır. */
+const KC_KEY = "kasa-prompt-ayar";
+const KC = { birim: "₺", gecis: "akici", etiket: "var" };
+try { const c = JSON.parse(localStorage.getItem(KC_KEY) || "null"); if (c) { if (c.birim === "TL") KC.birim = "TL"; if (c.gecis === "anlik") KC.gecis = "anlik"; if (c.etiket === "yok") KC.etiket = "yok"; } } catch (e) {}
+const saveKC = () => { try { localStorage.setItem(KC_KEY, JSON.stringify(KC)); } catch (e) {} };
+const kcOzet = () => [KC.birim, KC.gecis === "anlik" ? "anında değişir" : "akıcı sayar", KC.etiket === "yok" ? "KASA yazısı yok" : "KASA yazısı var"].join(" · ");
+let kcAcik = false;
+const DAT = {1:"e", 2:"ye", 3:"e", 4:"e", 5:"e", 6:"ya"}, LOK = {1:"deki", 2:"deki", 3:"teki", 4:"teki", 5:"teki", 6:"daki"};
 
 const RULES = [
   ["Sahneyi net tanımla", "Mekânı, zamanı ve ana eylemi açık yaz.", "Her prompt'ta LOCATION, TIME AND LIGHT ve ACTION ayrı satırlar. Sahne kartında saat ve yer en üstte."],
@@ -262,7 +287,7 @@ function renderChars(){
     </div>
     <div class="recipe">
       <h3>Kasa videosu</h3>
-      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Arka plan siyah, kasa sağ üst köşede. Sayı, para girip çıktıkça artar ya da azalır ve yeni değerde durur; değişmeyen sahnelerde sabit kalır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa yeniden üret.</p>
+      <p class="muted">Bölüm 4'ten itibaren her sahnenin altında o sahneye eklenecek bir kasa videosu prompt'u var. Prompt sabittir, yalnızca sayılar değişir: arka plan siyah, kasa sağ üst köşede. Para girince altında yeşil "+" fark, çıkınca kırmızı "−" fark yazar ve bakiye yeni değere gider. Para efekti yoktur. Kasası değişmeyen sahnelerde "sabit kasa" prompt'u var: bakiye 8 saniye boyunca aynı kalır, altında yazı çıkmaz. Aynı bakiyeyi taşıyan sabit sahneler tek klibi paylaşır. Videoyu indirip sahnenin üstüne koy, karıştırma modunu "Ekran" (Screen) ya da "Aydınlat" (Lighten) yap. Para birimi, rakam geçişi ve KASA yazısı ayarları her bölüm listesinin en üstünde. Yapay zekâ rakamları bazen bozar; sayıyı kontrol et, bozuksa "Anında değişir"i dene ya da yeniden üret.</p>
     </div>
     <div class="chars">${ana.map(card).join("")}</div>
     <div class="season-head"><span class="eyebrow">Geçmiş sahneleri</span><h2>1979 hâlleri</h2>
@@ -286,17 +311,43 @@ function renderCal(){
       <tbody>${rows}</tbody></table></div>`;
 }
 
+function kasaAyarHtml(){
+  const opt = (ad, val, etiket, id) => `<input type="radio" name="kc-${ad}" id="kc-${id}" value="${val}" data-kc="${ad}" ${KC[ad] === val ? "checked" : ""}><label for="kc-${id}">${etiket}</label>`;
+  const grup = (no, baslik, secenekler, yardim) => `<div class="kseg" role="radiogroup" aria-labelledby="kc-l${no}"><span class="kseg-lbl" id="kc-l${no}">${baslik}</span><div class="kopts">${secenekler}</div><span class="kseg-help">${yardim}</span></div>`;
+  return `<details class="kayar" id="kc-ayar" ${kcAcik ? "open" : ""}>
+    <summary>Kasa prompt ayarları <span class="sum">${esc(kcOzet())}</span></summary>
+    <div class="kayar-body">
+      ${grup(1, "Para birimi", opt("birim", "₺", "₺", "try") + opt("birim", "TL", "TL", "tl"), "₺ işareti videoda bozuk çıkarsa TL seç.")}
+      ${grup(2, "Rakamlar", opt("gecis", "akici", "Akıcı sayar", "akici") + opt("gecis", "anlik", "Anında değişir", "anlik"), "Sayarken rakamlar bozuluyorsa anında değişen sürümü dene.")}
+      ${grup(3, "KASA yazısı", opt("etiket", "var", "Var", "var") + opt("etiket", "yok", "Yok", "yok"), "Sayacın üstündeki küçük gri KASA yazısı.")}
+      <p class="note">Ayar değişince bu sayfadaki bütün kasa prompt'ları buna göre güncellenir. Sahne prompt'larına dokunmaz.</p>
+    </div>
+  </details>`;
+}
+
+function sahneListe(a){ return a.length < 2 ? String(a[0]) : a.slice(0, -1).join(", ") + " ve " + a[a.length - 1]; }
+
 function kvBox(b, sc){
   const k = sc.kv, id = b.no + "-" + sc.n + "-k";
-  PROMPTS.set(id, k.prompt);
-  const val = k.tip === "sabit"
-    ? `<p class="val">Sabit: ${fmt(k.simdi)}</p>`
+  const sabit = k.tip === "sabit";
+  const o = sabit ? { sabit: true, old: k.simdi, neu: k.simdi } : { sabit: false, old: k.onceki, neu: k.simdi, abs: Math.abs(k.fark), up: k.fark > 0 };
+  PROMPTS.set(id, KasaMotor.buildPrompt(o, KC));
+  let where = `Sahne ${sc.n}'${DAT[sc.n]} ekle`, same = "";
+  if (sabit) {
+    const g = b.sahneler.filter(x => x.kv && x.kv.tip === "sabit" && x.kv.simdi === k.simdi).map(x => x.n);
+    if (g.length > 1) {
+      if (g[0] === sc.n) where = `Sahne ${sahneListe(g)}'${DAT[g[g.length - 1]]} ekle (aynı klip)`;
+      else { where = `Sahne ${g[0]}'${LOK[g[0]]} klibi kullan`; same = `<p class="note">Bakiye Sahne ${g[0]} ile aynı: o sahne için ürettiğin sabit kasa klibini buraya da koy, yeniden üretme.</p>`; }
+    }
+  }
+  const val = sabit
+    ? `<p class="val">Sabit: ${fmt(k.simdi)} · altta fark yazısı yok</p>`
     : `<p class="val ${k.fark>0?"up":"down"}">${fmt(k.onceki)} → ${fmt(k.simdi)} (${k.fark>0?"+":"−"}${fmt(Math.abs(k.fark))})</p>`;
   const why = k.neden.length ? `<p class="note">${esc(k.neden.join(" · "))}</p>` : "";
   return `<div class="kvb">
-    <div class="top"><span class="lbl">Kasa videosu · sağ üst · siyah arka plan</span><span class="where">Sahne ${sc.n}'e ekle</span></div>
-    ${val}${why}
-    <div class="copyrow">${copyBtn(id, "Kasa prompt'unu kopyala")}
+    <div class="top"><span class="lbl">${sabit ? "Sabit kasa" : "Kasa videosu"} · sağ üst · siyah arka plan</span><span class="where">${esc(where)}</span></div>
+    ${val}${why}${same}
+    <div class="copyrow">${copyBtn(id, sabit ? "Sabit kasa prompt'unu kopyala" : "Kasa prompt'unu kopyala")}
       <label class="made"><input type="checkbox" id="m-${id}" data-made="${id}" ${made.has(id)?"checked":""}> Kasa üretildi</label></div>
     <details class="pr" data-pid="${id}"><summary>Prompt'u göster</summary><pre class="prompt"></pre></details>
   </div>`;
@@ -395,6 +446,7 @@ function renderSeason(id){
       <h2>${esc(s.ad)}</h2>
       <p class="muted">${eps.length} bölüm, ${eps.length*6} sahne. Bölüme gitmek için numaraya dokun. Yeşil numaralar 6 sahnesi de üretilmiş bölümlerdir.</p>
       <div class="jump">${jump}</div>
+      ${kasaAyarHtml()}
     </div>
     ${eps.map(ep).join("")}`;
 }
@@ -437,11 +489,20 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("toggle", e => {
   const d = e.target;
+  if (d && d.id === "kc-ayar") { kcAcik = d.open; return; }
   if (!d || d.tagName !== "DETAILS" || !d.open || !d.dataset.pid) return;
   const pre = d.querySelector("pre");
   if (pre && !pre.textContent) pre.textContent = PROMPTS.get(d.dataset.pid) || "";
 }, true);
 document.addEventListener("change", e => {
+  const kc = e.target.closest("[data-kc]");
+  if (kc) {
+    KC[kc.dataset.kc] = kc.value; saveKC(); kcAcik = true;
+    const y = window.scrollY, fid = kc.id;
+    route(); window.scrollTo(0, y);
+    document.getElementById(fid)?.focus({ preventScroll: true });
+    return;
+  }
   const m = e.target.closest("[data-made]");
   if (!m) return;
   const id = m.dataset.made;

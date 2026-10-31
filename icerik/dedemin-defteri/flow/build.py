@@ -152,38 +152,12 @@ def saat_goster(z):
 
 
 # ---------------------------------------------------------------- kasa
-KV_ORTAK = ("Vertical 9:16 video, 8 seconds, PURE SOLID BLACK background (#000000) filling the entire frame, "
-            "made to be layered over another video with a Screen / Lighten blend mode. "
-            "Absolutely nothing else in the frame: no scene, no characters, no gradient, no vignette, no texture, "
-            "no glow spilling across the screen, locked static camera, no camera movement, no sound, no music.\n\n"
-            "LAYOUT: only in the TOP RIGHT corner (about 6% from the top edge and 5% from the right edge) sits one compact "
-            "cash counter widget: a small flat banknote icon, the small label \"KASA\", and under it a large bold "
-            "odometer-style number followed by the Turkish lira sign. The widget is at most 38% of the frame width and 9% "
-            "of the frame height. All the rest of the frame stays pure black.\n\n")
-
-
+# Kasa prompt'u sayfada, ../kasa/kasa-motor.js ile üretilir (ayarlara göre). Burada yalnızca kasa olayı kaydedilir.
 def kasa_video(onceki, simdi, parts, no):
     fark = simdi - onceki
-    if fark == 0:
-        tip = "sabit"
-        anim = ("ANIMATION: the counter stays perfectly still for all 8 seconds showing exactly \"%s\" in clean white-gold "
-                "glowing digits, with only a very faint soft pulse of light. The digits never change." % tl(simdi))
-    else:
-        yon = "increasing" if fark > 0 else "decreasing"
-        renk = "bright green" if fark > 0 else "bright red"
-        tip = "artis" if fark > 0 else "azalis"
-        efekt = ("a few small gold coins and banknotes sparkle and fly into the widget" if fark > 0
-                 else "a few banknotes slide out of the widget and fade away")
-        anim = ("ANIMATION: seconds 0 to 1: the counter holds still on exactly \"%s\" in white-gold digits. "
-                "Seconds 1 to 5.5: the digits roll smoothly like a mechanical odometer, the value %s continuously through "
-                "intermediate values, the glow turns %s, and %s. At about second 5.5 the number lands exactly on \"%s\". "
-                "Seconds 5.5 to 8: the counter holds still on exactly \"%s\", glow returns to white-gold. "
-                "A tiny change label \"%s\" appears under the number from second 1 and fades out at second 6." % (
-                    tl(onceki), yon, renk, efekt, tl(simdi), tl(simdi), isaretli(fark)))
-    son = ("\n\nTEXT RULES: the only characters allowed in the whole video are \"KASA\", the numbers and the ₺ sign shown above; "
-           "digits must be sharp, perfectly legible, evenly spaced and never distorted or morphing into other characters.")
+    tip = "sabit" if fark == 0 else ("artis" if fark > 0 else "azalis")
     return dict(onceki=onceki, simdi=simdi, fark=fark, tip=tip, no=no,
-                neden=[a + " " + isaretli(d) for a, d in parts], prompt=KV_ORTAK + anim + son)
+                neden=[a + " " + isaretli(d) for a, d in parts])
 
 
 def kasa_akisi(r, ep):
@@ -449,6 +423,10 @@ if __name__ == "__main__":
     js = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     assert "/*__DATA__*/null" in html
     html = html.replace("/*__DATA__*/null", js)
+    with io.open(os.path.join(HERE, "..", "kasa", "kasa-motor.js"), encoding="utf-8") as fh:
+        motor = fh.read().strip("\n")
+    assert "/*__KASA_MOTOR__*/" in html
+    html = html.replace("/*__KASA_MOTOR__*/", motor)
     out = os.path.join(HERE, "dedemin-defteri-flow.html")
     with io.open(out, "w", encoding="utf-8") as fh:
         fh.write(html)
