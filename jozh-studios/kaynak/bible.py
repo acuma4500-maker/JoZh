@@ -94,7 +94,7 @@ SEZONLAR = [
          hikaye="Nemli sıcak, narenciye, sera ve deniz. Antalya'da Ali'nin evine dönüş: Hasan'ın serası, borç ve bir aile meselesi. "
                 "Hasan onlara eski beyaz kamyoneti verir; artık mallarını kendileri taşırlar.",
          hedef="100.000 TL'lik üçüncü taksit ve kamyonetle daha büyük alımlar.",
-         orta="Kahramanmaraş'ta dondurma ustası Mert'i kandırır (geleneksel şov); Mersin'de kamyonetin lastiği patlar. "
+         orta="Kahramanmaraş'ta dondurma ustası Mert'i yedi kez kandırır (geleneksel şov); Anamur'da muz seralarının önünde Mert kendi kuralını hatırlar. "
               "Antalya'da Ali, babasının serası için kasadan para istemez: 'Önce söz verdiğimiz borç.'",
          final="Burdur'da Salda Gölü kıyısında üçüncü taksit. Mert ilk kez Ali'ye kasanın anahtarını tamamen bırakır.",
          gecis="Ege'ye iniş: Denizli'nin havluları ve Pamukkale.", taksit=100000),
