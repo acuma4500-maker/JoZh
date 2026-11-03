@@ -647,7 +647,7 @@
     }
     $("#view").innerHTML = html;
     $("#nav").innerHTML = navHtml(cur);
-    document.title = (($("#view h1") || {}).textContent || "Panel") + " · JOZH STUDIOS";
+    document.title = parts[0] === "" ? "JOZH STUDIOS · 81 Şehir" : (($("#view h1") || {}).textContent || "Panel") + " · JOZH STUDIOS";
     if (yol !== sonYol) { window.scrollTo(0, 0); sonYol = yol; if (parts[0] !== "kasa") sonEklenen = null; }
     menuKapat();
   }
@@ -794,7 +794,8 @@
       const out = $("#serbest-sonuc");
       if (a == null || b == null) { out.innerHTML = `<p class="form-err">İki bakiyeyi de tam lira olarak yaz.</p>`; return; }
       out.innerHTML = promptKutu("serbest", kasaPrompt(a, b), a === b ? "Sabit kasa prompt'u" : (b > a ? "Artış prompt'u (" : "Azalış prompt'u (") + (a === b ? "" : isaretli(b - a) + ")"));
-      const d = out.querySelector("details"); if (d) d.open = true;
+      const d = out.querySelector("details");
+      if (d) { d.querySelector("pre").textContent = PROMPTS.get("serbest"); d.open = true; }
     }
   });
 
