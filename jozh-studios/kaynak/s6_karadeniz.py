@@ -711,7 +711,7 @@ EP(65, "Ordu", "Fındığın Başkenti",
 # ======================================================================= 66 GİRESUN
 EP(66, "Giresun", "Tombul Fındık",
    "Giresun Adası'na fırtınada tekne, tombul fındık ve kalede kutu planı.",
-   "Giresun'da sabah Mert, Karadeniz'in tek adası Giresun Adası'na gitmek ister; dalgalar yüksektir ve tekneci ancak kıyıdan uzakta bir "
+   "Giresun'da sabah Mert, Doğu Karadeniz'in tek adası Giresun Adası'na gitmek ister; dalgalar yüksektir ve tekneci ancak kıyıdan uzakta bir "
    "tur atar. Bir fındık işleme tesisinde Giresun'un ünlü tombul fındığını görür, kutu için 75 kilo iç fındık alırlar. Öğlen Giresun "
    "pidesi yerler. Giresun Kalesi'nde Ali kutunun son hâlini çizer: çay, fındık, ezme ve lokum. Akşam Trabzon'a yarım saat kala sözleşmeyi "
    "son kez okurlar.",
@@ -736,7 +736,7 @@ EP(66, "Giresun", "Tombul Fındık",
          "The small boat bounces over choppy waves, spray splashing over the bow; Ali grips the side with both hands, soaking wet; Mert laughs and "
          "points at the island.",
          [("ali", "Bu da bir sözleşmeli iş miydi Mert?", "drenched, scared"),
-          ("mert", "Tek ada! Karadeniz'in tek adası!", "laughing")],
+          ("mert", "Tek ada! Doğu Karadeniz'in tek adası!", "laughing")],
          "handheld-feel but stable tracking shot from the bow", h="rüzgar",
          t=U(2, "kişi", 250, "diger_gider", "Giresun Adası tekne turu ({adet} x {fiyat} TL)")),
        S("12:00 iç-gündüz", "tesis", ["mert", "ali", "fabrikaci"], "Tombul",
@@ -781,8 +781,8 @@ EP(66, "Giresun", "Tombul Fındık",
           "while Ali clings to the side soaked", "Dalgalarda zıplayan teknede gülen Mert ve sırılsıklam Ali."),
    yakinda=("kale", ["mert", "ali"], "Two silhouettes on a bench in a castle park at sunset bent over a notebook with small objects beside it, "
             "the sea glowing behind", "Gün batımında defterin üstüne eğilmiş iki silüet."),
-   tiktok="Karadeniz'in tek adasına fırtınada gittik 🌊 #JozhStudios",
-   ig=("Giresun'da Karadeniz'in tek adasına gitmek istedik; dalgalar 'hayır' dedi, tekneci 'kıyıdan bir tur' dedi. 🌊 Ali sırılsıklam!\n\n"
+   tiktok="Doğu Karadeniz'in tek adasına fırtınada gittik 🌊 #JozhStudios",
+   ig=("Giresun'da Doğu Karadeniz'in tek adasına gitmek istedik; dalgalar 'hayır' dedi, tekneci 'kıyıdan bir tur' dedi. 🌊 Ali sırılsıklam!\n\n"
        "Giresun'un tombul fındığından kutu için 75 kilo aldık. Kalede kutunun son hâlini çizdik: çay, fındık, ezme, lokum. 📦\n\n"
        "Yarın Trabzon'da imza. Kasa: {KASA}"),
    tags=["#Giresun", "#TombulFındık", "#GiresunAdası"],
@@ -1104,14 +1104,14 @@ EP(71, "Gümüşhane", "Pestil ve Köme",
    "Zinciri Mert takar; Karaca Mağarası, pestil ve köme atölyesi.",
    "Sabah Mert zinciri kendisi takar, Ali fotoğrafını çeker. Gümüşhane'de Karaca Mağarası'nın renkli sarkıtlarını görürler. Bir pestil "
    "atölyesinde dut ve üzüm pekmezinin bezlere sürülüp kurutularak pestile, cevizin pekmezle köme'ye dönüştüğünü izler, 80 kilo alırlar. "
-   "Kafkas arısı balının bir kısmı da satılır. Akşam Zigana'dan inen yolda kar diner, gökyüzü açılır.",
+   "Kafkas arısı balının bir kısmı da satılır. Akşam Kelkit'e inen dağ yolunda kar diner, gökyüzü açılır.",
    {"otopark": ("Otel otoparkı", "a snowy hotel parking lot in Bayburt in the early morning: the old white pickup truck, snow on the ground, a "
                 "clear cold sky"),
     "magara": ("Karaca Mağarası", "inside Karaca Cave near Gümüşhane: colorful stalactites and stalagmites in shades of white, pink and "
                "orange, lit walkway, damp air"),
     "atolye": ("Pestil ve köme atölyesi", "a pestil and köme workshop in Gümüşhane: thin sheets of fruit pestil drying on cloths on wooden "
                "racks, strings of walnuts coated in molasses (köme) hanging, a copper cauldron of grape molasses"),
-    "zigana": ("Zigana yolu", "a mountain road near Zigana at sunset after a snowfall: snowy pine forest, the sky clearing into pink and gold, "
+    "zigana": ("Kelkit yolu", "a mountain road south of Gümüşhane toward Kelkit at sunset after a snowfall: snowy pine forest, the sky clearing into pink and gold, "
                "the old white pickup truck driving")},
    [
        S("07:30 sabah", "otopark", ["mert", "ali"], "Zinciri Mert Taktı",
@@ -1146,7 +1146,7 @@ EP(71, "Gümüşhane", "Pestil ve Köme",
          t=[U(80, "kg", 400, "alis", "Gümüşhane pestili ve kömesi ({adet} kg x {fiyat} TL)"),
             U(10, "kg", 1600, "satis", "Macahel Kafkas arısı balı, atölye dükkânına (10 kg x 1.600 TL)"), T("yemek", 800, "Öğle yemeği")]),
        S("17:00 gün batımı", "zigana", ["mert", "ali"], "Gökyüzü Açılıyor",
-         "Zigana'dan inen yolda kar diner, gökyüzü pembe ve altın rengine açılır.",
+         "Kelkit'e inen dağ yolunda kar diner, gökyüzü pembe ve altın rengine açılır.",
          "The pickup drives slowly down the snowy mountain road as the clouds part into pink and gold; Mert, driving, slows down; Ali rolls down "
          "the window and breathes in the cold air.",
          [("ali", "Kar durdu. Gökyüzü açıldı.", "relieved"),
@@ -1172,7 +1172,7 @@ EP(71, "Gümüşhane", "Pestil ve Köme",
    tiktok="Zinciri bu sefer ben taktım! ⛓️ (12 dakika) #JozhStudios",
    ig=("Sabah zinciri Mert kendisi taktı: 'İki dakika... tamam, on iki.' ⛓️😂\n\n"
        "Karaca Mağarası'nda pembe taştan perdeler gördük. Gümüşhane'de dut pekmezinden pestil ve cevizli kömenin yapılışını izledik, 80 kilo aldık. 🍇\n\n"
-       "Zigana'da kar durdu, gökyüzü açıldı. Kasa: {KASA}"),
+       "Kelkit yolunda kar durdu, gökyüzü açıldı. Kasa: {KASA}"),
    tags=["#Gümüşhane", "#Pestil", "#KaracaMağarası"],
    son="Sezonun son dört şehri: Tokat, Amasya, Çorum.",
    teaser="On iki dakikada takılan zincir, pembe taştan perdeler ve meyveden ipek. Bölüm 71: Gümüşhane. Pek yakında.")
