@@ -124,7 +124,7 @@ function nobetCizelgeGoster() {
         '<tbody>' + nobetSatirlar() + '</tbody>' +
       '</table>' +
       '</div>' +
-      '<div class="nc-tablo-footer">Jozh Ajans • Her dilim 2 saattir • Toplam ' + nobetCizelgesi.length + ' dilim</div>' +
+      '<div class="nc-tablo-footer">JOZH Panel • Her dilim 2 saattir • Toplam ' + nobetCizelgesi.length + ' dilim</div>' +
     '</div>';
 
   wrap.innerHTML = html;

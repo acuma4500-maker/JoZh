@@ -1,0 +1,3 @@
+# Jozh Ajans
+
+Yeni proje.
