@@ -176,9 +176,9 @@ def bolum_yap(n, D, SB, kasali):
     klasor = GIRDI / f"bolum-{n:02d}"
     sahneler = []
     for d in klasor.iterdir():
-        m = re.match(r"\D*(\d+)", d.stem)
-        if d.suffix.lower() in VIDEO and m:
-            sahneler.append((int(m.group(1)), d.name, d))
+        sayilar = re.findall(r"\d+", d.stem)        # "3.mp4" ya da "1.3.mp4" → sahne 3 (son sayı)
+        if d.suffix.lower() in VIDEO and sayilar:
+            sahneler.append((int(sayilar[-1]), d.name, d))
     sahneler.sort()
     if not sahneler:
         print(f"Bölüm {n}: video yok, atlandı.")
@@ -214,7 +214,10 @@ def bolum_yap(n, D, SB, kasali):
             parcalar.append(p)
         else:
             arka = resim_bul(sonraki_klasor, "kapak") or kapak
-            if arka and (n + 1) in ep:
+            if not arka:                                   # hiç kapak yoksa: son sahnenin son karesi
+                arka = tmp / "son_kare.png"
+                calistir(["-sseof", "-0.2", "-i", str(sahneler[-1][2]), "-frames:v", "1", "-update", "1", str(arka)])
+            if (n + 1) in ep:
                 ad = tr_upper(ep[n + 1]["baslik"])
                 resimden_klip(arka, YAKINDA_SN,
                               "gblur=sigma=14,eq=brightness=-0.28,fade=t=in:st=0:d=0.3,"
