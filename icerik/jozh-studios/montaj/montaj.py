@@ -44,7 +44,7 @@ FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 RESIM = (".png", ".jpg", ".jpeg", ".webp")
 VIDEO = (".mp4", ".mov", ".m4v", ".webm")
 
-NORMAL = (f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+NORMAL = (f"scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},"
           f"setsar=1,fps={FPS},format=yuv420p")
 KOD = ["-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
        "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2"]
