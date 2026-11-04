@@ -1,7 +1,7 @@
 {
-  "name": "JOZH Panel",
-  "short_name": "JOZH",
-  "description": "Kişisel yönetim paneli",
+  "name": "Jozh Ajans",
+  "short_name": "Jozh Ajans",
+  "description": "Jozh Ajans yönetim paneli",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d0f14",

@@ -1,5 +1,5 @@
 // ── SERVICE WORKER v2 — Offline destek
-var CACHE = "jozh-v2";
+var CACHE = "jozh-ajans-v3";
 var DOSYALAR = [
   "./index.html",
   "./css/style.css",
