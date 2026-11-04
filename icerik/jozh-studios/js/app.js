@@ -119,11 +119,72 @@
     ].join("\n");
   }
 
-  function kapakPrompt(ep, k, stil) {
-    const sat = k[1].map(c => "- " + nokta(bilgi(ep, c).look));
-    return [stil, "", "CHARACTERS (same fixed design as in the episode):\n" + sat.join("\n"), "",
-            "SETTING: " + nokta(ep.yerler[k[0]][1]), "",
-            "COMPOSITION: " + nokta(k[2]) + " Expressive, recognizable faces, strong depth, cinematic rim light."].join("\n");
+  /* Kapak prompt'u: kullanıcının taslağı (yazı görselin içinde üretilir).
+     yakinda=true → aynı şablon + "PEK YAKINDA" yazısı ve teaser havası. */
+  function kapakYazilari(ep) { return { no: "BÖLÜM " + ep.no, ad: TR_UP(ep.baslik) }; }
+
+  function kapakPrompt(ep, k, yakinda) {
+    const y = kapakYazilari(ep);
+    const ana = k[1].filter(c => KAR.get(c) && KAR.get(c).ana);
+    const yan = k[1].filter(c => !ana.includes(c));
+    const satir = c => "- " + nokta(bilgi(ep, c).look);
+    const izinli = ["“" + y.no + "”", "“" + y.ad + "”"].concat(yakinda ? ["“PEK YAKINDA”"] : []);
+    const hava = D.hava[ep.hava];
+    return [
+      D.sabit[yakinda ? "yakinda_stil" : "kapak_stil"],
+      "",
+      "TITLE TEXT (IMPORTANT):",
+      "Add a large, visually striking Turkish title at the top of the image, in two lines:",
+      "“" + y.no + "”",
+      "“" + y.ad + "”",
+      "Typography:",
+      "- “" + y.no + "” in smaller, elegant, bold uppercase letters.",
+      "- “" + y.ad + "” in large, bold, cinematic typography.",
+      "- Use a slightly distressed white font with subtle warm golden lighting.",
+      "- Make the most important words particularly prominent.",
+      "- Add a subtle dark shadow behind the letters for readability.",
+      "- Perfect Turkish spelling with the Turkish letters exactly as written (İ, I, Ş, Ğ, Ü, Ö, Ç), clearly readable typography.",
+      "- Position the title in the upper portion without covering the characters or important visual elements.",
+      ...(yakinda ? [
+        "",
+        "ADDITIONAL TEXT – PEK YAKINDA:",
+        "Add the exact Turkish text: “PEK YAKINDA”",
+        "Typography and positioning:",
+        "- Place “PEK YAKINDA” prominently in the middle area of the image.",
+        "- Use bold, uppercase cinematic lettering.",
+        "- White or warm golden color with a subtle glowing effect.",
+        "- Add a soft dark shadow for maximum readability.",
+        "- Make it visually prominent, like an official animated movie trailer announcement.",
+        "- Position it carefully without covering the main characters' faces or important objects.",
+        "- Maintain a premium cinematic movie-poster appearance."] : []),
+      "",
+      "Keep all main characters and important visual elements inside the central square area so the cover works when Instagram crops it to 1:1 or 4:5.",
+      "",
+      "CHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):",
+      ...(ana.length ? ["Main characters:"].concat(ana.map(satir)) : []),
+      ...(yan.length ? ["Supporting characters:"].concat(yan.map(satir)) : []),
+      "All characters must maintain absolute visual consistency with their previous appearances, including faces, hairstyles, clothing, accessories and body proportions.",
+      "",
+      "SETTING: " + nokta(ep.yerler[k[0]][1]) + (hava ? " " + nokta(hava) : ""),
+      "",
+      "COMPOSITION: " + nokta(k[2]),
+      yakinda
+        ? (ana.length ? "The face" + (ana.length > 1 ? "s" : "") + " of " + ana.map(c => etiket(KAR.get(c).en)).join(" and ") + (ana.length > 1 ? " stay" : " stays") + " recognizable; whatever" : "Whatever")
+          + " the composition keeps in shadow or out of frame stays hidden. Each hand holds at most one object."
+        : "Every character's face is clearly visible and expressive, with readable body language; each hand holds at most one object; the background stays detailed but secondary.",
+      "",
+      "MOOD AND EMOTION: " + (yakinda
+        ? "Mysterious, high-contrast teaser mood: the key moment is only hinted, partly in shadow, backlight or silhouette, with one strong light source and a slightly darker color grade, while the faces stay recognizable. It should make the viewer ask: what happens next?"
+        : "Carry the exact emotion of the composition above in the faces and body language. Overall series atmosphere: two best friends on a road trip across Türkiye, trading to pay off a big debt; warm, adventurous, hopeful, with humor and real stakes."),
+      "",
+      "LIGHTING AND QUALITY: Cinematic lighting, dramatic rim lighting, realistic textures, expressive facial details, beautiful depth of field, detailed environments, professional color grading and premium 3D animated feature film rendering.",
+      "",
+      "The final image should feel like the official " + (yakinda ? "coming-soon poster" : "cover") + " of Episode " + ep.no + " of the exact same animated series as previous episodes.",
+      "Maintain absolute character consistency throughout the entire series.",
+      "",
+      "No additional text, no random letters, no logos, no watermark.",
+      "The ONLY permitted text elements are: " + izinli.join(", ") + "."
+    ].join("\n");
   }
 
   /* ================================================================ kasa yardımcıları */
@@ -415,7 +476,8 @@
     const prev = EP.get(no - 1), next = EP.get(no + 1);
     const tags = hashtagler(b);
     const ilet = AY().iletisim || "[iletişim adresin]";
-    const kapakYazi = [b.sehir ? `BÖLÜM ${b.no}` : `VİDEO ${b.no}`, b.baslik, b.sehir || "Malatya"];
+    const ky = kapakYazilari(b);
+    const kapakYazi = [ky.no, ky.ad];
     const igMetin = sosyalKasaDoldur(b.ig, b);
     const tiktokAciklama = b.tiktok + "\n\n" + b.ozet + "\n\n" + tags.join(" ");
     const sponsor = b.sehir
@@ -435,13 +497,13 @@
       <span class="crumb-r">${prev ? `<a href="#/video/${prev.no}">‹ ${esc(epEtiket(prev))}</a>` : ""}${next ? `<a href="#/video/${next.no}">${esc(epEtiket(next))} ›</a>` : ""}</span></nav>
     <section class="covers">
       ${gorselAlan(b, "kapak", "Video kapağı", kapakYazi)}
-      ${gorselAlan(b, "yakinda", "Pek yakında kapağı", ["PEK YAKINDA", b.baslik])}
+      ${gorselAlan(b, "yakinda", "Pek yakında kapağı", kapakYazi.concat("PEK YAKINDA"))}
     </section>
     <section class="grid two block">
-      <div>${promptKutu(b.no + "-kapak", kapakPrompt(b, b.kapak, D.sabit.kapak_stil), "Video kapağı prompt'u", uretildiKutu(b.no + "-kapak", "Kapak üretildi"))}
-        <p class="note"><b>Kapak:</b> ${esc(b.kapak[3])}<br><b>Kapağa yazılacak:</b> ${kapakYazi.map(esc).join(" · ")}</p></div>
-      <div>${promptKutu(b.no + "-yakinda", kapakPrompt(b, b.yakinda, D.sabit.yakinda_stil), "Pek yakında kapağı prompt'u", uretildiKutu(b.no + "-yakinda", "Yakında kapağı üretildi"))}
-        <p class="note"><b>Pek yakında:</b> ${esc(b.yakinda[3])}<br><b>Kapağa yazılacak:</b> PEK YAKINDA · ${esc(b.baslik)}</p></div>
+      <div>${promptKutu(b.no + "-kapak", kapakPrompt(b, b.kapak, false), "Video kapağı prompt'u", uretildiKutu(b.no + "-kapak", "Kapak üretildi"))}
+        <p class="note"><b>Kapak:</b> ${esc(b.kapak[3])}<br><b>Görselde yazacak:</b> ${kapakYazi.map(esc).join(" · ")}<br><b>Montaj:</b> bu videonun başında 1,2 sn görünür.</p></div>
+      <div>${promptKutu(b.no + "-yakinda", kapakPrompt(b, b.yakinda, true), "Pek yakında kapağı prompt'u", uretildiKutu(b.no + "-yakinda", "Yakında kapağı üretildi"))}
+        <p class="note"><b>Pek yakında:</b> ${esc(b.yakinda[3])}<br><b>Görselde yazacak:</b> ${kapakYazi.map(esc).join(" · ")} · PEK YAKINDA<br><b>Montaj:</b> bir önceki videonun sonunda 3 sn görünür.</p></div>
     </section>
     <section class="block vhead">
       <p class="eyebrow">${esc(sz.ad)} · ${esc(epEtiket(b))} · ${esc(b.ay)} · ${esc(b.hava_tr)}</p>

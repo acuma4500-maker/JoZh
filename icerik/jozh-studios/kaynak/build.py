@@ -53,17 +53,11 @@ SABIT = dict(
     avoid=("distorted or morphing faces, face changing between frames, extra or missing fingers, deformed hands, floating or duplicated "
            "objects, characters changing clothes or hairstyle, flickering light, sudden lighting changes, shaky camera, jump cuts, "
            "subtitles, captions, on-screen text, watermarks, logos, brand names, childish cartoon style"),
-    kapak_stil=("Social media video cover image for TikTok and Instagram Reels, vertical 9:16, 1080x1920. Semi-realistic stylized 3D animation "
-                "still with Pixar-like proportions, realistic skin, hair and fabric, photorealistic cinematic real-world background, dramatic "
-                "cinematic lighting, rich but natural colors, very high detail, eye-catching. Keep faces and the main action inside the "
-                "central square so the image still works when cropped to 1:1 or 4:5 in the profile grid. Leave the top 22% as clean, calm "
-                "background for a title added later in editing. No text, no letters, no numbers, no logos, no watermark."),
-    yakinda_stil=("'Coming soon' teaser poster image for TikTok and Instagram, vertical 9:16, 1080x1920. Semi-realistic stylized 3D animation "
-                  "still with Pixar-like proportions, realistic textures and a photorealistic cinematic background. Mysterious, high-contrast "
-                  "teaser mood: the key moment is only HINTED, partly hidden in shadow, backlight or silhouette, with a strong single light "
-                  "source and a slightly darker color grade. Keep the faces recognizable and inside the central square. Leave the bottom 25% as "
-                  "dark, clean, uncluttered space for the words 'PEK YAKINDA' added later in editing. No text, no letters, no numbers, "
-                  "no logos, no watermark."),
+    kapak_stil=("Instagram Reels cover image, vertical 9:16 (1080x1920), semi-realistic stylized 3D animation still, Pixar-like proportions "
+                "with realistic textures, cinematic lighting, rich saturated colors, high detail, professional animated movie poster quality."),
+    yakinda_stil=("Instagram Reels 'coming soon' teaser cover image, vertical 9:16 (1080x1920), semi-realistic stylized 3D animation still, "
+                  "Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors, high detail, professional "
+                  "animated movie poster quality."),
 )
 
 FAZ = {
