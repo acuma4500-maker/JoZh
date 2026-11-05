@@ -219,6 +219,7 @@ Replik olmayan senaryoda DIALOGUE bloğu yerine `DIALOGUE: No dialogue.` yazıl�
 2. **Karakterler:** Üç karakterin sabit tarifleri ve her biri için referans görsel promptu, Kopyala düğmeleriyle.
 3. **Rota:** 50 bölümün şehir listesi: alınan ve satılan ürün, kasa değişimi, defterin o şehirde verdiği ipucu.
 4. **Kasa Aracı:** Bölüm 4.4'te anlatılan araç.
+5. **Profil:** Instagram ve TikTok hesap bilgileri (aşağıda).
 
 ### Bölüm sayfası (sırası sabit, başka bir şey yok)
 1. Kapak 1 + Kopyala
@@ -233,6 +234,29 @@ Durum ve "✓ Ürettim" işaretleri telefonun tarayıcısında saklanır. Sayfa 
 ### Yayın
 - Sana özel claude.ai bağlantısı. Düzeltmelerde aynı bağlantı güncellenir.
 - Düzeltme: sahne kodu ile istenir ("B05-S03'ü değiştir"). Yalnızca o kısım değişir, sayfa yeniden üretilir.
+
+### Profil sekmesi
+
+Instagram ve TikTok hesap bilgileri, her biri Kopyala düğmesiyle:
+
+| Alan | Instagram | TikTok |
+|---|---|---|
+| Kullanıcı adı | `kervan.dizi` | `kervan.dizi` |
+| Ad | `Kervan` | `Kervan` |
+| Biyografi | 4 satır, 124 karakter (sınır 150) | İlk 2 satır, 72 karakter (sınır 80) |
+| Profil fotoğrafı | Amblem (aynı görsel) | Amblem (aynı görsel) |
+
+Biyografi:
+
+```
+Üç genç, tek bir hayal ✨
+Ellerinde bir defter, önlerinde bütün Türkiye 🐪
+Kâr da var, zarar da, sır da…
+Yeni bölümler yolda 👇
+```
+
+- Kullanıcı adı alınmışsa sıradaki seçenekler: `kervandizisi`, `kervan.tr`. İki platformda aynı ad kullanılır.
+- **Profil fotoğrafı:** Eski deri defter ve pusula; sıcak altın tonlar, yazısız, karakter yok. Kare (1:1) üretilir, ana figür ortada ve büyük durur, böylece yuvarlak kırpmada ve küçük boyutta da net seçilir. Flow promptu bu sekmede verilir.
 
 ## 6. Teknik yapı
 
