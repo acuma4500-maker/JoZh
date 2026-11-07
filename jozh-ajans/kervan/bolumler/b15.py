@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""B15 · Kaş · BATAN TEKNE — kasa 672.000 → 632.000 → 640.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    15,
+    aciklama=ac(15, "⛵", "Malları Antalya'ya deniz yoluyla göndermek iyi fikir gibiydi… ta ki kiralık teknenin motoru "
+                "durana kadar. Kasaların bir kısmı denize gömülüyor. Ama Likya kaya mezarının dibinde yüz yıllık bir "
+                "kuyumcu fişi bekliyor.", "Kuyumcu Nesim'in dükkânı hâlâ açık mı sizce?"),
+    etiketler=et(15, "Kaş", "Antalya", "Likya"),
+    kapak=kapak("defne", ["kerem", "kaan"],
+                "The rocky coast of Kaş at dusk; a small wooden boat tilting with smoke rising from its engine, crates "
+                "floating on deep blue water, ancient Lycian rock-cut tombs carved into the cliff above the town.",
+                "Defne in the center standing in the tilting boat, holding a floating crate with one arm and her "
+                "ledger above her head with the other, furious. Kerem on the left pointing up at the rock tombs on "
+                "the cliff. Kaan on the right in the water up to his chest, pushing a crate toward the boat.",
+                "Disaster with a stubborn spirit and an ancient clue above."),
+    senaryolar=[
+        # 1
+        s("HOOK", EKIP, "A small wooden cargo boat off the coast of Kaş, afternoon; black smoke from the engine.",
+          ("The engine coughs and black smoke pours out.",
+           "The boat tilts; crates slide toward the edge.",
+           "Two crates fall into the deep blue water."),
+          "Handheld shot on the boat, then a slow-motion splash.",
+          "Engine coughing, splash, alarm music.",
+          "Disaster.",
+          r=("Defne", "Kasalar! Kasalar düşüyor!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " driving along the cliff road to Kaş in the morning; turquoise bays below.",
+          ("The van drives along the spectacular cliff road.",
+           "Kaan looks down at the sea nervously.",
+           "Kerem points at rock-cut tombs on the cliff above town."),
+          "Drone shot of the cliff road, then a close-up of Kerem pointing.",
+          "Wind, epic coastal music.",
+          "Awe.",
+          alt="SABAH · KAŞ"),
+        # 3
+        s("TRADE", ["defne"], "Kaş harbor; a fisherman with a small rentable cargo boat.",
+          ("Defne negotiates a cheap boat to carry goods to Antalya.",
+           "The fisherman pats the boat proudly.",
+           "Kaan looks at the old engine with doubt."),
+          "Medium shot on the dock, close-up of the rusty engine.",
+          "Harbor sounds, light music with a doubtful note.",
+          "Risky deal.",
+          r=("Defne", "Karayolundan yarı fiyatına. Anlaştık!")),
+        # 4
+        s("TRADE", ["defne", "kaan"], "A village market near Kaş; jars of carob molasses and olives.",
+          ("Defne buys jars of carob molasses and local olives.",
+           "Kaan tastes the molasses and his eyes light up.",
+           "The village women laugh at his reaction."),
+          "Close-up of molasses dripping, then on Kaan.",
+          "Market chatter, warm music.",
+          "Charming."),
+        # 5
+        s("ARRIVAL", EKIP, "Kaş harbor; crates of sponges and mandarins loaded onto the small boat.",
+          ("They load the sponge and mandarin crates onto the boat.",
+           "The boat sits low in the water.",
+           "The fisherman starts the engine; it rattles."),
+          "Wide shot, then a close-up of the low waterline.",
+          "Engine rattle, uneasy music.",
+          "Foreboding."),
+        # 6
+        s("CRISIS", EKIP, "The small boat at sea off Kaş.",
+          ("Halfway out, the engine coughs black smoke.",
+           "The boat stops and tilts in the waves.",
+           "Crates start sliding."),
+          "Handheld shot, crates sliding.",
+          "Engine dying, waves.",
+          "Panic."),
+        # 7
+        s("CRISIS", ["kaan", "kerem"], "In the water next to the tilting boat.",
+          ("Kaan jumps into the water to push crates back.",
+           "Kerem pulls crates up by their ropes.",
+           "Some crates sink anyway, mandarins floating everywhere."),
+          "Water-level shot, mandarins bobbing around.",
+          "Splashes, shouts, dramatic music.",
+          "Struggle.",
+          r=("Kaan", "Mandalinalar yüzüyor! Hepsi yüzüyor!")),
+        # 8
+        s("CRISIS", EKIP, "Kaş harbor at dusk; the boat towed back by another fishing boat.",
+          ("The broken boat is towed back to the harbor.",
+           "The three sit soaked among wet crates.",
+           "Defne opens a crate: the sponges are soaked and ruined."),
+          "Wide shot of the tow, close-up of the ruined sponges.",
+          "Tow rope creaking, sad music.",
+          "Defeat."),
+        # 9
+        s("CRISIS", ["defne"], "Kaş harbor at dusk.",
+          ("Defne calculates the loss on her ledger.",
+           "She closes her eyes and takes a long breath.",
+           "Kerem hands her a dry towel."),
+          "Close-up on the ledger, then on Defne.",
+          "Silence, waves.",
+          "Painful loss.",
+          r=("Defne", "Kırk bin denize gitti."),
+          k=(672_000, 632_000)),
+        # 10
+        s("SECRET", ["kerem"], "A Lycian rock-cut tomb carved into the cliff above Kaş at sunset.",
+          ("Kerem climbs the path to the ancient rock tomb.",
+           "He compares its carved facade to a drawing in the notebook.",
+           "At the base, a small camel is scratched into the rock."),
+          "Low-angle shot of the tomb, close-up on the camel.",
+          "Wind, ancient mysterious music.",
+          "Discovery."),
+        # 11
+        s("SECRET", ["kerem", "kaan"], "The base of the rock tomb at dusk.",
+          ("Kaan arrives with a flashlight, still wet.",
+           "They find a small gap in the rock under the camel.",
+           "Kerem pulls out a folded old paper protected in oilcloth."),
+          "Close-up on hands, flashlight beam.",
+          "Heartbeat drum.",
+          "Suspense."),
+        # 12
+        s("TRADE", ["defne"], "A café terrace in Kaş at night; tourists eating.",
+          ("Defne sells the carob molasses to the café owner.",
+           "Tourists also buy jars from her table.",
+           "She smiles a tired smile and writes a small green number."),
+          "Medium shot, close-up on the ledger.",
+          "Café ambience, soft hopeful music.",
+          "Small recovery.",
+          k=(632_000, 640_000)),
+        # 13
+        s("SECRET", EKIP, "The café terrace at night; the oilcloth packet on the table.",
+          ("Kerem unwraps the oilcloth; inside is an old jeweler's receipt.",
+           "The receipt has a stamp with a shop name and 1926.",
+           "Defne recognizes the old Antalya district name."),
+          "Close-up on the receipt (no readable text), then three faces.",
+          "Paper rustle, curious music.",
+          "Clue.",
+          r=("Defne", "Antalya, Kaleiçi. Kuyumcu Nesim.")),
+        # 14
+        s("SECRET", ["kerem"], "The café terrace at night.",
+          ("Kerem searches the jeweler's name on his phone.",
+           "Nothing comes up.",
+           "He frowns and searches again with a different spelling."),
+          "Close-up on Kerem's face lit by the phone.",
+          "Silence, suspense music.",
+          "Uncertainty."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The café terrace at night.",
+          ("A small map pin appears on the phone: an old shop in Kaleiçi.",
+           "Its status shows a strange note instead of opening hours.",
+           "The three look at each other. Cut to black."),
+          "Close-up on the phone, then a three-shot, cut to black.",
+          "A single notification ping, deep bass hit.",
+          "Cliffhanger.",
+          r=("Kaan", "Dükkân hâlâ açık mı?")),
+    ],
+)
+
+BOLUMLER = [B]

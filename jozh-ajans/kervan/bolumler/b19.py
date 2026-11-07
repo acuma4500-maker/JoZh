@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""B19 · Mersin · SOĞUK ZİNCİR — kasa 890.000 → 915.000 → 845.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    19,
+    aciklama=ac(19, "🍊", "Mersin'de sekiz ton narenciye, kiralık soğutuculu bir kamyon ve sıcak bir gün… Soğutucu "
+                "yolda bozuluyor. Bir milyona bu kadar yaklaşmışken kasa sert düşüyor. Ama defterin yeni sayfası "
+                "anahtar için bambaşka bir yer gösteriyor.", "Siz geri dönüp Isparta'daki kulübeyi açar mıydınız?"),
+    etiketler=et(19, "Mersin", "narenciye"),
+    kapak=kapak("defne", ["kerem", "kaan"],
+                "A roadside on a hot highway near Mersin at noon; a rented refrigerated truck with its back doors open, "
+                "steam rising, crushed oranges and lemons spilling onto the asphalt, citrus orchards behind.",
+                "Defne in the center holding a crushed orange in one hand and her ledger in the other, staring at the "
+                "camera with fury. Kerem on the left holding the camel key and the notebook, looking at a new page. "
+                "Kaan on the right inside the truck, fanning the crates with his cap, sweating.",
+                "Hot, frustrating, dramatic loss with a stubborn spark."),
+    senaryolar=[
+        # 1
+        s("HOOK", EKIP, "A hot highway shoulder near Mersin; a rented refrigerated truck with steaming back doors.",
+          ("The truck's back doors swing open; hot air and steam pour out.",
+           "Crushed oranges roll out onto the asphalt.",
+           "Defne stares, frozen, as an orange stops at her shoe."),
+          "Low-angle shot of rolling oranges, then a slow tilt up to Defne.",
+          "Hissing, rolling fruit, a dramatic music hit.",
+          "Disaster.",
+          r=("Defne", "Soğutucu… çalışmıyor muydu?")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " arriving at the Mersin wholesale produce market in the morning.",
+          ("The van enters the huge, busy produce market.",
+           "The van still smells like roses; a vendor sniffs and laughs.",
+           "Kaan waves like a celebrity."),
+          "Wide market shot, comic close-ups.",
+          "Market shouts, light comic music.",
+          "Fun.",
+          alt="SABAH · MERSİN"),
+        # 3
+        s("TRADE", ["defne"], "A wholesale stall in the Mersin produce market; the buyer from the phone call.",
+          ("Defne delivers the avocados and bananas to the buyer.",
+           "He inspects and nods.",
+           "He pays the agreed price."),
+          "Medium shot, close-up on cash.",
+          "Market noise, confident music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne", "kaan"], "The produce market.",
+          ("Defne writes the profit and smiles.",
+           "Kaan points at a sign for cheap citrus nearby.",
+           "Defne's eyes light up."),
+          "Two-shot, close-up of the ledger.",
+          "Upbeat music.",
+          "Success.",
+          r=("Defne", "Yirmi beş bin kâr. Bir milyona az kaldı!"),
+          k=(890_000, 915_000)),
+        # 5
+        s("TRADE", ["defne"], "A citrus orchard near Mersin; mountains of oranges and lemons.",
+          ("Defne buys eight tons of citrus at a great price.",
+           "She calls an Adana juice factory; they agree to buy tomorrow.",
+           "She needs a refrigerated truck."),
+          "Wide shot of fruit mountains, close-up on Defne on the phone.",
+          "Orchard sounds, ambitious music.",
+          "Big bet."),
+        # 6
+        s("TRADE", ["defne", "kaan"], "A small truck rental yard; an old refrigerated truck.",
+          ("A rental man shows them an old refrigerated truck.",
+           "He kicks the tire and says it's fine.",
+           "Kaan looks at the rusty cooling unit doubtfully."),
+          "Medium shot, close-up on the cooling unit.",
+          "A suspicious music note.",
+          "Foreboding.",
+          r=("Kaan", "Bu soğutucu bizden yaşlı.")),
+        # 7
+        s("ARRIVAL", ["kaan", "kerem"], "The highway from Mersin toward Adana at noon; heat waves on the asphalt.",
+          ("Kaan drives the truck, Kerem next to him.",
+           "The temperature display on the dashboard climbs.",
+           "A beeping warning starts."),
+          "Inside the cab, close-up on the climbing display.",
+          "Beeping, tension music.",
+          "Rising dread."),
+        # 8
+        s("CRISIS", ["kaan", "kerem"], "The highway shoulder in burning heat.",
+          ("Kaan pulls over; smoke comes from the cooling unit.",
+           "Kerem opens the back doors.",
+           "Hot steam rushes out."),
+          "Wide shot of the truck on the shoulder, slow-motion steam.",
+          "Hiss, cicadas, dramatic music.",
+          "Disaster."),
+        # 9
+        s("CRISIS", EKIP, "The highway shoulder; " + VAN + " pulls up behind the truck.",
+          ("Defne jumps out of the van and runs to the truck.",
+           "Crates of crushed, warm fruit are everywhere.",
+           "She picks up a crushed orange in silence."),
+          "Handheld tracking shot, then a close-up on the orange.",
+          "Silence, cicadas.",
+          "Shock."),
+        # 10
+        s("CRISIS", ["defne"], "The highway shoulder.",
+          ("Defne calculates the damage in her ledger.",
+           "Her hand shakes.",
+           "She slams the ledger shut."),
+          "Close-up on the ledger and her hands.",
+          "A heavy drum hit.",
+          "Painful loss.",
+          r=("Defne", "Yetmiş bin gitti. Yetmiş!"),
+          k=(915_000, 845_000)),
+        # 11
+        s("CRISIS", ["kaan", "defne"], "The highway shoulder in the afternoon heat.",
+          ("Kaan sits next to Defne on the guardrail.",
+           "He hands her the coldest orange he can find.",
+           "She takes it and almost smiles."),
+          "Wide static shot, then a two-shot.",
+          "Soft music.",
+          "Comfort.",
+          r=("Kaan", "Bu soğuk. Tek soğuk olan bu.")),
+        # 12
+        s("SECRET", ["kerem", "kaan"], "A roadside tea stand at sunset; " + VAN + " parked.",
+          ("Kerem suggests going back to Isparta with the key.",
+           "Kaan shakes his head and points at the notebook.",
+           "A new page has fallen open in the wind."),
+          "Two-shot, close-up on the fluttering page.",
+          "Wind, mysterious music.",
+          "Disagreement turning into a clue."),
+        # 13
+        s("SECRET", ["kerem"], "The tea stand at sunset.",
+          ("Kerem reads the newly opened page.",
+           "It shows the same camel key and a bridge with many arches.",
+           "He reads the line below."),
+          "Close-up on the drawing.",
+          "Heartbeat drum.",
+          "Clue.",
+          r=("Kerem", "Anahtarı Adana'da kullan.")),
+        # 14
+        s("SECRET", EKIP, "The tea stand at dusk.",
+          ("Defne looks at the drawing of the bridge.",
+           "She recognizes the ancient stone bridge of Adana.",
+           "Kaan cheers; no going back."),
+          "Three-shot, close-up on Defne.",
+          "Music rising.",
+          "Decision."),
+        # 15
+        s("CLIFFHANGER", ["defne"], "The highway at night; Defne in the passenger seat of " + VAN + ".",
+          ("Defne looks at the total in her ledger.",
+           "The number is just below one million.",
+           "She closes the ledger and looks at the road ahead. Cut to black."),
+          "Close-up on the ledger, then on Defne's eyes in passing headlights.",
+          "Engine hum, a soft but tense music hit.",
+          "Bittersweet determination.",
+          r=("Defne", "Bir milyona bu kadar yakınken…")),
+    ],
+)
+
+BOLUMLER = [B]

@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""B17 · Isparta · GÜL YAĞI — kasa 735.000 → 780.000 → 812.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    17,
+    aciklama=ac(17, "🌹", "Yüzüğün içindeki isim onları Isparta'nın gül tarlalarına getirdi. Gül şafakta toplanır, "
+                "Kaan ise uyuyakalıyor… Tarlanın ortasında yüz yıllık bir taş kulübe var ve kapısındaki kilit çok "
+                "tuhaf.", "Deve şeklinde bir anahtar deliği… Anahtar nerede olabilir?"),
+    etiketler=et(17, "Isparta", "gülyağı", "gül"),
+    kapak=kapak("kaan", ["kerem", "defne"],
+                "Endless pink rose fields near Isparta at sunrise; mist over the flowers, pickers with baskets, an old "
+                "stone hut with a heavy wooden door in the middle of the field.",
+                "Kaan in the center running through the rose rows in pajama pants and his denim jacket, hair messy, "
+                "panicked, holding a basket. Kerem on the left kneeling at the stone hut's door, touching a camel-shaped "
+                "keyhole. Defne on the right with a basket full of pink roses, shaking her head at Kaan.",
+                "Dreamy pink dawn with comic panic and a locked secret."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "An old stone hut in the middle of a rose field at sunrise; a heavy wooden door with an iron lock.",
+          ("Kerem kneels at the hut's old door.",
+           "The iron lock has a keyhole shaped like a small camel.",
+           "He tries the ring in it; it doesn't fit."),
+          "Close-up on the keyhole, slow push-in.",
+          "Morning birds, mysterious music.",
+          "Mystery.",
+          r=("Kerem", "Anahtar deliği deve şeklinde…")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " climbing a mountain road to Isparta; lakes and mountains.",
+          ("The van climbs past a blue lake toward Isparta.",
+           "Kerem studies the ring's engraving.",
+           "Defne makes a plan in her ledger."),
+          "Drone shot over the lake, inside close-ups.",
+          "Engine, calm music.",
+          "Purpose.",
+          alt="BİR GÜN ÖNCE · ISPARTA"),
+        # 3
+        s("TRADE", ["defne"], "A fruit wholesaler's market hall in Isparta.",
+          ("Defne shows the Antalya fruits to a wholesaler.",
+           "He inspects them and offers a price.",
+           "Defne counters; they shake hands."),
+          "Over-the-shoulder shots.",
+          "Market hall echoes, confident music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne", "kaan"], "The market hall loading area.",
+          ("Kaan unloads the fruit crates.",
+           "The wholesaler pays Defne.",
+           "Defne writes in the ledger and winks at Kaan."),
+          "Medium shot, close-up of the ledger.",
+          "Crates, upbeat music.",
+          "Success."),
+        # 5
+        s("TRADE", ["defne"], "Outside the market hall.",
+          ("Defne counts the total.",
+           "She asks the wholesaler about rose oil.",
+           "He tells her: harvest at dawn, before the sun."),
+          "Two-shot.",
+          "Light music.",
+          "Information.",
+          r=("Defne", "Meyveler bitti. Kırk beş bin kâr!"),
+          k=(735_000, 780_000)),
+        # 6
+        s("ARRIVAL", EKIP, "A small village guest house near the rose fields at night.",
+          ("Defne sets three alarms for 4 a.m.",
+           "Kaan says he never oversleeps.",
+           "Kerem looks at him doubtfully."),
+          "Three-shot in warm lamp light.",
+          "Crickets, playful music.",
+          "Setup for comedy.",
+          r=("Kaan", "Ben mi uyuyakalmak? Asla!")),
+        # 7
+        s("CRISIS", ["kaan"], "The guest house bedroom at dawn; sunlight already through the window.",
+          ("Sunlight hits Kaan's face; he wakes up slowly.",
+           "He looks at the window and his eyes go wide.",
+           "He jumps out of bed in his pajama pants."),
+          "Slow push-in, then a whip pan.",
+          "Rooster, comic alarm music.",
+          "Comic panic."),
+        # 8
+        s("CRISIS", ["kaan", "defne"], "The rose field after sunrise; pickers finishing.",
+          ("Kaan runs into the field holding a basket.",
+           "The pickers are already leaving with full baskets.",
+           "Defne stands with her arms crossed, waiting."),
+          "Wide shot of Kaan running, then Defne's stare.",
+          "Running steps, comic sting.",
+          "Funny tension.",
+          r=("Defne", "En değerli saatler gitti, Kaan.")),
+        # 9
+        s("CRISIS", ["defne"], "A rose oil distillery with copper stills.",
+          ("The distiller says the morning oil is already sold.",
+           "Only a small amount remains, at a higher price.",
+           "Defne buys it anyway."),
+          "Close-up on copper stills, then Defne's decision.",
+          "Steam hissing, tense music.",
+          "Compromise."),
+        # 10
+        s("SECRET", ["kerem"], "The rose field around an old stone hut.",
+          ("Kerem follows the ring's engraving to a field name sign.",
+           "In the middle of the field stands an old stone hut.",
+           "He walks toward it through the roses."),
+          "Tracking shot through roses, reveal of the hut.",
+          "Wind, mysterious music.",
+          "Discovery."),
+        # 11
+        s("SECRET", ["kerem"], "The stone hut door.",
+          ("Kerem tries to push the door; it is locked.",
+           "He finds the camel-shaped keyhole.",
+           "He calls the others."),
+          "Close-up on the keyhole.",
+          "Lock rattle.",
+          "Locked mystery."),
+        # 12
+        s("TRADE", ["defne"], "A perfume shop in Isparta; a perfumer with small glass vials.",
+          ("Defne offers the rose oil to a perfumer.",
+           "He smells it and closes his eyes.",
+           "He buys most of it at an excellent price."),
+          "Close-up on the vial, then the perfumer's face.",
+          "Soft music, a bright hit.",
+          "Turnaround.",
+          r=("Defne", "Pahalıya aldık, daha pahalıya sattık!"),
+          k=(780_000, 812_000)),
+        # 13
+        s("SECRET", EKIP, "The stone hut at sunset.",
+          ("All three gather at the hut's door.",
+           "Kaan tries a hairpin; it bends.",
+           "Kerem checks the notebook for a key drawing."),
+          "Three-shot, close-up on the bent hairpin.",
+          "Comic beat, then suspense.",
+          "Puzzle."),
+        # 14
+        s("SECRET", ["kerem"], "The stone hut at dusk.",
+          ("Kerem finds a drawing of a tower with a camel inside.",
+           "Under it is a note about a shipyard by the sea.",
+           "He looks at Defne."),
+          "Close-up on the drawing.",
+          "Mysterious music.",
+          "Clue.",
+          r=("Kerem", "Anahtar bir kulede. Denizin kıyısında.")),
+        # 15
+        s("CLIFFHANGER", EKIP, "The rose field at night under the moon.",
+          ("Defne searches for red towers by the sea on the map.",
+           "One result: a famous red tower in a nearby coastal town.",
+           "She turns the phone screen toward the others. Cut to black."),
+          "Close-up on phone, three-shot, cut to black.",
+          "A deep music hit.",
+          "Next destination.",
+          r=("Defne", "Kızıl Kule. Alanya!")),
+    ],
+)
+
+BOLUMLER = [B]

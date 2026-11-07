@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+"""B18 · Alanya · KIZIL KULE — kasa 812.000 → 852.000 → 890.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    18,
+    aciklama=ac(18, "🗝️", "Anahtar Alanya'da, Kızıl Kule'nin yanındaki tarihi tersanede. Gül yağı kozmetik dükkânlarına "
+                "satılıyor, ama bir şişe kırılıyor ve kamyonet aylarca gül kokacak. Anahtar bulundu… peki kapı "
+                "nerede kaldı?", "Isparta'ya geri dönmeliler mi?"),
+    etiketler=et(18, "Alanya", "KızılKule", "Antalya"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "The red octagonal Kızıl Kule tower in Alanya at sunset, the medieval stone shipyard with arched "
+                "galleries opening onto turquoise water, banana plantations on the hills behind.",
+                "Kerem in the center inside a stone shipyard arch, holding up an old iron key with a camel-shaped "
+                "bit, backlit by sunset. Defne on the left holding a cracked rose oil bottle, pink drops falling. "
+                "Kaan on the right carrying a huge bunch of bananas on his shoulder like a hero.",
+                "Golden, adventurous, triumphant with a funny twist."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "Inside the medieval stone shipyard of Alanya; arched galleries, sea light reflecting on the walls.",
+          ("Kerem pulls an old iron key out of a hole in the stone.",
+           "The key's bit is shaped like a camel.",
+           "Sunlight from the sea flashes on it."),
+          "Slow-motion close-up on the key emerging.",
+          "Water echo, magical music hit.",
+          "Triumph.",
+          r=("Kerem", "Anahtar! Deve anahtarı!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " driving along the coast to Alanya; the castle on its rocky peninsula.",
+          ("The van drives toward the Alanya peninsula.",
+           "A rose smell fills the van; everyone sniffs.",
+           "Kaan checks the boxes nervously."),
+          "Drone shot of the castle, inside comic sniffing.",
+          "Waves, light comic music.",
+          "Comic foreshadowing.",
+          alt="BİR GÜN ÖNCE · ALANYA"),
+        # 3
+        s("TRADE", ["defne"], "A cosmetics boutique in Alanya; shelves of creams and perfumes.",
+          ("Defne shows the rose oil to the boutique owner.",
+           "The owner tests a drop on her wrist.",
+           "She orders the remaining oil for her three shops."),
+          "Close-up on the drop, medium two-shot.",
+          "Soft shop music.",
+          "Elegant deal."),
+        # 4
+        s("CRISIS", ["kaan"], "Behind " + VAN + " outside the boutique.",
+          ("Kaan lifts the rose oil box out of the van.",
+           "One bottle slips and shatters on the van floor.",
+           "A pink rose mist fills the whole van."),
+          "Slow-motion shatter, wide shot of the pink mist.",
+          "Glass breaking, a comic choir 'aaah'.",
+          "Comic disaster.",
+          r=("Kaan", "Kamyonet artık gül kokuyor…")),
+        # 5
+        s("TRADE", ["defne"], "The cosmetics boutique counter.",
+          ("Defne delivers the remaining bottles.",
+           "The owner pays and laughs about the smell.",
+           "Defne writes the profit, holding her nose."),
+          "Two-shot, close-up on the ledger.",
+          "Cash, comic music.",
+          "Success with a laugh.",
+          r=("Defne", "Bir şişe gitti ama kırk bin geldi."),
+          k=(812_000, 852_000)),
+        # 6
+        s("ARRIVAL", EKIP, "The Kızıl Kule red tower in Alanya harbor, midday.",
+          ("The three walk around the red octagonal tower.",
+           "Kerem compares it to the drawing in the notebook.",
+           "The drawing points further along the shore to the shipyard."),
+          "Low-angle shot of the tower, then a match cut to the drawing.",
+          "Harbor sounds, curious music.",
+          "Search."),
+        # 7
+        s("SECRET", EKIP, "The medieval stone shipyard of Alanya; arched galleries at water level.",
+          ("They enter the old shipyard with five stone arches.",
+           "Kerem counts the arches, following the notebook.",
+           "He stops at the third arch."),
+          "Wide shot of the arches, then a tracking shot.",
+          "Echoing water, mysterious music.",
+          "Suspense."),
+        # 8
+        s("SECRET", ["kerem", "kaan"], "Inside the third arch of the shipyard.",
+          ("Kerem finds a small camel carving low on the wall.",
+           "Kaan shines his flashlight on it.",
+           "The carving has a dark hole in its belly."),
+          "Close-up on the carving.",
+          "Drip, heartbeat drum.",
+          "Discovery."),
+        # 9
+        s("SECRET", ["kerem"], "The camel carving in the shipyard.",
+          ("Kerem slides his fingers into the hole.",
+           "He feels cold metal and pulls.",
+           "An old iron key with a camel-shaped bit comes out."),
+          "Macro on the key emerging.",
+          "Metal scrape, music hit.",
+          "Triumph."),
+        # 10
+        s("TRADE", ["defne", "kaan"], "A banana and avocado plantation on the hills of Alanya.",
+          ("A farmer shows them rows of bananas and avocados.",
+           "Kaan peels a banana and sighs happily.",
+           "Defne negotiates a large load."),
+          "Tracking shot through the plantation.",
+          "Birds, warm music.",
+          "Abundance."),
+        # 11
+        s("TRADE", ["kaan"], "The plantation at sunset.",
+          ("Kaan carries a giant bunch of bananas on his shoulder.",
+           "He poses like a hero; the bunch slowly tips him over.",
+           "He falls into soft grass, still holding it."),
+          "Low-angle hero shot, then a comic fall.",
+          "Comic music.",
+          "Slapstick."),
+        # 12
+        s("TRADE", ["defne"], "The plantation office.",
+          ("Defne calls a big produce market in Mersin.",
+           "They pre-order half of the load at a high price.",
+           "She hangs up and dances in the office."),
+          "Medium shot, then a wide comic shot.",
+          "Phone, triumphant music.",
+          "Success.",
+          r=("Defne", "Mersin hali yarısını aldı!"),
+          k=(852_000, 890_000)),
+        # 13
+        s("SECRET", EKIP, "The Alanya harbor at night, the red tower lit up.",
+          ("The three sit on the harbor wall.",
+           "Kerem holds the key up next to the lit tower.",
+           "He suddenly freezes."),
+          "Wide night shot, then a close-up on Kerem.",
+          "Calm waves, music stops.",
+          "Realization."),
+        # 14
+        s("SECRET", ["kerem", "defne", "kaan"], "The harbor wall at night.",
+          ("Kerem slowly turns the key in the air.",
+           "Defne realizes what he realized.",
+           "Kaan facepalms."),
+          "Close-up on the key, then reaction shots.",
+          "Comic sting.",
+          "Funny realization."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The harbor wall at night.",
+          ("Kerem looks at the map: the hut is far behind them.",
+           "Defne checks the next stop: Mersin, further east.",
+           "Kerem decides; he puts the key in his pocket. Cut to black."),
+          "Three-shot, then a close-up on the pocket, cut to black.",
+          "A tense music hit.",
+          "Dilemma.",
+          r=("Kerem", "Anahtar bizde… ama kulübe Isparta'da kaldı.")),
+    ],
+)
+
+BOLUMLER = [B]

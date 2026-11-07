@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""B16 · Antalya · KALEİÇİ — kasa 640.000 → 695.000 → 735.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    16,
+    aciklama=ac(16, "💍", "Kuyumcu Nesim'in dükkânı yüz yıl sonra hâlâ Kaleiçi'nde. Otel müdürü izinde, meyveler "
+                "olgunlaşıyor, sabırları tükeniyor. Ve kuyumcunun torunu, dedesinin yüz yıldır sakladığı bir yüzüğü "
+                "çıkarıyor…", "Yüzüğün taşındaki renk neyi anlatıyor olabilir?"),
+    etiketler=et(16, "Antalya", "Kaleiçi"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "A tiny old jewelry shop in Antalya's Kaleiçi old town at golden hour; narrow street of Ottoman wooden "
+                "houses with bougainvillea, the Roman Hadrian's Gate in the background; inside, glass cases glittering.",
+                "Kerem in the center holding an old gold ring with a dusty-rose colored stone up to the light, amazed. "
+                "Defne on the left with a crate of shiny oranges, leaning in. Kaan on the right with a giant tomato "
+                "in his hand, mouth open. An old jeweler's hand rests on the counter in the foreground.",
+                "Warm, golden, heart-touching discovery."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "Inside an old jewelry shop in Kaleiçi; dim light, glass cases, a velvet box on the counter.",
+          ("A wrinkled hand opens a small velvet box.",
+           "Inside lies an old gold ring with a dusty-rose stone.",
+           "Kerem leans in, holding his breath."),
+          "Macro shot of the box opening, then Kerem's reflection in the glass.",
+          "Velvet creak, magical music.",
+          "Wonder.",
+          r=("Kerem", "Bu yüzük… yüz yıllık mı?")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " entering Antalya in the morning; palm boulevards, the Taurus mountains behind the sea.",
+          ("The van drives along a palm boulevard.",
+           "Defne calls the hotel group about the order.",
+           "Her face falls as she listens."),
+          "Drone shot, then a close-up of Defne on the phone.",
+          "City sounds, music turning tense.",
+          "Bad news.",
+          alt="ÜÇ GÜN ÖNCE · ANTALYA"),
+        # 3
+        s("CRISIS", ["defne"], "The lobby of a grand Antalya hotel; a receptionist shrugs.",
+          ("The receptionist says the purchasing manager is on leave for three days.",
+           "Defne looks at the crates of mandarins in the van outside.",
+           "She sits down heavily on a lobby sofa."),
+          "Medium shot, then a window shot of the van.",
+          "Lobby music, a sad trombone sting.",
+          "Frustration.",
+          r=("Defne", "Üç gün mü? Mandalinalar bekleyemez!")),
+        # 4
+        s("CRISIS", ["kaan", "defne"], "A shady parking lot; " + VAN + " with open doors.",
+          ("Kaan sprays water on the mandarin crates to keep them fresh.",
+           "He fans them with a cardboard lid.",
+           "Defne watches him and can't stop laughing."),
+          "Comic static shot, close-up on Kaan fanning.",
+          "Spray sounds, comic music.",
+          "Comedy."),
+        # 5
+        s("SECRET", ["kerem"], "Narrow streets of Kaleiçi old town with Ottoman houses.",
+          ("Kerem walks through Kaleiçi searching for the jeweler.",
+           "He finds a tiny shop with an old sign matching the receipt.",
+           "A man in his sixties with gold-rimmed glasses polishes rings inside."),
+          "Tracking shot through alleys, then a reveal of the shop.",
+          "Footsteps, curious music.",
+          "Discovery."),
+        # 6
+        s("TRADE", ["defne"], "The grand hotel's purchasing office three days later; the manager is back.",
+          ("The manager returns and inspects the mandarins and olives.",
+           "He signs a big order for the whole hotel chain.",
+           "Defne jumps out of her chair."),
+          "Close-up on the signature, then Defne jumping.",
+          "Pen scratch, triumphant music.",
+          "Victory.",
+          r=("Defne", "Bütün zincir alıyor! Elli beş bin!"),
+          k=(640_000, 695_000)),
+        # 7
+        s("SECRET", ["kerem"], "Inside the jewelry shop; the jeweler looks at the old receipt.",
+          ("Kerem places the 1926 receipt on the glass counter.",
+           "The jeweler's hands start to tremble.",
+           "He takes off his glasses and looks at Kerem."),
+          "Close-up on the receipt, then on the jeweler's face.",
+          "Clock ticking, emotional strings.",
+          "Emotion.",
+          r=("Kuyumcu", "Bu dedemin el yazısı.")),
+        # 8
+        s("SECRET", EKIP, "Inside the jewelry shop; Defne and Kaan join Kerem.",
+          ("The jeweler goes to a back room.",
+           "He comes back with a small dusty velvet box.",
+           "He places it in front of Kerem."),
+          "Tracking shot to the back room, then the box on the counter.",
+          "Drawer opening, a soft music swell.",
+          "Anticipation."),
+        # 9
+        s("SECRET", ["kerem"], "The jewelry shop counter.",
+          ("The jeweler opens the box: an old gold ring with a dusty-rose stone.",
+           "Kerem holds it up to the light.",
+           "Defne and Kaan lean in."),
+          "Macro on the ring in the light.",
+          "Magical chime.",
+          "Wonder."),
+        # 10
+        s("SECRET", ["kerem"], "The jewelry shop counter.",
+          ("The jeweler explains with a soft voice.",
+           "He folds Kerem's fingers over the ring.",
+           "Kerem nods, deeply moved."),
+          "Close two-shot.",
+          "Soft strings.",
+          "Trust passed on.",
+          r=("Kuyumcu", "Dedem dedi: defterle gelene ver.")),
+        # 11
+        s("TRADE", ["defne", "kaan"], "A huge greenhouse near Antalya; rows of red tomatoes and summer fruits.",
+          ("Defne walks the greenhouse rows checking tomatoes.",
+           "Kaan eats a tomato like an apple.",
+           "Defne orders a truckload of tomatoes and fruit."),
+          "Long tracking shot through the greenhouse.",
+          "Greenhouse fans, warm music.",
+          "Abundance."),
+        # 12
+        s("TRADE", ["defne"], "A fresh juice chain's warehouse in Antalya.",
+          ("A juice chain buyer tests the fruits and nods.",
+           "He buys half of the fruit load immediately.",
+           "Defne writes the profit with a flourish."),
+          "Medium shot, close-up of the ledger.",
+          "Warehouse sounds, upbeat music.",
+          "Success.",
+          r=("Defne", "Meyvenin yarısı gitti. Kırk bin!"),
+          k=(695_000, 735_000)),
+        # 13
+        s("SECRET", EKIP, "Hadrian's Gate in Antalya at sunset.",
+          ("The three sit under the ancient gate.",
+           "Kerem looks inside the ring with his phone's magnifier.",
+           "Tiny letters are engraved inside the band."),
+          "Wide shot of the gate, then a macro inside the ring.",
+          "Evening sounds, mysterious music.",
+          "Clue."),
+        # 14
+        s("SECRET", ["kerem", "defne"], "Under Hadrian's Gate at dusk.",
+          ("Defne reads the tiny engraving with the magnifier.",
+           "It is the name of a rose field.",
+           "Kerem opens the notebook to a page of a rose with a small house."),
+          "Close-up on the engraving, match cut to the rose drawing.",
+          "Heartbeat drum.",
+          "Connection.",
+          r=("Defne", "Bir gül bahçesinin adı yazıyor.")),
+        # 15
+        s("CLIFFHANGER", EKIP, "Under Hadrian's Gate at night.",
+          ("Kerem looks at the stone's dusty-rose color, then at the map.",
+           "He realizes where the rose field must be.",
+           "He closes his hand around the ring. Cut to black."),
+          "Close-up on the ring, then on Kerem's eyes, cut to black.",
+          "A deep music hit.",
+          "Next destination.",
+          r=("Kerem", "Gül kurusu… Isparta!")),
+    ],
+)
+
+BOLUMLER = [B]

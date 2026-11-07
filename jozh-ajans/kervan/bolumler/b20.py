@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""B20 · Adana · ACI BİBER — kasa 845.000 → 885.000 → 895.000 → 940.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    20,
+    aciklama=ac(20, "🌶️", "Deve anahtarı Adana'da, Taşköprü'nün yanındaki eski bir pamuk deposunun kapısını açıyor. "
+                "Kaan acı biber yarışmasını kazanıyor ama iki gün sesi çıkmıyor. Depodan çıkan şey ise Sabri'nin "
+                "1926'daki hesap defteri…", "\"Her şeyi kaybettik\" ne demek olabilir?"),
+    etiketler=et(20, "Adana", "Taşköprü", "pulbiber"),
+    kapak=kapak("kaan", ["kerem", "defne"],
+                "Adana's ancient Roman stone bridge Taşköprü over the Seyhan River at sunset, an old abandoned cotton "
+                "warehouse with a huge wooden door beside it, strings of red peppers drying on the walls.",
+                "Kaan in the center with a bright red face, steam coming out of his ears in a cartoonish way, holding "
+                "up a winner's ribbon and a red pepper. Kerem on the left turning the camel key in the warehouse's "
+                "huge lock. Defne on the right holding a dusty old account book, eyes wide.",
+                "Fiery, funny and suddenly serious."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "The huge wooden door of an old cotton warehouse beside Taşköprü bridge in Adana, sunset.",
+          ("Kerem pushes the camel key into a rusty lock.",
+           "He turns it; the lock clicks after a hundred years.",
+           "The giant door creaks open; dust and old cotton fibers float out."),
+          "Close-up on the key turning, then a wide shot of the door opening.",
+          "Click, deep creak, epic music.",
+          "Triumph.",
+          r=("Kerem", "Açıldı! Yüz yıl sonra açıldı!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " crossing Adana's long stone Taşköprü bridge in the morning.",
+          ("The van crosses the ancient bridge over the wide river.",
+           "Kerem compares the bridge with the drawing.",
+           "Kaan points at a big banner of a hot pepper contest."),
+          "Drone shot over the bridge, close-ups inside.",
+          "River, city sounds, energetic music.",
+          "Excitement.",
+          alt="SABAH · ADANA"),
+        # 3
+        s("TRADE", ["defne"], "A juice factory loading dock in Adana; a factory buyer in a hard hat.",
+          ("Defne shows the surviving citrus crates.",
+           "The buyer checks them; most are fine.",
+           "He accepts the load."),
+          "Medium shot, close-up on good oranges.",
+          "Factory hum, hopeful music.",
+          "Recovery."),
+        # 4
+        s("TRADE", ["defne"], "The juice factory office.",
+          ("The buyer pays Defne.",
+           "She writes the number and exhales.",
+           "She looks at the total: still under one million."),
+          "Close-up on the ledger.",
+          "Cash, soft music.",
+          "Partial recovery.",
+          r=("Defne", "Kırk bin geri geldi. Az kaldı."),
+          k=(845_000, 885_000)),
+        # 5
+        s("TRADE", ["kaan"], "A hot pepper eating contest stage in an Adana square; contestants with plates of red peppers.",
+          ("Kaan sits at the contest table, confident.",
+           "He eats pepper after pepper as the crowd counts.",
+           "His face turns red, then purple."),
+          "Quick cuts of eating, close-ups on his face.",
+          "Crowd chanting, comic drums.",
+          "Comic tension."),
+        # 6
+        s("TRADE", ["kaan", "defne"], "The contest stage.",
+          ("The last opponent gives up; Kaan wins.",
+           "The host hands him an envelope of prize money.",
+           "Kaan tries to speak; only a squeak comes out."),
+          "Wide shot of the win, close-up on the squeak.",
+          "Cheering, a comic squeak.",
+          "Funny triumph.",
+          k=(885_000, 895_000)),
+        # 7
+        s("CRISIS", ["kaan", "defne"], "Next to " + VAN + "; Kaan drinking milk from a big bottle.",
+          ("Kaan drinks a whole bottle of milk.",
+           "He tries to speak again; no voice.",
+           "He writes on Defne's ledger: 'Kazandım'."),
+          "Comic two-shot, close-up on the ledger.",
+          "Gulping, comic music.",
+          "Comedy."),
+        # 8
+        s("SECRET", ["kerem", "defne"], "Next to Taşköprü bridge; an old warehouse with a giant wooden door.",
+          ("Kerem finds a warehouse with a camel carved above its door.",
+           "The lock is rusty and old.",
+           "Defne looks around to make sure it's okay."),
+          "Low-angle shot of the carving.",
+          "River sounds, mysterious music.",
+          "Discovery."),
+        # 9
+        s("SECRET", ["kerem"], "The warehouse door.",
+          ("Kerem slides the camel key into the lock.",
+           "He turns it slowly; it clicks.",
+           "The door creaks open."),
+          "Close-up on the key, then the door opening.",
+          "Click, creak, music swell.",
+          "Triumph."),
+        # 10
+        s("SECRET", EKIP, "Inside the old cotton warehouse; light beams through broken roof tiles.",
+          ("Old cotton bales are piled to the ceiling.",
+           "Dust and cotton fibers float in light beams.",
+           "A small wooden desk stands in the middle."),
+          "Slow wide shot moving into the warehouse.",
+          "Echoes, ethereal music.",
+          "Awe."),
+        # 11
+        s("SECRET", ["defne"], "The wooden desk inside the warehouse.",
+          ("Defne opens the desk drawer.",
+           "She takes out a dusty old account book.",
+           "On the cover is the camel symbol."),
+          "Close-up on the drawer and the book.",
+          "Creak, heartbeat drum.",
+          "Discovery.",
+          r=("Defne", "Sabri'nin hesap defteri.")),
+        # 12
+        s("TRADE", ["defne"], "A cotton fabric workshop in Adana; a weaver at a loom.",
+          ("Defne orders cotton fabric and red pepper flakes.",
+           "She shows a buyer in Hatay the samples on a video call.",
+           "The buyer pays a deposit for everything."),
+          "Medium shots, close-up on the phone.",
+          "Loom rhythm, a bright music hit.",
+          "Smart trade.",
+          r=("Defne", "Hatay her şeyi peşin aldı!"),
+          k=(895_000, 940_000)),
+        # 13
+        s("SECRET", EKIP, "The warehouse desk under a light beam.",
+          ("Defne turns the account book's pages.",
+           "Columns of numbers, cities, profits from 1926.",
+           "She is impressed by Sabri's trade."),
+          "Close-up on the pages.",
+          "Paper sounds, warm music.",
+          "Admiration.",
+          r=("Defne", "Bu adam çok iyi tüccarmış.")),
+        # 14
+        s("SECRET", ["defne", "kerem"], "The warehouse.",
+          ("Defne turns to the last written page.",
+           "The numbers stop suddenly.",
+           "There is only one line under them."),
+          "Close-up on the last page.",
+          "Music fades out.",
+          "Dread."),
+        # 15
+        s("CLIFFHANGER", EKIP, "Inside the warehouse; the light beam fades.",
+          ("Defne reads the last line aloud.",
+           "Kaan tries to speak but no voice comes out.",
+           "The light beam fades and the warehouse goes dark. Cut to black."),
+          "Close-up on Defne, then darkness.",
+          "Silence, a deep bass hit.",
+          "Cliffhanger.",
+          r=("Defne", "Hatay'da her şeyi kaybettik.")),
+    ],
+)
+
+BOLUMLER = [B]
