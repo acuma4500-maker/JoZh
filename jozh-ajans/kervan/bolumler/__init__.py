@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Yazılmış bölümleri yükler: b01_10 … b41_50 (varsa)."""
+"""Yazılmış bölümleri yükler: bolumler/b01.py … b50.py (varsa). Her dosya BOLUMLER listesi verir."""
 import importlib
+import os
+import re
+
+_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def yukle():
     eps = []
-    for a in range(1, 51, 10):
-        ad = "bolumler.b%02d_%02d" % (a, a + 9)
-        try:
-            mod = importlib.import_module(ad)
-        except ModuleNotFoundError as ex:
-            if ex.name != ad:
-                raise
-            continue
-        eps.extend(mod.BOLUMLER)
+    for ad in sorted(os.listdir(_DIR)):
+        if re.fullmatch(r"b\d{2}\.py", ad):
+            eps.extend(importlib.import_module("bolumler." + ad[:-3]).BOLUMLER)
     return sorted(eps, key=lambda e: e["no"])

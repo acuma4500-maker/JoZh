@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""B06 · Bursa · İPEK YOLU — kasa 262.000 → 290.000 → 288.000 → 305.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    6,
+    aciklama=ac(6, "🧣", "Yaşlı bekçinin sözleri onları Bursa'ya, ipeğin kalbi Koza Han'a getirdi. Zeytinyağı satıldı, "
+                "ipek alındı, kestane şekerleri ise… Kaan'ın midesine gitti. Şadırvanın dibinde parlayan şey ne?",
+                "Kaan'ın midesini kasadan düşmek adil mi? 😄"),
+    etiketler=et(6, "Bursa", "KozaHan", "ipek"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "The two-story courtyard of Koza Han in Bursa at golden hour; arched stone galleries draped with "
+                "colorful silk scarves, an octagonal marble fountain with a small domed top in the center, tea tables "
+                "under plane trees.",
+                "Kerem in the center leaning over the fountain, reaching toward something glinting under the water. "
+                "Defne on the left wrapped in a shimmering silk scarf, holding her ledger. Kaan on the right with "
+                "cheeks stuffed with candied chestnuts, holding an almost empty box. Silk scarves hang above them.",
+                "Rich, colorful, joyful with a sudden glint of mystery."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "The courtyard of the abandoned Ayvalık olive oil factory at night; an old watchman in his eighties with a lantern.",
+          ("The old watchman sits on a stone step, picking up glass pieces with shaking hands.",
+           "He looks up at Kerem, tears in his eyes.",
+           "He grips Kerem's wrist and whispers a name and a place."),
+          "Close two-shot in lantern light, slow push-in.",
+          "Crickets, lantern flame, low strings.",
+          "Emotional mystery.",
+          r=("Bekçi", "Dedem anlatırdı. Bursa'ya, Koza Han'a git.")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " driving toward Bursa in the morning, Uludağ mountain rising green behind the city.",
+          ("The van drives down toward Bursa with the mountain behind.",
+           "Kaan reads a list of Bursa foods out loud from his phone.",
+           "Defne snatches the phone and replaces it with her ledger."),
+          "Drone shot, then a dashboard-level shot inside.",
+          "Road wind, lively music.",
+          "Fun anticipation.",
+          alt="BURSA"),
+        # 3
+        s("ARRIVAL", EKIP, "The arched entrance of Koza Han in Bursa, bustling with silk sellers.",
+          ("The three walk into the courtyard full of silk scarves and tea tables.",
+           "Kerem stops in front of the octagonal fountain in the middle.",
+           "He holds up the notebook; the same fountain is drawn on a page."),
+          "Steadicam through the arch, then a match cut from drawing to fountain.",
+          "Courtyard chatter, tea glasses clinking, curious motif.",
+          "Wonder.",
+          r=("Kerem", "Su nereden gelirse yol oradan gider.")),
+        # 4
+        s("TRADE", ["defne"], "A busy delicatessen in Bursa's covered market, cheeses and olives on display.",
+          ("Defne pours olive oil into a small dish for the deli owner.",
+           "The owner dips bread, tastes, and nods slowly.",
+           "Defne shows him the lab report like an ace card."),
+          "Medium shot across the counter, close-up of the dipping bread.",
+          "Market sounds, light confident music.",
+          "Confident sales."),
+        # 5
+        s("TRADE", ["defne", "kaan"], "Outside the delicatessen; oil tins being carried in.",
+          ("Kaan carries oil tins into the shop two at a time.",
+           "The deli owner hands Defne a thick envelope.",
+           "Defne fans herself with the envelope."),
+          "Handheld tracking shot, then a close-up of Defne.",
+          "Tins clanking, cash rustle, happy music.",
+          "Success.",
+          r=("Defne", "Zeytinyağı bitti. Yirmi sekiz bin kâr!"),
+          k=(262_000, 290_000)),
+        # 6
+        s("TRADE", ["defne", "kerem"], "A silk shop in the upper gallery of Koza Han; scarves in every color.",
+          ("The silk seller, an elegant old man with a white beard, unrolls a shimmering scarf.",
+           "Defne feels the silk between her fingers and checks the edges.",
+           "They agree on a big order of scarves."),
+          "Slow-motion silk unrolling, close-up on Defne's fingers.",
+          "Silk rustling, soft music.",
+          "Elegant deal."),
+        # 7
+        s("TRADE", ["kaan"], "A candied chestnut shop in Bursa, golden chestnuts in glass jars.",
+          ("Kaan buys boxes of candied chestnuts to sell.",
+           "He opens one box 'just to check the quality'.",
+           "He checks another… and another."),
+          "Comic jump cuts of Kaan eating, getting faster each time.",
+          "Chewing sounds, a speeding-up comic tune.",
+          "Pure comedy."),
+        # 8
+        s("CRISIS", ["defne", "kaan"], "Inside " + VAN + " parked near Koza Han; empty chestnut boxes on the seat.",
+          ("Defne opens the boxes one by one; they are all half empty.",
+           "Kaan slowly hides behind a silk scarf.",
+           "Defne writes something in the ledger with a terrifying calm."),
+          "Close-up on empty boxes, then a slow push-in on Defne.",
+          "Silence, a single comic drum hit.",
+          "Funny tension.",
+          r=("Defne", "Gider kalemi: Kaan'ın midesi.")),
+        # 9
+        s("CRISIS", ["defne", "kaan"], "The same van; Defne shows Kaan the ledger page.",
+          ("Defne shows the ledger to Kaan with a pen tapping the number.",
+           "Kaan places his hand on his heart like a sinner.",
+           "Kerem in the background laughs so hard he falls off the seat."),
+          "Two-shot, then a wide shot of Kerem falling.",
+          "Comic music, laughter.",
+          "Comedy.",
+          k=(290_000, 288_000)),
+        # 10
+        s("SECRET", ["kerem"], "The octagonal marble fountain of Koza Han in the late afternoon; few people left.",
+          ("Kerem sits at the fountain's edge and studies the notebook.",
+           "He notices water flowing from one spout more strongly than the others.",
+           "He follows the flow into the basin with his eyes."),
+          "Close-up on the spouts, then follow the water flow down into the basin.",
+          "Running water, a mysterious motif.",
+          "Concentration."),
+        # 11
+        s("TRADE", ["defne"], "A tea table in Koza Han's courtyard; Defne on a video call with a boutique owner.",
+          ("Defne shows silk scarves to a boutique owner on a video call.",
+           "The boutique owner orders most of them for her Istanbul shop.",
+           "Defne waves a scarf like a flag."),
+          "Over-the-shoulder shot at the phone, then a wide shot of the waving scarf.",
+          "Phone chime, triumphant music.",
+          "Big win.",
+          r=("Defne", "İpeklerin çoğu satıldı!"),
+          k=(288_000, 305_000)),
+        # 12
+        s("SECRET", ["kerem", "kaan"], "The Koza Han fountain at sunset.",
+          ("Kerem rolls up his sleeve and reaches into the fountain basin.",
+           "Kaan holds his phone flashlight over the water.",
+           "Kerem's fingers touch something hard under the moss."),
+          "Close-up of the arm entering water, underwater-style shot of the moss.",
+          "Water splashing, heartbeat drum.",
+          "Suspense."),
+        # 13
+        s("SECRET", EKIP, "The Koza Han fountain at dusk; the courtyard lamps turning on.",
+          ("Kerem scrapes the moss away with his fingers.",
+           "Defne arrives and kneels next to them.",
+           "Under the water, a bronze edge catches the lamp light."),
+          "Top-down shot into the basin, slow push-in on the glint.",
+          "Lamp hum, rising mysterious music.",
+          "Discovery."),
+        # 14
+        s("SECRET", ["kerem", "defne"], "The same fountain; the bronze piece is stuck under a stone.",
+          ("Kerem tries to pull the bronze piece out; it is stuck.",
+           "Defne pulls a pencil from behind her ear and uses it as a lever.",
+           "The pencil snaps in half."),
+          "Close-up on hands and the snapping pencil.",
+          "Snap sound, tension music.",
+          "Frustration and urgency."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The Koza Han fountain at night, lit by courtyard lamps.",
+          ("Kerem pulls one last time and lifts a bronze piece out of the water.",
+           "Water drips from it; it is shaped like part of a camel.",
+           "A night guard's whistle blows behind them. Cut to black."),
+          "Slow-motion lift out of the water, then a whip pan to the guard, cut to black.",
+          "Water drops, a sharp whistle, music cut.",
+          "Cliffhanger.",
+          r=("Kerem", "Mührün bir parçası… olabilir mi?")),
+    ],
+)
+
+BOLUMLER = [B]
