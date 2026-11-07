@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""B35 · Erzurum · BEŞİNCİ MÜHÜR — kasa 1.835.000 → 1.890.000 → 1.930.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    35,
+    aciklama=ac(35, "📿", "Erzurum'da oltu taşı ustası tespihin imamesini açıyor: beşinci mühür parçası! Kaan cağ "
+                "kebabı yarışmasında kendini aşıyor ve iki gün çalışamıyor. Ve tam o anda telefon çalıyor: arayan "
+                "İstanbul'daki sahaf…", "Sahaf neden şimdi aradı?"),
+    etiketler=et(35, "Erzurum", "oltutaşı", "cağkebabı"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "An oltu stone workshop in Erzurum's Rüstem Pasha Bazaar in winter; black oltu stone prayer beads "
+                "hanging in rows, a craftsman's lathe, the Twin Minaret Madrasa visible through a frosted window.",
+                "Kerem in the center holding five joined camel pieces with the new black-stone camel, his phone "
+                "ringing in his other hand. Defne on the left holding black prayer beads up to the light. Kaan on the "
+                "right lying on a bench with a huge belly from kebab, hand on his stomach.",
+                "Warm workshop, cold city, a phone call that changes everything."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "An oltu stone workshop in Erzurum; a craftsman's hands open the large end bead of a prayer bead string.",
+          ("The craftsman twists the large end bead of the prayer beads.",
+           "It opens like a tiny box.",
+           "A small black-stone camel falls into Kerem's palm."),
+          "Macro on the bead opening, slow motion fall.",
+          "Click, magical chime.",
+          "Wonder.",
+          r=("Kerem", "Beşinci parça! İmamenin içindeymiş!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " entering snowy Erzurum; the Twin Minaret Madrasa.",
+          ("The van enters Erzurum's snowy streets.",
+           "The Twin Minaret Madrasa rises in the cold sun.",
+           "Kaan reads a kebab festival poster."),
+          "Drone shot.",
+          "Snow, warm music.",
+          "Arrival.",
+          alt="İKİ GÜN ÖNCE · ERZURUM"),
+        # 3
+        s("TRADE", ["defne"], "A deli in Erzurum.",
+          ("Defne delivers smoked goose and Ardahan honey.",
+           "The deli owner tastes and nods.",
+           "He buys extra honey."),
+          "Medium shot.",
+          "Warm music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne"], "The deli counter.",
+          ("Defne gets paid.",
+           "She writes the profit.",
+           "She asks about oltu stone workshops."),
+          "Close-up on the ledger.",
+          "Upbeat music.",
+          "Success.",
+          r=("Defne", "Bal ve kaz eti elli beş bin!"),
+          k=(1_835_000, 1_890_000)),
+        # 5
+        s("TRADE", ["kaan"], "A cağ kebab competition in an Erzurum restaurant; skewers of horizontal kebab.",
+          ("Kaan enters a cağ kebab eating contest.",
+           "Skewer after skewer disappears.",
+           "The crowd chants his name."),
+          "Fast cuts.",
+          "Chanting, comic drums.",
+          "Comedy."),
+        # 6
+        s("CRISIS", ["kaan", "defne"], "The restaurant.",
+          ("Kaan wins, then collapses on a bench.",
+           "He holds his belly, groaning.",
+           "Defne realizes he can't carry anything for days."),
+          "Comic wide shot.",
+          "Groan, comic music.",
+          "Comedy.",
+          r=("Kaan", "Kazandım… ama kalkamıyorum.")),
+        # 7
+        s("CRISIS", ["defne", "kerem"], "Loading area of a stone shop; heavy boxes.",
+          ("Defne and Kerem carry all the boxes alone.",
+           "Defne slips on ice; Kerem catches the box.",
+           "They glare at Kaan's empty spot."),
+          "Medium shots.",
+          "Grunting, comic music.",
+          "Struggle."),
+        # 8
+        s("SECRET", ["kerem"], "Rüstem Pasha Bazaar; oltu stone workshops.",
+          ("Kerem walks into an oltu stone workshop.",
+           "An old craftsman polishes black beads on a lathe.",
+           "Kerem shows him the prayer beads from the lake."),
+          "Tracking shot, close-up on the lathe.",
+          "Lathe hum, mysterious music.",
+          "Search."),
+        # 9
+        s("SECRET", ["kerem"], "The workshop.",
+          ("The craftsman counts the beads.",
+           "He says the end bead is special: it opens.",
+           "He reaches for it carefully."),
+          "Close-up on his hands.",
+          "Heartbeat.",
+          "Suspense.",
+          r=("Usta", "Bu imame açılır. Dedem yaptı.")),
+        # 10
+        s("SECRET", ["kerem"], "The workshop.",
+          ("He twists the end bead open.",
+           "A black-stone camel falls out.",
+           "Kerem catches it."),
+          "Macro, slow motion.",
+          "Click, chime.",
+          "Revelation."),
+        # 11
+        s("SECRET", EKIP, "The workshop table.",
+          ("Defne arrives; even Kaan limps in.",
+           "Kerem joins five pieces together.",
+           "Five camels walk in a row."),
+          "Macro on the click.",
+          "Click, emotional swell.",
+          "Joy."),
+        # 12
+        s("TRADE", ["defne"], "The workshop.",
+          ("Defne buys oltu stone prayer beads and jewelry.",
+           "She calls a shop in Istanbul.",
+           "They order it all."),
+          "Medium shot.",
+          "Triumphant music.",
+          "Success.",
+          r=("Defne", "Oltu taşları kırk bin getirdi!"),
+          k=(1_890_000, 1_930_000)),
+        # 13
+        s("SECRET", ["kerem"], "The workshop.",
+          ("Kerem turns the fifth piece.",
+           "On the back, waves are engraved, like a sea.",
+           "He thinks of the Black Sea."),
+          "Close-up on the waves.",
+          "Wind, building music.",
+          "Clue."),
+        # 14
+        s("SECRET", EKIP, "Outside the madrasa at night, snow falling.",
+          ("The three walk in the snow.",
+           "Kerem's phone buzzes with an unknown Istanbul number.",
+           "He stops."),
+          "Wide snowy shot, then close-up on the phone (no readable text).",
+          "Phone vibrating, suspense.",
+          "Suspense."),
+        # 15
+        s("CLIFFHANGER", ["kerem"], "Outside the madrasa at night.",
+          ("Kerem answers the phone.",
+           "A calm old woman's voice speaks.",
+           "Kerem's face goes pale. Cut to black."),
+          "Slow push-in on Kerem, cut to black.",
+          "Old voice, deep bass hit.",
+          "Cliffhanger.",
+          r=("Sahaf", "Kerem, ben sahaf. Defteri size ben seçtim.")),
+    ],
+)
+
+BOLUMLER = [B]

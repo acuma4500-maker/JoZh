@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""B32 · Iğdır · KAYISI — kasa 1.560.000 → 1.600.000 → 1.595.000 → 1.650.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    32,
+    aciklama=ac(32, "🍑", "Dağın gölgesi Iğdır'a düşüyor. Kayısılar tatlı, kavunlar dev; bir kilim ise yanlış ölçüde "
+                "çıkınca Kaan'ın yatağı oluyor. Eski bir istasyonun emanetçisinde yüz yıldır kimsenin almadığı bir "
+                "bavul bekliyor…", "Bavulun içinden ne çıkmıştır sizce?"),
+    etiketler=et(32, "Iğdır", "kayısı"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "An old abandoned railway station in Iğdır on a cold sunny day; Mount Ararat towering white behind, "
+                "a wooden left-luggage counter with old shelves, apricot orchards in the distance.",
+                "Kerem in the center opening a dusty old leather suitcase on the counter, light pouring out on his "
+                "face. Defne on the left holding a basket of dried apricots. Kaan on the right lying on a rolled kilim "
+                "on the bench like a bed, peeking with one eye.",
+                "Nostalgic, sunny-cold, thrilling."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "An old station's left-luggage room in Iğdır; dusty shelves, one old leather suitcase.",
+          ("An old station clerk blows dust off a suitcase.",
+           "A paper tag on it shows a camel and '1926'.",
+           "Kerem opens the clasps; they snap."),
+          "Close-up on the tag, then the clasps.",
+          "Snap, magical music hit.",
+          "Discovery.",
+          r=("Kerem", "Yüz yıldır kimse almamış.")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " on the plain toward Iğdır; Mount Ararat behind, orchards.",
+          ("The van drives across the plain under Mount Ararat.",
+           "Snow gives way to orchards.",
+           "Kaan takes off his scarf, smiling."),
+          "Drone shot.",
+          "Warm music.",
+          "Relief.",
+          alt="İKİ GÜN ÖNCE · IĞDIR"),
+        # 3
+        s("TRADE", ["defne"], "A market hall in Iğdır.",
+          ("Defne sells Ağrı honey to a breakfast shop.",
+           "She shows the kilims to a home store.",
+           "Both owners buy."),
+          "Medium shots.",
+          "Market sounds, light music.",
+          "Deals."),
+        # 4
+        s("TRADE", ["defne", "kaan"], "The home store.",
+          ("Kaan carries kilims inside.",
+           "The owner checks the sizes.",
+           "Everything seems fine."),
+          "Medium shot.",
+          "Light music.",
+          "Delivery."),
+        # 5
+        s("TRADE", ["defne"], "The market hall.",
+          ("Defne counts the earnings.",
+           "She writes the profit.",
+           "She buys apricot samples."),
+          "Close-up on the ledger.",
+          "Upbeat music.",
+          "Success.",
+          r=("Defne", "Bal ve kilim kırk bin getirdi."),
+          k=(1_560_000, 1_600_000)),
+        # 6
+        s("CRISIS", ["defne"], "The home store next day.",
+          ("The owner calls them back.",
+           "One kilim is the wrong size for his customer.",
+           "He returns it."),
+          "Medium shot.",
+          "Sad trombone.",
+          "Small setback."),
+        # 7
+        s("CRISIS", ["kaan"], "Inside " + VAN + " at night.",
+          ("Kaan unrolls the returned kilim in the back of the van.",
+           "He lies on it happily.",
+           "He declares it his new bed."),
+          "Comic top-down shot.",
+          "Comic music.",
+          "Comedy.",
+          r=("Kaan", "Bu benim yatağım artık.")),
+        # 8
+        s("CRISIS", ["defne"], "The van.",
+          ("Defne writes the small loss.",
+           "She shakes her head at Kaan.",
+           "She smiles a little."),
+          "Close-up on the ledger.",
+          "Soft comic music.",
+          "Acceptance.",
+          k=(1_600_000, 1_595_000)),
+        # 9
+        s("SECRET", ["kerem"], "An abandoned old railway station in Iğdır.",
+          ("Kerem follows Rüstem's letter to an old station.",
+           "The station is quiet; an old clerk sweeps the floor.",
+           "Kerem shows him the camel drawing."),
+          "Wide shot of the station.",
+          "Wind, nostalgic music.",
+          "Search."),
+        # 10
+        s("SECRET", ["kerem"], "The left-luggage room.",
+          ("The clerk leads him to the dusty shelves.",
+           "He pulls down an old leather suitcase with a camel tag.",
+           "He says his father told him never to throw it away."),
+          "Close-up on the suitcase.",
+          "Dust, emotional music.",
+          "Discovery.",
+          r=("Memur", "Babam dedi ki: biri gelecek.")),
+        # 11
+        s("TRADE", ["defne", "kaan"], "An apricot orchard; dried apricots on trays.",
+          ("Defne and Kaan taste dried apricots.",
+           "Defne buys a large amount.",
+           "Kaan also buys a giant melon."),
+          "Wide orchard shot.",
+          "Birds, warm music.",
+          "Trade."),
+        # 12
+        s("TRADE", ["defne"], "The orchard office.",
+          ("Defne calls a dried fruit shop chain.",
+           "They order the apricots at a good price.",
+           "She shows the giant melon to the camera."),
+          "Medium shot.",
+          "Triumphant music.",
+          "Success.",
+          r=("Defne", "Kayısılar elli beş bin getirdi!"),
+          k=(1_595_000, 1_650_000)),
+        # 13
+        s("SECRET", EKIP, "The station; the suitcase open on the counter.",
+          ("Defne and Kaan arrive.",
+           "Kerem opens the suitcase.",
+           "It is almost empty."),
+          "Top-down shot of the suitcase.",
+          "Silence.",
+          "Disappointment."),
+        # 14
+        s("SECRET", ["kerem"], "The suitcase.",
+          ("Kerem feels the lining.",
+           "He finds a hidden pocket.",
+           "He pulls out a small paper."),
+          "Close-up on the lining.",
+          "Heartbeat drum.",
+          "Discovery."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The station counter.",
+          ("The paper is an old train ticket from 1926.",
+           "Its destination is clearly printed.",
+           "A distant train horn sounds. Cut to black."),
+          "Close-up on the ticket, cut to black.",
+          "Train horn, deep music hit.",
+          "Next destination.",
+          r=("Kerem", "Bir tren bileti… Kars'a.")),
+    ],
+)
+
+BOLUMLER = [B]
