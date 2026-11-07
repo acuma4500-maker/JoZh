@@ -1,0 +1,380 @@
+<title>Kervan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rakkas&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: kervan yol defteri. Üstte mühürlü başlık ve sekmeler; bölüm sayfası yukarıdan aşağı üretim sırası (kapak → açıklama → kasa → 15 senaryo). Altın = defter/pusula, yeşil/kırmızı = kasa. */
+:root{
+  --bg:#f2f0eb; --sheet:#fbfaf7; --ink:#21190f; --soft:#6a5f50; --rule:#ddd6c8;
+  --gold:#8a5d10; --gold-soft:#f0e3c4; --up:#1d7a4c; --down:#b3352b; --code:#efebe2;
+  --f-display:"Rakkas", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110b; --sheet:#211912; --ink:#efe6d6; --soft:#b3a58f; --rule:#3a2e21;
+    --gold:#e2b35c; --gold-soft:#3a2b14; --up:#4fd08a; --down:#ff7a6b; --code:#1a140e; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110b; --sheet:#211912; --ink:#efe6d6; --soft:#b3a58f; --rule:#3a2e21;
+  --gold:#e2b35c; --gold-soft:#3a2b14; --up:#4fd08a; --down:#ff7a6b; --code:#1a140e; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-bottom:1px solid var(--rule)}
+header.top .wrap{display:flex;flex-direction:column;gap:8px;padding-block:12px 0}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:30px;letter-spacing:.06em;color:var(--gold);line-height:1}
+.brand .meta{font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+.brand .meta b{color:var(--ink)}
+.bar{height:4px;background:var(--rule);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -4px}
+nav.tabs a{flex:none;padding:10px 12px;font-weight:600;font-size:14px;color:var(--soft);text-decoration:none;border-bottom:3px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-color:var(--gold)}
+main.wrap{padding-block:20px 64px;display:flex;flex-direction:column;gap:20px}
+h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0;text-wrap:balance;line-height:1.15}
+h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:0;font-weight:700}
+p{margin:0}
+.muted{color:var(--soft);font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Bölüm listesi */
+.region{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+.row .no{font-family:var(--f-mono);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+.row a.t{color:var(--ink);text-decoration:none;min-width:0}
+.row a.t b{display:block;font-weight:700}
+.row a.t span{display:block;font-size:13px;color:var(--soft)}
+.row.off{opacity:.55}
+.row .side{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.delta{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.delta.up{color:var(--up)} .delta.down{color:var(--down)}
+.durum{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:2px 10px;font-size:12px;white-space:nowrap}
+.durum[data-d="1"]{background:var(--gold-soft);border-color:var(--gold)}
+.durum[data-d="2"]{background:var(--up);border-color:var(--up);color:var(--sheet)}
+
+/* Bölüm sayfası */
+.ephead{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.kasaline{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+section.blk{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.blkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+pre.prompt{margin:0;font-family:var(--f-mono);font-size:12px;line-height:1.55;background:var(--code);border-radius:8px;padding:10px 12px;white-space:pre-wrap;word-break:break-word;max-height:9.5em;overflow:hidden;position:relative}
+details[open] pre.prompt{max-height:none}
+details summary{cursor:pointer;color:var(--soft);font-size:13px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸ "} details[open] summary::before{content:"▾ "}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--gold);background:var(--gold);color:var(--sheet);border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn.done{background:var(--up);border-color:var(--up)}
+.made{border:1px solid var(--rule);background:transparent;border-radius:8px;padding:8px 12px;font-size:14px}
+.made[aria-pressed="true"]{background:var(--up);border-color:var(--up);color:var(--sheet)}
+.scene .meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.code{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.tag{font-size:12px;border:1px solid var(--rule);border-radius:999px;padding:1px 8px;color:var(--soft)}
+.tag.k{border-color:var(--gold);color:var(--gold)}
+.say{border-left:3px solid var(--gold);padding-left:10px;font-size:15px}
+.say b{font-weight:700}
+.kasa{border:1px dashed var(--rule);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.kasa .val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px}
+.opts{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:14px}
+.opts label{display:flex;gap:4px;align-items:center}
+.pager{display:flex;justify-content:space-between;gap:8px}
+.pager a{color:var(--gold);font-weight:700;text-decoration:none}
+.fallback{width:100%;min-height:8em;font-family:var(--f-mono);font-size:12px;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:8px}
+
+/* Rota, karakterler, profil, kasa aracı */
+.rt summary{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;color:var(--ink);font-size:15px}
+.rt summary::before{content:none}
+.rt summary .n{font-family:var(--f-mono);font-size:12px;color:var(--soft)}
+.rt{border-bottom:1px solid var(--rule)}
+.rt dl{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:4px 12px;margin:0 0 10px 44px;font-size:14px}
+.rt dt{color:var(--soft)} .rt dd{margin:0}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .v{background:var(--code);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:15px;word-break:break-word}
+.amblem{width:120px;height:120px;border-radius:50%;overflow:hidden;border:1px solid var(--rule)}
+textarea#ka-metin{width:100%;min-height:7em;font-family:var(--f-mono);font-size:14px;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:10px}
+.err{color:var(--down);font-size:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>KERVAN</h1>
+      <div class="meta" id="ozet"></div>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="ilerleme" style="width:0"></i></div>
+    <nav class="tabs" aria-label="Sekmeler">
+      <a href="#bolumler" data-tab="bolumler">Bölümler</a>
+      <a href="#rota" data-tab="rota">Rota</a>
+      <a href="#karakterler" data-tab="karakterler">Karakterler</a>
+      <a href="#kasa" data-tab="kasa">Kasa aracı</a>
+      <a href="#profil" data-tab="profil">Profil</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="sayfa"></main>
+
+<script id="veri" type="application/json">/*__VERI__*/</script>
+<script>
+/*__KASA_MOTOR__*/
+</script>
+<script>
+"use strict";
+const V = JSON.parse(document.getElementById("veri").textContent);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const para = n => KasaMotor.fmt(n) + " ₺";
+const fark = (a, b) => (b >= a ? "+" : "−") + KasaMotor.fmt(Math.abs(b - a)) + " ₺";
+const pad = n => String(n).padStart(2, "0");
+const BOLGELER = ["Marmara", "Ege", "Akdeniz", "Güneydoğu Anadolu", "Doğu Anadolu", "Karadeniz", "İç Anadolu"];
+const DURUM = ["Yapılmadı", "Üretiliyor", "Yayınlandı"];
+
+/* ── Tarayıcı hafızası (yoksa da sayfa çalışır) ── */
+function oku(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function yaz(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const durum = oku("kervan-durum", {});
+const uretildi = new Set(oku("kervan-uretildi", []));
+const KC = Object.assign({ birim: "₺", gecis: "akici", etiket: "var" }, oku("kervan-kasa-ayar", {}));
+
+/* ── Kopyala ── */
+const METIN = new Map();
+let sayac = 0;
+function kopyaBtn(metin, etiket, sinif){
+  const id = "k" + (++sayac);
+  METIN.set(id, metin);
+  return `<button type="button" class="btn ${sinif || ""}" data-kopya="${id}">${esc(etiket || "Kopyala")}</button>`;
+}
+function kopyalandi(btn){
+  const eski = btn.textContent;
+  btn.classList.add("done"); btn.textContent = "Kopyalandı ✓";
+  setTimeout(() => { btn.classList.remove("done"); btn.textContent = eski; }, 1600);
+}
+function yedekKopya(metin, btn){
+  const ta = document.createElement("textarea");
+  ta.value = metin; ta.setAttribute("readonly", ""); ta.className = "fallback";
+  btn.closest(".btns, section, .field, .kasa").appendChild(ta);
+  ta.focus(); ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  if (ok) { ta.remove(); kopyalandi(btn); }
+  else { btn.textContent = "Metni seçtim, uzun basıp kopyala"; }
+}
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-kopya]");
+  if (b) {
+    const metin = METIN.get(b.dataset.kopya) || "";
+    try { navigator.clipboard.writeText(metin).then(() => kopyalandi(b), () => yedekKopya(metin, b)); }
+    catch (e) { yedekKopya(metin, b); }
+    return;
+  }
+  const m = ev.target.closest("[data-made]");
+  if (m) {
+    const k = m.dataset.made;
+    if (uretildi.has(k)) uretildi.delete(k); else uretildi.add(k);
+    yaz("kervan-uretildi", [...uretildi]);
+    m.setAttribute("aria-pressed", uretildi.has(k)); m.textContent = uretildi.has(k) ? "✓ Ürettim" : "Ürettim";
+    return;
+  }
+  const d = ev.target.closest("[data-durum]");
+  if (d) {
+    const no = d.dataset.durum;
+    durum[no] = ((durum[no] || 0) + 1) % 3;
+    yaz("kervan-durum", durum);
+    d.dataset.d = durum[no]; d.textContent = DURUM[durum[no]];
+    ust();
+  }
+});
+const madeBtn = k => `<button type="button" class="made" data-made="${k}" aria-pressed="${uretildi.has(k)}">${uretildi.has(k) ? "✓ Ürettim" : "Ürettim"}</button>`;
+
+/* ── Üst özet ── */
+function ust(){
+  const yayin = V.rota.filter(r => durum[r.no] === 2);
+  const kasa = yayin.length ? Math.max(...yayin.map(r => r.no)) : 0;
+  const deger = kasa ? V.rota[kasa - 1].kasa_son : V.rota[0].kasa_bas;
+  const hazir = V.rota.filter(r => r.hazir).length;
+  $("#ozet").innerHTML = `<b>${yayin.length}</b> / 50 yayınlandı · ${hazir} bölüm hazır · Kasa <b>${para(deger)}</b>`;
+  $("#ilerleme").style.width = (yayin.length / 50 * 100) + "%";
+}
+
+/* ── Kasa promptu ── */
+function kasaPrompt(eski, yeni){
+  const o = eski === yeni ? { sabit: true, old: eski, neu: eski }
+    : { sabit: false, old: eski, neu: yeni, abs: Math.abs(yeni - eski), up: yeni > eski };
+  return KasaMotor.buildPrompt(o, KC);
+}
+function kasaAyarlari(){
+  const r = (ad, deger, metin) => `<label><input type="radio" name="${ad}" id="${ad}-${deger}" value="${deger}" ${KC[ad] === deger ? "checked" : ""}> ${metin}</label>`;
+  return `<div class="opts" id="kasa-ayar">
+    <span>${r("birim", "₺", "₺")} ${r("birim", "TL", "TL")}</span>
+    <span>${r("gecis", "akici", "Rakam sayarak değişir")} ${r("gecis", "anlik", "Anında değişir")}</span>
+    <span>${r("etiket", "var", "KASA yazısı var")} ${r("etiket", "yok", "Yazı yok")}</span></div>`;
+}
+document.addEventListener("change", ev => {
+  if (ev.target.closest("#kasa-ayar")) {
+    KC[ev.target.name] = ev.target.value; yaz("kervan-kasa-ayar", KC); goster();
+  }
+});
+
+/* ── Görünümler ── */
+function bolumListesi(){
+  let h = `<div class="ephead"><h2>Sezon 1 · 50 bölüm</h2><p class="muted">Durum düğmesine dokundukça Yapılmadı → Üretiliyor → Yayınlandı olarak değişir. Telefonun hatırlar.</p></div>`;
+  for (const bolge of BOLGELER) {
+    h += `<div class="region"><h3>${esc(bolge)}</h3>`;
+    for (const r of V.rota.filter(x => x.bolge === bolge)) {
+      const d = durum[r.no] || 0, up = r.kasa_son >= r.kasa_bas;
+      const t = `<b>${esc(r.baslik)}</b><span>${esc(r.sehir)}${r.hazir ? "" : " · hazırlanıyor"}</span>`;
+      h += `<div class="row ${r.hazir ? "" : "off"}"><span class="no">B${pad(r.no)}</span>
+        ${r.hazir ? `<a class="t" href="#b${pad(r.no)}">${t}</a>` : `<div class="t">${t}</div>`}
+        <div class="side"><span class="delta ${up ? "up" : "down"}">${fark(r.kasa_bas, r.kasa_son)}</span>
+        <button type="button" class="durum" data-durum="${r.no}" data-d="${d}">${DURUM[d]}</button></div></div>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function promptBlok(baslik, metin, kod, aciklama){
+  return `<section class="blk"><div class="blkhead"><h3>${esc(baslik)}</h3>${kod ? madeBtn(kod) : ""}</div>
+    ${aciklama ? `<p class="muted">${aciklama}</p>` : ""}
+    <details><summary>Promptu göster</summary><pre class="prompt">${esc(metin)}</pre></details>
+    <div class="btns">${kopyaBtn(metin)}</div></section>`;
+}
+
+function bolum(no){
+  const b = V.bolumler[no];
+  if (!b) return `<p>Bu bölüm henüz hazırlanıyor.</p><p><a href="#bolumler">Bölümlere dön</a></p>`;
+  const K = "B" + pad(b.no);
+  let h = `<div class="ephead"><span class="eyebrow">Bölüm ${b.no} · ${esc(b.sehir)} · ${esc(b.bolge)}</span>
+    <h2>${esc(b.baslik)}</h2>
+    <span class="kasaline">Kasa ${para(b.kasa_bas)} → ${para(b.kasa_son)} <span class="delta ${b.kasa_son >= b.kasa_bas ? "up" : "down"}">(${fark(b.kasa_bas, b.kasa_son)})</span></span></div>`;
+  h += promptBlok("Kapak 1 · Ana kapak", b.kapak1, K + "-K1");
+  h += promptBlok("Kapak 2 · Pek yakında", b.kapak2, K + "-K2");
+  h += `<section class="blk"><div class="blkhead"><h3>Video açıklaması</h3></div>
+    <div class="field"><div class="v">${esc(b.aciklama)}</div></div><div class="btns">${kopyaBtn(b.aciklama)}</div></section>`;
+  h += `<section class="blk"><div class="blkhead"><h3>Sabit kasa</h3></div>
+    <p class="muted">Para değişmeyen senaryolar için. Aynı rakamı taşıyan senaryolar tek klibi paylaşır. Klibi senaryonun üstüne koy, karıştırma modunu Ekran (Screen) yap.</p>
+    ${kasaAyarlari()}`;
+  for (const s of b.sabit) {
+    h += `<div class="kasa"><span class="val">${para(s.deger)} · Senaryo ${s.sahneler.join(", ")}</span>
+      <div class="btns">${kopyaBtn(kasaPrompt(s.deger, s.deger), "Sabit kasa promptunu kopyala", "ghost")}${madeBtn(K + "-SK" + s.deger)}</div></div>`;
+  }
+  h += `</section>`;
+  for (const s of b.senaryolar) {
+    h += `<section class="blk scene" id="${s.kod}"><div class="blkhead"><div class="meta"><span class="code">${s.kod}</span>
+      <span class="tag">${esc(s.rol)}</span><span class="tag">${s.sure}</span>${s.kasa ? `<span class="tag k">Kasa değişiyor</span>` : ""}</div>${madeBtn(s.kod)}</div>`;
+    if (s.altyazi) h += `<p class="say">Altyazı: <b>${esc(s.altyazi)}</b></p>`;
+    h += s.replik ? `<p class="say"><b>${esc(s.replik[0])}:</b> “${esc(s.replik[1])}”</p>` : `<p class="muted">Replik yok.</p>`;
+    h += `<details><summary>Promptu göster</summary><pre class="prompt">${esc(s.prompt)}</pre></details><div class="btns">${kopyaBtn(s.prompt)}</div>`;
+    if (s.kasa) {
+      h += `<div class="kasa"><span class="val">Kasa ${para(s.kasa[0])} → ${para(s.kasa[1])} <span class="delta ${s.kasa[1] > s.kasa[0] ? "up" : "down"}">(${fark(s.kasa[0], s.kasa[1])})</span></span>
+        <div class="btns">${kopyaBtn(kasaPrompt(s.kasa[0], s.kasa[1]), "Kasa promptunu kopyala", "ghost")}${madeBtn(s.kod + "-KASA")}</div></div>`;
+    } else if (s.gizli) {
+      h += `<p class="muted">Bu senaryoda kasa göstergesi yok.</p>`;
+    }
+    h += `</section>`;
+  }
+  const hazir = V.rota.filter(r => r.hazir).map(r => r.no);
+  const i = hazir.indexOf(b.no), once = hazir[i - 1], sonra = hazir[i + 1];
+  h += `<div class="pager"><span>${once ? `<a href="#b${pad(once)}">◀ Bölüm ${once}</a>` : ""}</span><span>${sonra ? `<a href="#b${pad(sonra)}">Bölüm ${sonra} ▶</a>` : ""}</span></div>`;
+  return h;
+}
+
+function rota(){
+  let h = `<div class="ephead"><h2>Rota</h2><p class="muted">İstanbul'dan Kapadokya'ya, defterin izinde 50 durak. Satıra dokununca ayrıntılar açılır.</p></div>`;
+  for (const bolge of BOLGELER) {
+    h += `<div class="region"><h3>${esc(bolge)}</h3>`;
+    for (const r of V.rota.filter(x => x.bolge === bolge)) {
+      h += `<details class="rt"><summary><span class="n">B${pad(r.no)}</span><span>${esc(r.sehir)} · ${esc(r.baslik)}</span>
+        <span class="delta ${r.kasa_son >= r.kasa_bas ? "up" : "down"}">${para(r.kasa_son)}</span></summary>
+        <dl><dt>Alınan</dt><dd>${esc(r.alinan)}</dd><dt>Satılan</dt><dd>${esc(r.satilan)}</dd>
+        <dt>Kasa</dt><dd>${para(r.kasa_bas)} → ${para(r.kasa_son)} (${fark(r.kasa_bas, r.kasa_son)})</dd>
+        <dt>Aksilik</dt><dd>${esc(r.aksilik)}</dd><dt>Defter</dt><dd>${esc(r.ipucu)}</dd><dt>Son</dt><dd>${esc(r.son)}</dd></dl></details>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function karakterler(){
+  let h = `<div class="ephead"><h2>Karakterler</h2><p class="muted">Önce her karakterin referans görselini Flow'da üret. Tarifler bütün promptlara harfi harfine aynı girer.</p></div>`;
+  for (const k of V.karakterler) {
+    h += `<section class="blk"><div class="blkhead"><h3>${esc(k.isim)} · ${esc(k.alt)}</h3></div><p>${esc(k.ozet)}</p>
+      <details><summary>İngilizce tarif</summary><pre class="prompt">${esc(k.tarif)}</pre></details>
+      <div class="btns">${k.referans ? kopyaBtn(k.referans, "Referans görsel promptunu kopyala") : ""}${kopyaBtn(k.tarif, "Tarifi kopyala", "ghost")}</div></section>`;
+  }
+  return h;
+}
+
+function profil(){
+  const p = V.profil;
+  const alan = (b, v, not) => `<div class="field"><h3>${esc(b)}</h3><div class="v">${esc(v)}</div>${not ? `<p class="muted">${not}</p>` : ""}<div class="btns">${kopyaBtn(v)}</div></div>`;
+  return `<div class="ephead"><h2>Profil</h2><p class="muted">Instagram ve TikTok'ta aynı kullanıcı adı. Alınmışsa sırayla kervandizisi, kervan.tr dene.</p></div>
+    <section class="blk">${alan("Kullanıcı adı", p.kullanici)}${alan("Ad", p.ad)}</section>
+    <section class="blk">${alan("Instagram biyografisi", p.biyo_ig, [...p.biyo_ig].length + " / 150 karakter")}
+      ${alan("TikTok biyografisi", p.biyo_tt, [...p.biyo_tt].length + " / 80 karakter")}</section>
+    <section class="blk"><div class="blkhead"><h3>Profil fotoğrafı</h3></div>
+      <div class="amblem" role="img" aria-label="Kervan amblemi: pusulalı deri defter">${AMBLEM}</div>
+      <p class="muted">Hazır amblem sohbette PNG olarak gönderildi. Flow'da 3D sürümünü üretmek için:</p>
+      <details><summary>Promptu göster</summary><pre class="prompt">${esc(p.foto)}</pre></details>
+      <div class="btns">${kopyaBtn(p.foto)}</div></section>`;
+}
+
+function kasaAraci(){
+  let metin = oku("kervan-kasa-arac", "200.000 → 185.000\n186.000");
+  return `<div class="ephead"><h2>Kasa aracı</h2><p class="muted">Her satıra bir kasa yaz: değişim için <b>eski → yeni</b>, sabit kasa için tek rakam. Her satır için Flow promptu çıkar.</p></div>
+    <section class="blk">${kasaAyarlari()}<label for="ka-metin" class="muted">Satırlar</label>
+    <textarea id="ka-metin" spellcheck="false">${esc(metin)}</textarea><div id="ka-sonuc" class="region"></div></section>`;
+}
+function kasaAraciCiz(){
+  const ta = $("#ka-metin"); if (!ta) return;
+  yaz("kervan-kasa-arac", ta.value);
+  let h = "";
+  ta.value.split("\n").forEach((satir, i) => {
+    const o = KasaMotor.parseLine(satir);
+    if (!o) return;
+    if (!o.ok) { h += `<p class="err">Satır ${i + 1}: ${esc(o.msg)}</p>`; return; }
+    const metin = KasaMotor.buildPrompt(o, KC);
+    const lbl = o.sabit ? "Sabit " + para(o.old) : para(o.old) + " → " + para(o.neu);
+    h += `<div class="kasa"><span class="val">${lbl}</span><div class="btns">${kopyaBtn(metin, "Kopyala", "ghost")}</div></div>`;
+  });
+  $("#ka-sonuc").innerHTML = h;
+}
+document.addEventListener("input", ev => { if (ev.target.id === "ka-metin") kasaAraciCiz(); });
+
+const AMBLEM = `<svg viewBox="0 0 1080 1080" width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="1080" height="1080" fill="#24130a"/><g transform="rotate(-7 540 545)"><rect x="300" y="238" width="492" height="624" rx="18" fill="#e9d9b4"/><rect x="282" y="226" width="492" height="628" rx="22" fill="#6b3d1f"/><rect x="282" y="226" width="64" height="628" rx="22" fill="#3d1d0b"/><rect x="368" y="252" width="380" height="576" rx="14" fill="none" stroke="#d9b465" stroke-width="5" stroke-dasharray="14 10"/><g transform="translate(558 540)"><circle r="168" fill="#d9a945"/><circle r="150" fill="#2a170a"/><path d="M0 -128L24 0L0 128L-24 0Z" fill="#fbe3a0"/><path d="M-128 0L0 24L128 0L0 -24Z" fill="#e0b25a"/><circle r="14" fill="#d9a945"/></g></g></svg>`;
+
+/* ── Yönlendirme ── */
+function goster(){
+  const h = location.hash.replace("#", "") || "bolumler";
+  const m = h.match(/^b(\d{2})$/);
+  const sekme = m ? "bolumler" : h;
+  METIN.clear();
+  let html;
+  if (m) html = bolum(String(parseInt(m[1], 10)));
+  else if (h === "rota") html = rota();
+  else if (h === "karakterler") html = karakterler();
+  else if (h === "kasa") html = kasaAraci();
+  else if (h === "profil") html = profil();
+  else html = bolumListesi();
+  $("#sayfa").innerHTML = html;
+  document.querySelectorAll("nav.tabs a").forEach(a => {
+    if (a.dataset.tab === sekme) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (h === "kasa") kasaAraciCiz();
+  ust();
+}
+let sonHash = null;
+window.addEventListener("hashchange", () => { goster(); if (location.hash !== sonHash) window.scrollTo(0, 0); sonHash = location.hash; });
+goster();
+</script>

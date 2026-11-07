@@ -1,0 +1,1512 @@
+<title>Kervan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rakkas&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: kervan yol defteri. Üstte mühürlü başlık ve sekmeler; bölüm sayfası yukarıdan aşağı üretim sırası (kapak → açıklama → kasa → 15 senaryo). Altın = defter/pusula, yeşil/kırmızı = kasa. */
+:root{
+  --bg:#f2f0eb; --sheet:#fbfaf7; --ink:#21190f; --soft:#6a5f50; --rule:#ddd6c8;
+  --gold:#8a5d10; --gold-soft:#f0e3c4; --up:#1d7a4c; --down:#b3352b; --code:#efebe2;
+  --f-display:"Rakkas", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110b; --sheet:#211912; --ink:#efe6d6; --soft:#b3a58f; --rule:#3a2e21;
+    --gold:#e2b35c; --gold-soft:#3a2b14; --up:#4fd08a; --down:#ff7a6b; --code:#1a140e; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110b; --sheet:#211912; --ink:#efe6d6; --soft:#b3a58f; --rule:#3a2e21;
+  --gold:#e2b35c; --gold-soft:#3a2b14; --up:#4fd08a; --down:#ff7a6b; --code:#1a140e; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-bottom:1px solid var(--rule)}
+header.top .wrap{display:flex;flex-direction:column;gap:8px;padding-block:12px 0}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:30px;letter-spacing:.06em;color:var(--gold);line-height:1}
+.brand .meta{font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+.brand .meta b{color:var(--ink)}
+.bar{height:4px;background:var(--rule);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -4px}
+nav.tabs a{flex:none;padding:10px 12px;font-weight:600;font-size:14px;color:var(--soft);text-decoration:none;border-bottom:3px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-color:var(--gold)}
+main.wrap{padding-block:20px 64px;display:flex;flex-direction:column;gap:20px}
+h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0;text-wrap:balance;line-height:1.15}
+h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:0;font-weight:700}
+p{margin:0}
+.muted{color:var(--soft);font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Bölüm listesi */
+.region{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+.row .no{font-family:var(--f-mono);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+.row a.t{color:var(--ink);text-decoration:none;min-width:0}
+.row a.t b{display:block;font-weight:700}
+.row a.t span{display:block;font-size:13px;color:var(--soft)}
+.row.off{opacity:.55}
+.row .side{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.delta{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.delta.up{color:var(--up)} .delta.down{color:var(--down)}
+.durum{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:2px 10px;font-size:12px;white-space:nowrap}
+.durum[data-d="1"]{background:var(--gold-soft);border-color:var(--gold)}
+.durum[data-d="2"]{background:var(--up);border-color:var(--up);color:var(--sheet)}
+
+/* Bölüm sayfası */
+.ephead{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.kasaline{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+section.blk{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.blkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+pre.prompt{margin:0;font-family:var(--f-mono);font-size:12px;line-height:1.55;background:var(--code);border-radius:8px;padding:10px 12px;white-space:pre-wrap;word-break:break-word;max-height:9.5em;overflow:hidden;position:relative}
+details[open] pre.prompt{max-height:none}
+details summary{cursor:pointer;color:var(--soft);font-size:13px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸ "} details[open] summary::before{content:"▾ "}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--gold);background:var(--gold);color:var(--sheet);border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn.done{background:var(--up);border-color:var(--up)}
+.made{border:1px solid var(--rule);background:transparent;border-radius:8px;padding:8px 12px;font-size:14px}
+.made[aria-pressed="true"]{background:var(--up);border-color:var(--up);color:var(--sheet)}
+.scene .meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.code{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.tag{font-size:12px;border:1px solid var(--rule);border-radius:999px;padding:1px 8px;color:var(--soft)}
+.tag.k{border-color:var(--gold);color:var(--gold)}
+.say{border-left:3px solid var(--gold);padding-left:10px;font-size:15px}
+.say b{font-weight:700}
+.kasa{border:1px dashed var(--rule);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.kasa .val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px}
+.opts{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:14px}
+.opts label{display:flex;gap:4px;align-items:center}
+.pager{display:flex;justify-content:space-between;gap:8px}
+.pager a{color:var(--gold);font-weight:700;text-decoration:none}
+.fallback{width:100%;min-height:8em;font-family:var(--f-mono);font-size:12px;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:8px}
+
+/* Rota, karakterler, profil, kasa aracı */
+.rt summary{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;color:var(--ink);font-size:15px}
+.rt summary::before{content:none}
+.rt summary .n{font-family:var(--f-mono);font-size:12px;color:var(--soft)}
+.rt{border-bottom:1px solid var(--rule)}
+.rt dl{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:4px 12px;margin:0 0 10px 44px;font-size:14px}
+.rt dt{color:var(--soft)} .rt dd{margin:0}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .v{background:var(--code);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:15px;word-break:break-word}
+.amblem{width:120px;height:120px;border-radius:50%;overflow:hidden;border:1px solid var(--rule)}
+textarea#ka-metin{width:100%;min-height:7em;font-family:var(--f-mono);font-size:14px;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:10px}
+.err{color:var(--down);font-size:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>KERVAN</h1>
+      <div class="meta" id="ozet"></div>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="ilerleme" style="width:0"></i></div>
+    <nav class="tabs" aria-label="Sekmeler">
+      <a href="#bolumler" data-tab="bolumler">Bölümler</a>
+      <a href="#rota" data-tab="rota">Rota</a>
+      <a href="#karakterler" data-tab="karakterler">Karakterler</a>
+      <a href="#kasa" data-tab="kasa">Kasa aracı</a>
+      <a href="#profil" data-tab="profil">Profil</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="sayfa"></main>
+
+<script id="veri" type="application/json">{
+ "rota": [
+  {
+   "no": 1,
+   "sehir": "İstanbul",
+   "bolge": "Marmara",
+   "baslik": "ESKİ DEFTER",
+   "alinan": "Kapalıçarşı'daki sahaftan yüz yıllık deri defter; Eminönü'nden toptan lokum ve akide şekeri",
+   "satilan": "— (ilk bölüm: henüz satış yok)",
+   "kasa_bas": 200000,
+   "kasa_son": 186000,
+   "aksilik": "Sahaf defter için beklenmedik derecede yüksek fiyat ister; Defne pazarlıkta ilk kez geri adım atar.",
+   "ipucu": "Defterin ilk sayfası: \"Kervan İstanbul'dan çıkar, Edirne'de ilk hanı bulur. — S.K. 1926\"",
+   "son": "Kerem defterin arka kapağında yarısı kırılmış, deve kervanı şeklinde bronz bir mühür izi fark eder.",
+   "hazir": true
+  },
+  {
+   "no": 2,
+   "sehir": "Edirne",
+   "bolge": "Marmara",
+   "baslik": "İLK SATIŞ",
+   "alinan": "Edirne'nin meyve şeklindeki el yapımı sabunları",
+   "satilan": "İstanbul lokumu ve akide şekeri, Selimiye çarşısındaki dükkânlara",
+   "kasa_bas": 186000,
+   "kasa_son": 214000,
+   "aksilik": "Kaan sabun kokulu kamyonetin içinde lokumları açık bırakır; bir kutu lokum sabun kokar, ucuza gider.",
+   "ipucu": "Defter Ali Paşa Çarşısı'nda bir sabuncu ailesinin adını verir; dükkânın torunu defterdeki mührü tanır.",
+   "son": "Sabuncunun yaşlı annesi: \"Yüz yıl önce de üç genç gelmişti… biri hiç geri dönmedi.\"",
+   "hazir": false
+  },
+  {
+   "no": 3,
+   "sehir": "Tekirdağ",
+   "bolge": "Marmara",
+   "baslik": "KÖFTE SAVAŞI",
+   "alinan": "Tekirdağ köftesi için baharat karışımı ve Şarköy'den taze üzüm",
+   "satilan": "Edirne sabunları, sahil kasabalarındaki hediyelik dükkânlara",
+   "kasa_bas": 214000,
+   "kasa_son": 238000,
+   "aksilik": "Kaan köfte yarışmasına katılıp kazanır, ama ödül olarak para yerine 50 kilo baharat verilir.",
+   "ipucu": "Defterde bir rıhtım çizimi ve \"Rüzgâr dönmeden boğazı geç\" notu.",
+   "son": "Hava raporu: yarın Çanakkale'de fırtına. Kamyonet ise tamamen dolu.",
+   "hazir": false
+  },
+  {
+   "no": 4,
+   "sehir": "Çanakkale",
+   "bolge": "Marmara",
+   "baslik": "FIRTINA",
+   "alinan": "Çanakkale seramikleri (testi ve çanak)",
+   "satilan": "Şarköy üzümü — fırtına yüzünden yarısı bozulmuş halde",
+   "kasa_bas": 238000,
+   "kasa_son": 221000,
+   "aksilik": "Feribot fırtına yüzünden 9 saat gecikir, üzümlerin yarısı çürür. İlk büyük zarar.",
+   "ipucu": "Defterde Kilitbahir Kalesi'nin bir burcunun çizimi; burcun taşında kazınmış küçük bir deve izi bulunur.",
+   "son": "Taşın arkasından 1926 tarihli, yarısı yanmış bir tren bileti çıkar: \"İstanbul → ?\"",
+   "hazir": false
+  },
+  {
+   "no": 5,
+   "sehir": "Ayvalık (Balıkesir)",
+   "bolge": "Marmara",
+   "baslik": "ZEYTİN KARASI",
+   "alinan": "Ayvalık'ın soğuk sıkım zeytinyağı, 2 ton",
+   "satilan": "Çanakkale seramikleri, Cunda'daki butik otellere",
+   "kasa_bas": 221000,
+   "kasa_son": 262000,
+   "aksilik": "Defne zeytinyağını laboratuvara test ettirmeden almak istemez; test bir gün sürer, fırsat kaçmak üzeredir.",
+   "ipucu": "Defter eski bir zeytinyağı fabrikasının bacasını çizmiş; bacada yüz yıllık bir kervan işareti var.",
+   "son": "Fabrikanın kapısındaki yaşlı bekçi defteri görünce elindeki çayı düşürür.",
+   "hazir": false
+  },
+  {
+   "no": 6,
+   "sehir": "Bursa",
+   "bolge": "Marmara",
+   "baslik": "İPEK YOLU",
+   "alinan": "Koza Han'dan ipek eşarp ve kestane şekeri",
+   "satilan": "Ayvalık zeytinyağı, Bursa'daki şarküterilere",
+   "kasa_bas": 262000,
+   "kasa_son": 305000,
+   "aksilik": "Kaan kestane şekerlerinin yarısını yolda yer; Defne kasadan 'Kaan'ın midesi' diye gider yazar.",
+   "ipucu": "Defter Koza Han'ın avlusundaki şadırvanı işaret ediyor: \"Su nereden gelirse yol oradan gider.\"",
+   "son": "Şadırvanın dibinde, yosunun altında bronz bir parçanın kenarı parlar.",
+   "hazir": false
+  },
+  {
+   "no": 7,
+   "sehir": "İznik (Bursa)",
+   "bolge": "Marmara",
+   "baslik": "BİRİNCİ MÜHÜR",
+   "alinan": "El yapımı İznik çinisi, 300 parça",
+   "satilan": "Bursa ipeği ve kestane şekeri, İznik'teki turist dükkânlarına",
+   "kasa_bas": 305000,
+   "kasa_son": 348000,
+   "aksilik": "Çini atölyesinin fırını patlar; ustaya yardım edip siparişi kurtarmak için bir gece uykusuz kalırlar.",
+   "ipucu": "Bursa'da bulunan bronz parça, deve kervanı mührünün ilk parçası çıkar. Defterde yazıyor: \"Yedi bölge, yedi parça.\"",
+   "son": "Mühür parçasının arkasında kazınmış tek kelime: \"KÜTAHYA\".",
+   "hazir": false
+  },
+  {
+   "no": 8,
+   "sehir": "Kütahya",
+   "bolge": "Ege",
+   "baslik": "ÇİNİ USTASI",
+   "alinan": "Kütahya porseleni (çay takımı), toptan",
+   "satilan": "İznik çinisi, Kütahya'daki çini koleksiyoncularına",
+   "kasa_bas": 348000,
+   "kasa_son": 392000,
+   "aksilik": "Bir koleksiyoncu İznik çinilerini 'fazla yeni' bulur; Kerem çiniyi yapan ustanın hikâyesini anlatınca fikri değişir.",
+   "ipucu": "Defterde 1926'dan bir çini sipariş listesi; listedeki son isim, bugün hâlâ açık olan bir atölyenin kurucusu.",
+   "son": "Atölyenin duvarında 1926 tarihli bir fotoğraf: üç genç ve bir deve. Yüzler silinmiş.",
+   "hazir": false
+  },
+  {
+   "no": 9,
+   "sehir": "Uşak",
+   "bolge": "Ege",
+   "baslik": "SAHTE HALI",
+   "alinan": "El dokuması sanılan Uşak halıları, 12 adet",
+   "satilan": "Kütahya porseleni, Uşak'taki otellere",
+   "kasa_bas": 392000,
+   "kasa_son": 360000,
+   "aksilik": "Halıların 8'i makine dokuması çıkar; kimse kandırmamıştır, Defne'nin acelesi yüzünden yanlış partiyi almışlardır.",
+   "ipucu": "Defterde halı desenleri çizilmiş; bir desenin içine gizlenmiş harita: Gediz ovası ve bir bağ evi.",
+   "son": "Defne ilk kez ağlar: \"Benim hatam.\" Kerem defterin bir sayfasını gösterir: \"Sabri de aynı hatayı yapmış.\"",
+   "hazir": false
+  },
+  {
+   "no": 10,
+   "sehir": "Manisa",
+   "bolge": "Ege",
+   "baslik": "ÜZÜM BAĞI",
+   "alinan": "Sultaniye çekirdeksiz kuru üzüm, 5 ton",
+   "satilan": "Makine halılarını dürüst etiketle ucuz satar, el halılarını değerinden",
+   "kasa_bas": 360000,
+   "kasa_son": 418000,
+   "aksilik": "Bağ sahibinin traktörü bozulur; hasadı kurtarmak için üçü de bir gün boyunca üzüm toplar.",
+   "ipucu": "Halıdaki haritadaki bağ evinin bodrumunda, 1926 tarihli bir sandık ve sandıkta defterin kayıp sayfası.",
+   "son": "Kayıp sayfada bir isim: Sabri Kervancı. Altında: \"Emaneti İzmir'de Rıhtım'daki saate bıraktım.\"",
+   "hazir": false
+  },
+  {
+   "no": 11,
+   "sehir": "İzmir",
+   "bolge": "Ege",
+   "baslik": "SAAT KULESİ",
+   "alinan": "Kemeraltı'ndan Ege otları ve baharat",
+   "satilan": "Manisa kuru üzümü, İzmir limanındaki ihracatçıya",
+   "kasa_bas": 418000,
+   "kasa_son": 486000,
+   "aksilik": "İhracatçı üzümü almak için belge ister; Defne gece boyunca evrak hazırlar, sabah son dakikada yetişir.",
+   "ipucu": "Konak Saat Kulesi'nin kaidesinde, defterdeki çizimle aynı küçük deve kabartması.",
+   "son": "Kabartmanın altına kazınmış bir yön: \"Rüzgârın sakız kokduğu yere.\"",
+   "hazir": false
+  },
+  {
+   "no": 12,
+   "sehir": "Çeşme (İzmir)",
+   "bolge": "Ege",
+   "baslik": "SAKIZ AĞACI",
+   "alinan": "Çeşme sakızı (damla sakızı), değerli ve az bulunur",
+   "satilan": "Ege otları ve baharat, Alaçatı'daki restoranlara",
+   "kasa_bas": 486000,
+   "kasa_son": 541000,
+   "aksilik": "Kaan restoranlarda 'tadım' yaparken fazla cömert davranır; bedava dağıtılan baharat kâra yansır.",
+   "ipucu": "Defter sakız ağaçlarının arasında yüz yıllık bir ağacı tarif ediyor; ağacın gövdesinde oyulmuş harfler: S.K.",
+   "son": "Ağacın kovuğunda bir mektup: \"İncirler olgunlaşınca Aydın'da beni bekle.\"",
+   "hazir": false
+  },
+  {
+   "no": 13,
+   "sehir": "Aydın",
+   "bolge": "Ege",
+   "baslik": "İNCİR HASADI",
+   "alinan": "Aydın'ın kuru inciri, 4 ton",
+   "satilan": "Çeşme sakızı, İzmir'deki tatlıcılara",
+   "kasa_bas": 541000,
+   "kasa_son": 603000,
+   "aksilik": "İncir hasadında yağmur başlar; kurutma alanı ıslanmadan önce köylülerle yarışa girerler.",
+   "ipucu": "Mektubun devamı: Sabri ve iki ortağı burada yolu ikiye ayırmış; biri deniz yoluyla Bodrum'a, ikisi karadan gitmiş.",
+   "son": "Kerem defterin kenarında eski harflerle yazılmış bir not fark eder; okuyamazlar.",
+   "hazir": false
+  },
+  {
+   "no": 14,
+   "sehir": "Bodrum (Muğla)",
+   "bolge": "Ege",
+   "baslik": "İKİNCİ MÜHÜR",
+   "alinan": "Bodrum mandalinası ve el yapımı sünger",
+   "satilan": "Aydın inciri, Bodrum'daki marinalara",
+   "kasa_bas": 603000,
+   "kasa_son": 672000,
+   "aksilik": "Kaan bir tekne turunda denize düşer; bu sırada denizin dibinde parlayan bir şey görür.",
+   "ipucu": "Eski harfli not okunur: \"İkinci parça kalenin gölgesinde, suyun altında.\" Kaan'ın gördüğü şey ikinci mühür parçası.",
+   "son": "İki parça birleşince kervanın ikinci devesi tamamlanır. Arkasında: \"KAŞ\".",
+   "hazir": false
+  },
+  {
+   "no": 15,
+   "sehir": "Kaş (Antalya)",
+   "bolge": "Akdeniz",
+   "baslik": "BATAN TEKNE",
+   "alinan": "Kaş'tan zeytin ve keçiboynuzu pekmezi",
+   "satilan": "Bodrum süngeri — teknenin arızası yüzünden yarısı ıslak",
+   "kasa_bas": 672000,
+   "kasa_son": 640000,
+   "aksilik": "Mal taşıyan kiralık tekne arıza yapar, kasaların bir kısmı denize düşer. Ege'nin kârı eriyor.",
+   "ipucu": "Defter Kaş'taki bir Likya kaya mezarını çizmiş; mezarın altında 1926'dan bir kuyumcu fişi.",
+   "son": "Fişteki isim: \"Antalya, Kaleiçi, Kuyumcu Nesim.\" Dükkân hâlâ açık mı?",
+   "hazir": false
+  },
+  {
+   "no": 16,
+   "sehir": "Antalya",
+   "bolge": "Akdeniz",
+   "baslik": "KALEİÇİ",
+   "alinan": "Antalya'nın sera domatesi ve yaz meyveleri",
+   "satilan": "Keçiboynuzu pekmezi ve zeytin, otellere",
+   "kasa_bas": 640000,
+   "kasa_son": 735000,
+   "aksilik": "Otelin satın alma müdürü izne çıkar; üç gün beklemek zorunda kalırlar, meyveler olgunlaşmaya başlar.",
+   "ipucu": "Kuyumcu Nesim'in torunu Sabri'nin 1926'da bıraktığı bir yüzüğü saklamış. Yüzüğün taşı: gül kurusu renginde.",
+   "son": "Torun: \"Dedem bu yüzüğü bir gün defterle gelecek birine ver demişti.\"",
+   "hazir": false
+  },
+  {
+   "no": 17,
+   "sehir": "Isparta",
+   "bolge": "Akdeniz",
+   "baslik": "GÜL YAĞI",
+   "alinan": "Isparta gül yağı — gramı altından değerli",
+   "satilan": "Antalya meyvesi, Isparta'daki toptancıya",
+   "kasa_bas": 735000,
+   "kasa_son": 812000,
+   "aksilik": "Gül hasadı şafakta yapılır; Kaan uyuyakalır ve en değerli saatleri kaçırırlar.",
+   "ipucu": "Yüzüğün içine kazınmış bir gül tarlasının adı; tarlada yüz yıllık bir taş kulübe.",
+   "son": "Kulübenin kapısında bir kilit; anahtar deliği deve şeklinde.",
+   "hazir": false
+  },
+  {
+   "no": 18,
+   "sehir": "Alanya (Antalya)",
+   "bolge": "Akdeniz",
+   "baslik": "KIZIL KULE",
+   "alinan": "Alanya avokadosu ve muzu",
+   "satilan": "Gül yağı, Alanya'daki kozmetik dükkânlarına",
+   "kasa_bas": 812000,
+   "kasa_son": 890000,
+   "aksilik": "Gül yağının bir şişesi kırılır; bütün kamyonet aylarca gül kokacaktır.",
+   "ipucu": "Kızıl Kule'nin tersanesinde, defterdeki gibi bir deve oyması; içinde kulübenin anahtarı.",
+   "son": "Kerem anahtarı çevirir… kulübe Isparta'da kaldı.",
+   "hazir": false
+  },
+  {
+   "no": 19,
+   "sehir": "Mersin",
+   "bolge": "Akdeniz",
+   "baslik": "SOĞUK ZİNCİR",
+   "alinan": "Mersin narenciyesi, 8 ton",
+   "satilan": "Alanya avokadosu ve muzu, Mersin halinde",
+   "kasa_bas": 890000,
+   "kasa_son": 845000,
+   "aksilik": "Kiralık soğutuculu kamyonun soğutucusu yolda bozulur; narenciyenin bir kısmı ezilir.",
+   "ipucu": "Kaan'ın ısrarıyla kulübeye geri dönülmez; defter \"Anahtarı Adana'da kullan\" diyor.",
+   "son": "Defne kasaya bakar: \"Bir milyona bu kadar yakınken…\"",
+   "hazir": false
+  },
+  {
+   "no": 20,
+   "sehir": "Adana",
+   "bolge": "Akdeniz",
+   "baslik": "ACI BİBER",
+   "alinan": "Adana'nın pul biberi ve pamuklu kumaş",
+   "satilan": "Narenciyenin sağlam kalan kısmı, Adana'daki meyve suyu fabrikasına",
+   "kasa_bas": 845000,
+   "kasa_son": 940000,
+   "aksilik": "Kaan acı biber yarışmasına girer; kazanır ama iki gün sesi çıkmaz.",
+   "ipucu": "Anahtar Taşköprü'nün yanındaki eski bir pamuk deposunu açar; içinde Sabri'nin 1926 hesap defteri.",
+   "son": "Hesap defterinin son satırı: \"Hatay'da her şeyi kaybettik.\"",
+   "hazir": false
+  },
+  {
+   "no": 21,
+   "sehir": "Hatay",
+   "bolge": "Akdeniz",
+   "baslik": "ÜÇÜNCÜ MÜHÜR",
+   "alinan": "Hatay'ın künefe peyniri ve defne sabunu",
+   "satilan": "Adana pul biberi ve pamuklu kumaş",
+   "kasa_bas": 940000,
+   "kasa_son": 1030000,
+   "aksilik": "Uzun Çarşı'da elektrik kesilir; peynirler bozulmadan dağıtmak için bütün mahalleyle seferber olurlar.",
+   "ipucu": "Sabri'nin 'kaybettik' dediği şey para değil; Hatay'da bir aile mühür parçasını yüz yıldır saklıyor. Üçüncü parça.",
+   "son": "Kasa ilk kez 1.000.000 ₺'yi geçer. Ama mühür parçasının arkasında bir uyarı: \"Güneydoğu'da yol ikiye ayrılır.\"",
+   "hazir": false
+  },
+  {
+   "no": 22,
+   "sehir": "Gaziantep",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "FISTIK",
+   "alinan": "Antep fıstığı, 3 ton",
+   "satilan": "Künefe peyniri ve defne sabunu, Gaziantep'teki tatlıcılara",
+   "kasa_bas": 1030000,
+   "kasa_son": 1120000,
+   "aksilik": "Baklavacı ustası fıstığın kalitesini beğenmez; Kaan ustayla bir baklava düellosu yapar.",
+   "ipucu": "Defterde Bakırcılar Çarşısı'ndaki bir bakır ustası; ustanın atölyesinde deve şeklinde bir kalıp.",
+   "son": "Kalıbın içinde küçük bir kâğıt: \"Gül, karanlıkta açar.\"",
+   "hazir": false
+  },
+  {
+   "no": 23,
+   "sehir": "Halfeti (Şanlıurfa)",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "KARA GÜL",
+   "alinan": "Halfeti'nin kara gülü (fide ve kurusu)",
+   "satilan": "Antep fıstığı, Urfa'daki toptancıya",
+   "kasa_bas": 1120000,
+   "kasa_son": 1185000,
+   "aksilik": "Batık köyün yakınındaki tekne motoru durur; gece suyun ortasında kalırlar.",
+   "ipucu": "Gece suyun ortasında Kerem defteri fenerle okur; kara gül çizimi su altındaki eski camiyi gösteriyor.",
+   "son": "Su altındaki minarenin tepesinde, fener ışığında parlayan bir deve oyması.",
+   "hazir": false
+  },
+  {
+   "no": 24,
+   "sehir": "Şanlıurfa",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "İSOT",
+   "alinan": "Urfa isotu ve Harran'dan pamuk",
+   "satilan": "Kara gül fideleri, Urfa'daki çiçekçilere",
+   "kasa_bas": 1185000,
+   "kasa_son": 1260000,
+   "aksilik": "Balıklıgöl'de Kaan balıklara simit atarken telefonu suya düşer; bütün müşteri listesi o telefondadır.",
+   "ipucu": "Defter Harran'ın kümbet evlerinden birini işaret ediyor; içinde Sabri'nin el yazısıyla bir harita.",
+   "son": "Haritanın ortasında bir dağ: \"Taş başların gözüne bak.\"",
+   "hazir": false
+  },
+  {
+   "no": 25,
+   "sehir": "Adıyaman",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "NEMRUT SİSİ",
+   "alinan": "Adıyaman'ın kuru meyveleri",
+   "satilan": "Urfa isotu — Nemrut yolundaki nemden yarısı küflenmiş",
+   "kasa_bas": 1260000,
+   "kasa_son": 1210000,
+   "aksilik": "Nemrut yolunda sis ve yağmur; kamyonet iki gün mahsur kalır, isot nem çeker.",
+   "ipucu": "Gün doğarken taş heykellerin gözlerinin baktığı yerde bir taş yığını; içinde Sabri'nin pusulası.",
+   "son": "Pusula kuzeyi göstermiyor. Diyarbakır'ı gösteriyor.",
+   "hazir": false
+  },
+  {
+   "no": 26,
+   "sehir": "Diyarbakır",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "KARPUZ",
+   "alinan": "Diyarbakır karpuzu ve el yapımı bakır",
+   "satilan": "Kuru meyve, Diyarbakır'daki kuruyemişçilere",
+   "kasa_bas": 1210000,
+   "kasa_son": 1305000,
+   "aksilik": "Kaan dev bir karpuzu taşırken düşürür; karpuz, ticaretin anlaşma masasına yayılır. Herkes güler, anlaşma imzalanır.",
+   "ipucu": "Pusula Hasan Paşa Hanı'nda duruyor; hanın avlusunda Sabri'nin 1926'da konakladığı odanın numarası.",
+   "son": "Odanın duvarına yazılmış bir dize: \"Taşın sustuğu şehirde gümüş konuşur.\"",
+   "hazir": false
+  },
+  {
+   "no": 27,
+   "sehir": "Mardin",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "TAŞ ŞEHİR",
+   "alinan": "Mardin'in bıttım sabunu ve badem şekeri",
+   "satilan": "Diyarbakır karpuzu ve bakır, Mardin'deki butik otellere",
+   "kasa_bas": 1305000,
+   "kasa_son": 1390000,
+   "aksilik": "Taş merdivenlerde kamyonet giremez; bütün malları eşekle taşımak zorunda kalırlar.",
+   "ipucu": "Defterdeki dize Midyat'ın telkari ustalarını işaret ediyor; Mardin'de bir ustanın torunu yolu tarif eder.",
+   "son": "Torun: \"Dedem o gün üç değil, dört kişi geldiklerini söylerdi.\"",
+   "hazir": false
+  },
+  {
+   "no": 28,
+   "sehir": "Midyat (Mardin)",
+   "bolge": "Güneydoğu Anadolu",
+   "baslik": "DÖRDÜNCÜ MÜHÜR",
+   "alinan": "Midyat telkari gümüş takılar",
+   "satilan": "Bıttım sabunu ve badem şekeri",
+   "kasa_bas": 1390000,
+   "kasa_son": 1480000,
+   "aksilik": "Gümüş fiyatı bir gecede yükselir; Defne alımı bir gün öne çekerek büyük kâr yakalar.",
+   "ipucu": "Telkari ustası, dedesinin Sabri için yaptığı gümüş deveyi saklamış: dördüncü mühür parçası.",
+   "son": "Dördüncü parçanın arkasında: \"Dördüncü yolcu Van'da kaldı.\"",
+   "hazir": false
+  },
+  {
+   "no": 29,
+   "sehir": "Ahlat (Bitlis)",
+   "bolge": "Doğu Anadolu",
+   "baslik": "SELÇUKLU TAŞI",
+   "alinan": "Ahlat taşı işlemeleri ve Bitlis balı",
+   "satilan": "Telkari gümüş takılar, Ahlat'taki hediyelik dükkânlarına",
+   "kasa_bas": 1480000,
+   "kasa_son": 1525000,
+   "aksilik": "Van Gölü kıyısında kamyonetin lastiği patlar; yedek lastik de patlaktır.",
+   "ipucu": "Selçuklu mezar taşlarından birinde deve kabartması ve bir isim: \"Rüstem, 1926\".",
+   "son": "Rüstem kim? Sabri'nin defterinde hiç geçmiyor.",
+   "hazir": false
+  },
+  {
+   "no": 30,
+   "sehir": "Van",
+   "bolge": "Doğu Anadolu",
+   "baslik": "VAN KAHVALTISI",
+   "alinan": "Van otlu peyniri ve tereyağı",
+   "satilan": "Ahlat taşı işlemeleri ve Bitlis balı",
+   "kasa_bas": 1525000,
+   "kasa_son": 1610000,
+   "aksilik": "Kaan bir Van kedisine bağlanır ve kediyi bırakmak istemez; kedi bir kamyonet dolusu peynire saldırır.",
+   "ipucu": "Rüstem'in torunları Van'da bir kahvaltı salonu işletiyor; dedeleri Sabri'nin dördüncü yolcusuymuş.",
+   "son": "Rüstem'in eski bir mektubu: \"Kar yağmadan dağı geçin, yoksa bahara kadar beklersiniz.\"",
+   "hazir": false
+  },
+  {
+   "no": 31,
+   "sehir": "Doğubayazıt (Ağrı)",
+   "bolge": "Doğu Anadolu",
+   "baslik": "KAR FIRTINASI",
+   "alinan": "Ağrı'nın balı ve el dokuması kilim",
+   "satilan": "Van otlu peyniri — kar yüzünden teslimat gecikiyor",
+   "kasa_bas": 1610000,
+   "kasa_son": 1560000,
+   "aksilik": "Kar fırtınası; kamyonet İshak Paşa Sarayı yolunda mahsur kalır, peynirin bir kısmı satılamaz.",
+   "ipucu": "Fırtınada sığındıkları İshak Paşa Sarayı'nda defterde çizilmiş bir pencere; pencerenin taşında bir rakam: 1926.",
+   "son": "Pencereden bakınca karların arasında Ağrı Dağı. Defterde: \"Dağın gölgesi Iğdır'a düşer.\"",
+   "hazir": false
+  },
+  {
+   "no": 32,
+   "sehir": "Iğdır",
+   "bolge": "Doğu Anadolu",
+   "baslik": "KAYISI",
+   "alinan": "Iğdır'ın kayısısı (kuru) ve kavunu",
+   "satilan": "Ağrı balı ve kilim",
+   "kasa_bas": 1560000,
+   "kasa_son": 1650000,
+   "aksilik": "Kilimlerin biri yanlış ölçüde çıkar; müşteri iade eder, Kaan kilimi kamyonetin yatağı yapar.",
+   "ipucu": "Rüstem'in mektubuna göre Sabri burada bir bavul bırakmış; bavul eski bir istasyonun emanetçisinde.",
+   "son": "Bavulun içinde tek şey var: bir tren bileti, Kars'a.",
+   "hazir": false
+  },
+  {
+   "no": 33,
+   "sehir": "Kars",
+   "bolge": "Doğu Anadolu",
+   "baslik": "KAŞAR",
+   "alinan": "Kars kaşarı ve gravyer peyniri",
+   "satilan": "Iğdır kayısısı ve kavunu",
+   "kasa_bas": 1650000,
+   "kasa_son": 1760000,
+   "aksilik": "Gravyerin olgunlaşmasını beklemek gerekir; Defne kasanın bağlanmasından korkar ama riske girer.",
+   "ipucu": "Tren bileti eski Kars garını işaret ediyor; gardaki bekleme salonunda Sabri'nin kazıdığı bir harita.",
+   "son": "Haritadaki göl donmuş. Defterde: \"Göl buz tutunca, buzun altına bak.\"",
+   "hazir": false
+  },
+  {
+   "no": 34,
+   "sehir": "Çıldır (Ardahan)",
+   "bolge": "Doğu Anadolu",
+   "baslik": "BUZ GÖLÜ",
+   "alinan": "Ardahan kaz eti (füme) ve bal",
+   "satilan": "Kars kaşarı ve gravyer, Ardahan'daki marketlere",
+   "kasa_bas": 1760000,
+   "kasa_son": 1835000,
+   "aksilik": "Atlı kızakla göl üzerinde giderken buz çatlar; kızak suya gömülmeden kurtarılır.",
+   "ipucu": "Buz balıkçılarının açtığı delikten, yüz yıllık bir zincirle bağlı bir kutu çıkar.",
+   "son": "Kutunun içinde bir oltu taşı tespih ve bir not: \"Erzurum'da tespihi tamamlayan ustayı bul.\"",
+   "hazir": false
+  },
+  {
+   "no": 35,
+   "sehir": "Erzurum",
+   "bolge": "Doğu Anadolu",
+   "baslik": "BEŞİNCİ MÜHÜR",
+   "alinan": "Oltu taşı tespih ve takı",
+   "satilan": "Ardahan kaz eti ve bal",
+   "kasa_bas": 1835000,
+   "kasa_son": 1930000,
+   "aksilik": "Cağ kebabı yeme yarışmasında Kaan kendini aşar; iki gün çalışamaz, bütün yük Defne ve Kerem'e kalır.",
+   "ipucu": "Tespih ustası tespihin imamesini açar: içinden beşinci mühür parçası çıkar.",
+   "son": "Beşinci parça Karadeniz'i gösteriyor; Kerem'in telefonu çalar: arayan, İstanbul'daki sahaf.",
+   "hazir": false
+  },
+  {
+   "no": 36,
+   "sehir": "Yusufeli (Artvin)",
+   "bolge": "Karadeniz",
+   "baslik": "DERE YOLU",
+   "alinan": "Artvin'in kestane balı",
+   "satilan": "Oltu taşı tespih ve takılar",
+   "kasa_bas": 1930000,
+   "kasa_son": 1990000,
+   "aksilik": "Dar dere yolunda heyelan; kamyoneti ters yöne 20 kilometre geri sürmek zorunda kalırlar.",
+   "ipucu": "Sahafın telefonda söylediği: \"O defteri size ben seçtim. Ama sebebini Rize'de anlatacağım.\"",
+   "son": "Telefon kapanır. Kerem defterin son sayfalarının birbirine yapıştırıldığını fark eder.",
+   "hazir": false
+  },
+  {
+   "no": 37,
+   "sehir": "Rize",
+   "bolge": "Karadeniz",
+   "baslik": "ÇAY BAHÇESİ",
+   "alinan": "Rize çayı, 6 ton (yaş çay işleme anlaşması)",
+   "satilan": "Kestane balı, Rize'deki kahvaltıcılara",
+   "kasa_bas": 1990000,
+   "kasa_son": 2080000,
+   "aksilik": "Yağmur durmuyor; çay toplama günleri ertelenir, kamyonet çamura saplanır.",
+   "ipucu": "Sahaf Rize'de bir yaylada bekliyor; Sabri'nin kızının kızı olduğunu söyler.",
+   "son": "Sahaf: \"Defterin sonu yapıştırılmış, çünkü son sayfayı yüksek sesle okumaktan korktum.\"",
+   "hazir": false
+  },
+  {
+   "no": 38,
+   "sehir": "Trabzon",
+   "bolge": "Karadeniz",
+   "baslik": "ÇAY ÇÖKÜŞÜ",
+   "alinan": "Trabzon hurması ve tereyağı",
+   "satilan": "Rize çayı — o hafta çay fiyatı aniden düşer",
+   "kasa_bas": 2080000,
+   "kasa_son": 2010000,
+   "aksilik": "Çay fiyatı piyasada düşer; elleri mecbur, zararına satarlar.",
+   "ipucu": "Sümela'ya giden yolda yapışık sayfalar buharla açılır; Sabri'nin son yolculuğunun haritası.",
+   "son": "Haritada yolun sonu Kapadokya. Altında: \"Yedi parça olmadan kapı açılmaz.\"",
+   "hazir": false
+  },
+  {
+   "no": 39,
+   "sehir": "Giresun",
+   "bolge": "Karadeniz",
+   "baslik": "FINDIK",
+   "alinan": "Giresun fındığı, 10 ton",
+   "satilan": "Trabzon hurması ve tereyağı",
+   "kasa_bas": 2010000,
+   "kasa_son": 2150000,
+   "aksilik": "Fındık harmanında Kaan fındıkları yanlış çuvallara doldurur; bütün gece yeniden ayıklanır.",
+   "ipucu": "Giresun Adası'nda Sabri'nin çizdiği bir ağaç; ağacın kökünde boş bir mühür yuvası.",
+   "son": "Yuva boş. Biri altıncı parçayı daha önce almış.",
+   "hazir": false
+  },
+  {
+   "no": 40,
+   "sehir": "Ordu",
+   "bolge": "Karadeniz",
+   "baslik": "BOZTEPE",
+   "alinan": "Ordu'nun fındık ezmesi ve pestil",
+   "satilan": "Giresun fındığı, Ordu'daki fabrikaya",
+   "kasa_bas": 2150000,
+   "kasa_son": 2240000,
+   "aksilik": "Fabrika fındığı nem ölçümü yüzünden reddetmek üzereyken Defne ikinci bir laboratuvar raporu getirir.",
+   "ipucu": "Boztepe'deki yaşlı bir yamaç paraşütçüsü, parçayı 40 yıl önce adada bulup Sinop'taki ağabeyine verdiğini söyler.",
+   "son": "Sinop'taki ağabey yıllar önce ölmüş. Ama evi müze olmuş.",
+   "hazir": false
+  },
+  {
+   "no": 41,
+   "sehir": "Sinop",
+   "bolge": "Karadeniz",
+   "baslik": "TERSANE",
+   "alinan": "Sinop'un el yapımı tekne maketleri ve nakışları",
+   "satilan": "Ordu fındık ezmesi ve pestil",
+   "kasa_bas": 2240000,
+   "kasa_son": 2300000,
+   "aksilik": "Müze kapalı; bir haftalık restorasyon var. Belediyeyi ikna etmek için bütün bir gün uğraşırlar.",
+   "ipucu": "Müzenin vitrininde, 'kimliği bilinmeyen bronz parça' etiketiyle altıncı mühür parçası.",
+   "son": "Müze müdürü: \"Parçayı veririm. Ama Safranbolu'daki ailesi izin verirse.\"",
+   "hazir": false
+  },
+  {
+   "no": 42,
+   "sehir": "Safranbolu (Karabük)",
+   "bolge": "Karadeniz",
+   "baslik": "ALTINCI MÜHÜR",
+   "alinan": "Safranbolu safranı ve lokumu",
+   "satilan": "Sinop tekne maketleri ve nakışları",
+   "kasa_bas": 2300000,
+   "kasa_son": 2390000,
+   "aksilik": "Safran hasadı tek gün sürer ve yağmur yağmaktadır; çiçekleri sabaha kadar elle toplarlar.",
+   "ipucu": "Ailenin büyükannesi defteri görünce parçayı kendi verir: altıncı mühür parçası.",
+   "son": "Altı parça birleşince kervan tamamlanmak üzere; tek bir deve eksik. Arkasında: \"KAPI\".",
+   "hazir": false
+  },
+  {
+   "no": 43,
+   "sehir": "Beypazarı (Ankara)",
+   "bolge": "İç Anadolu",
+   "baslik": "HAVUÇ LOKUMU",
+   "alinan": "Beypazarı'nın havucu, kurusu ve maden suyu",
+   "satilan": "Safranbolu safranı ve lokumu",
+   "kasa_bas": 2390000,
+   "kasa_son": 2450000,
+   "aksilik": "Kaan havuç lokumu tarifini yanlış anlar; bin kutu 'havuçlu lokum' siparişi yanlış basılır.",
+   "ipucu": "Defterde Beypazarı'nın konak evlerinden birinin kapı tokmağı; tokmak deve şeklinde.",
+   "son": "Konağın sahibi: \"Sabri buradan geçtiğinde yanında üç değil, iki kişi vardı.\"",
+   "hazir": false
+  },
+  {
+   "no": 44,
+   "sehir": "Eskişehir",
+   "bolge": "İç Anadolu",
+   "baslik": "LÜLETAŞI",
+   "alinan": "Eskişehir lületaşı işlemeleri ve met helvası",
+   "satilan": "Beypazarı ürünleri",
+   "kasa_bas": 2450000,
+   "kasa_son": 2520000,
+   "aksilik": "Lületaşı ustası malı vermeden önce üçünden de birer parça işlemelerini ister; Kaan'ın parçası kırılır.",
+   "ipucu": "Odunpazarı'ndaki bir ahşap evde Sabri'nin 1926'dan bir fotoğrafı; fotoğrafın arkasında bir Ankara adresi.",
+   "son": "Kerem fotoğraftaki yüze uzun uzun bakar. Bir şey tanıdık geliyor.",
+   "hazir": false
+  },
+  {
+   "no": 45,
+   "sehir": "Ankara",
+   "bolge": "İç Anadolu",
+   "baslik": "BÜYÜK SİPARİŞ",
+   "alinan": "Ankara tiftiği ve keçisi yününden ürünler",
+   "satilan": "Lületaşı ve met helvası — büyük bir zincir mağaza siparişi",
+   "kasa_bas": 2520000,
+   "kasa_son": 2430000,
+   "aksilik": "Zincir mağaza iflas eder; sipariş iptal, mal elde kalır. Sezonun en büyük zararı.",
+   "ipucu": "Fotoğraftaki adres Ulus'ta eski bir han; hanın arşivinde Sabri'nin 1926'dan bir tapu kaydı.",
+   "son": "Tapu Kapadokya'da bir arazi için. Sahibi: Sabri Kervancı ve \"iki ortağı\".",
+   "hazir": false
+  },
+  {
+   "no": 46,
+   "sehir": "Konya",
+   "bolge": "İç Anadolu",
+   "baslik": "BÜYÜK PAZAR",
+   "alinan": "Konya'nın buğdayı, unu ve etli ekmek",
+   "satilan": "Elde kalan lületaşı ve tiftik ürünleri, Konya'daki büyük pazarda",
+   "kasa_bas": 2430000,
+   "kasa_son": 2580000,
+   "aksilik": "Pazar sabahı kar yağar; tezgâh kurulamaz, ürünleri bir tarihi hanın avlusunda satarlar.",
+   "ipucu": "Hanın avlusunda Sabri'nin defterde çizdiği sema eden bir derviş figürü; figürün eteğinde bir yol işareti.",
+   "son": "İşaret Ihlara Vadisi'ni gösteriyor. Defterde: \"Vadinin dibinde son harita.\"",
+   "hazir": false
+  },
+  {
+   "no": 47,
+   "sehir": "Ihlara (Aksaray)",
+   "bolge": "İç Anadolu",
+   "baslik": "VADİ",
+   "alinan": "Aksaray'ın bal kabağı ve kuru meyvesi",
+   "satilan": "Konya unu ve buğdayı, Aksaray'daki fırınlara",
+   "kasa_bas": 2580000,
+   "kasa_son": 2640000,
+   "aksilik": "Vadide yürüyüş yolu kapalı; ip ve halatla, rehberle inmek zorunda kalırlar.",
+   "ipucu": "Vadinin dibinde bir kaya kilisesinin duvarında Sabri'nin çizdiği son harita: Niğde'den geçen bir yol.",
+   "son": "Haritanın kenarında: \"Kervanın son devesi, elma ağacının altında uyur.\"",
+   "hazir": false
+  },
+  {
+   "no": 48,
+   "sehir": "Niğde",
+   "bolge": "İç Anadolu",
+   "baslik": "ELMA BAHÇESİ",
+   "alinan": "Niğde elması ve patatesi",
+   "satilan": "Aksaray bal kabağı ve kuru meyvesi",
+   "kasa_bas": 2640000,
+   "kasa_son": 2710000,
+   "aksilik": "Bahçenin sahibi elma ağacını kazdırmak istemez; üç gün bahçede çalışıp güvenini kazanırlar.",
+   "ipucu": "Yüz yıllık elma ağacının altında, kurşun bir kutunun içinde yedinci mühür parçası.",
+   "son": "Yedi parça tamam. Ama mühür kendiliğinden birleşmiyor; ortasında bir boşluk var.",
+   "hazir": false
+  },
+  {
+   "no": 49,
+   "sehir": "Kayseri",
+   "bolge": "İç Anadolu",
+   "baslik": "PASTIRMA",
+   "alinan": "Kayseri pastırması ve sucuğu",
+   "satilan": "Niğde elması ve patatesi, Kayseri'deki toptancıya",
+   "kasa_bas": 2710000,
+   "kasa_son": 2860000,
+   "aksilik": "Pastırma kurutma sezonu kısa; bir tüccar daha iyi fiyat teklif eder, Defne eski müşteriye sadık kalır.",
+   "ipucu": "Kayseri Bedesteni'ndeki yaşlı bir bakırcı, mührün ortasındaki boşluğa uyan küçük bir pim yapar: 1926'da da aynısını yapmış.",
+   "son": "Sahaf mesaj atar: \"Yarın sabah Derinkuyu. Ben de geliyorum.\"",
+   "hazir": false
+  },
+  {
+   "no": 50,
+   "sehir": "Kapadokya (Nevşehir)",
+   "bolge": "İç Anadolu",
+   "baslik": "KERVANIN KAPISI",
+   "alinan": "Ürgüp'ün üzüm pekmezi ve Avanos'un el yapımı çömlekleri",
+   "satilan": "Kayseri pastırması ve sucuğu",
+   "kasa_bas": 2860000,
+   "kasa_son": 2980000,
+   "aksilik": "Yeraltı şehrinin en alt katına inmek için izin gerekir; izin kâğıdı son anda yetişir.",
+   "ipucu": "Yedi parçalı mühür, Derinkuyu'nun en alt katındaki taş kapıyı açar: içinde Sabri'nin ikinci defteri ve 1926 tarihli bir fotoğraf.",
+   "son": "Fotoğrafta Sabri ve iki ortağı. Ortaklardan biri Kerem'in büyük dedesi. Sahaf: \"Bu defter size tesadüfen gelmedi.\"",
+   "hazir": false
+  }
+ ],
+ "bolumler": {
+  "1": {
+   "no": 1,
+   "sehir": "İstanbul",
+   "bolge": "Marmara",
+   "baslik": "ESKİ DEFTER",
+   "kasa_bas": 200000,
+   "kasa_son": 186000,
+   "aciklama": "Bölüm 1: Eski Defter 📜\n\nÜç genç, 200.000 ₺ ve tek bir hayal… Kapalıçarşı'daki eski bir sahaftan aldıkları yüz yıllık defter, onları Türkiye'nin dört bir yanına götürecek bir yolculuğun ilk sayfası.\n\nAma sahafın son sözü ve defterin arka kapağındaki iz… 👀\n\nSence bu mühür kime ait? Yorumlara yaz 👇\nTakip et, yolculuğu kaçırma. Bölüm 2 yolda 🐪\n\n#Kervan #KervanBölüm1 #animasyon #dizi #İstanbul #Kapalıçarşı #macera #gizem #ticaret #keşfet #reels",
+   "kapak1": "Instagram Reels cover image, vertical 9:16 (1080x1920), semi-realistic stylized 3D animation still, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors, high detail, professional animated movie poster quality.\n\nTITLE TEXT (IMPORTANT):\n\nAdd a large, visually striking Turkish title at the top of the image:\n\n“BÖLÜM 1”\n“ESKİ DEFTER”\n\nTypography:\n\n* “BÖLÜM 1” in smaller, elegant, bold uppercase letters.\n* “ESKİ DEFTER” in large, bold, cinematic typography.\n* Use a slightly distressed white font with subtle warm golden lighting.\n* Make the most important words particularly prominent.\n* Add a subtle dark shadow behind the letters for readability.\n* Perfect Turkish spelling and clearly readable typography.\n* Position the title in the upper portion without covering the characters or important visual elements.\n\nKeep all main characters and important visual elements inside the central square area so the cover works when Instagram crops it to 1:1 or 4:5.\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\n\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\n\nAll characters must maintain absolute visual consistency with their previous appearances, including faces, hairstyles, clothing, accessories and body proportions.\n\nSETTING:\n\nInside a tiny, very old secondhand bookshop in the Sahaflar Bazaar of Istanbul's Grand Bazaar at golden hour. Tall wooden shelves packed with dusty antique books, Ottoman-era maps on the walls, warm sunbeams cutting through floating dust, a brass oil lamp on the counter.\n\nCOMPOSITION:\n\nKerem stands in the center holding the old brown leather notebook open with both hands; the golden compass rose on its cover glows softly and lights his amazed face from below. Defne stands on the left, arms crossed, holding her black ledger, one eyebrow raised in suspicion. Kaan stands on the right with a half-open box of Turkish delight, cheeks full, staring at the notebook with wide eyes. Dusty shelves and hanging old maps fill the background.\n\nDescribe:\n\n* Where each character stands.\n* What each character is holding.\n* Their facial expressions.\n* Their body language.\n* Important objects in the scene.\n* Background details.\n\nMOOD AND EMOTION:\n\nWonder and mystery: the first page of a great adventure, with a hint that the notebook hides a secret.\n\nLIGHTING AND QUALITY:\n\nCinematic lighting, dramatic rim lighting, realistic textures, expressive facial details, beautiful depth of field, detailed environments, professional color grading and premium 3D animated feature film rendering.\n\nThe final image should feel like the official cover of Episode 1 of the exact same animated series as previous episodes.\n\nMaintain absolute character consistency throughout the entire series.\n\nNo additional text, no random letters, no logos, no watermark.\n\nThe ONLY permitted text elements are:\n“BÖLÜM 1”\n“ESKİ DEFTER”",
+   "kapak2": "Instagram Reels cover image, vertical 9:16 (1080x1920), semi-realistic stylized 3D animation still, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors, high detail, professional animated movie poster quality.\n\nTITLE TEXT (IMPORTANT):\n\nAdd a large, visually striking Turkish title at the top of the image:\n\n“BÖLÜM 1”\n“ESKİ DEFTER”\n\nTypography:\n\n* “BÖLÜM 1” in smaller, elegant, bold uppercase letters.\n* “ESKİ DEFTER” in large, bold, cinematic typography.\n* Use a slightly distressed white font with subtle warm golden lighting.\n* Make the most important words particularly prominent.\n* Add a subtle dark shadow behind the letters for readability.\n* Perfect Turkish spelling and clearly readable typography.\n* Position the title in the upper portion without covering the characters or important visual elements.\n\nKeep all main characters and important visual elements inside the central square area so the cover works when Instagram crops it to 1:1 or 4:5.\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\n\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\n\nAll characters must maintain absolute visual consistency with their previous appearances, including faces, hairstyles, clothing, accessories and body proportions.\n\nSETTING:\n\nInside a tiny, very old secondhand bookshop in the Sahaflar Bazaar of Istanbul's Grand Bazaar at golden hour. Tall wooden shelves packed with dusty antique books, Ottoman-era maps on the walls, warm sunbeams cutting through floating dust, a brass oil lamp on the counter.\n\nCOMPOSITION:\n\nKerem stands in the center holding the old brown leather notebook open with both hands; the golden compass rose on its cover glows softly and lights his amazed face from below. Defne stands on the left, arms crossed, holding her black ledger, one eyebrow raised in suspicion. Kaan stands on the right with a half-open box of Turkish delight, cheeks full, staring at the notebook with wide eyes. Dusty shelves and hanging old maps fill the background.\n\nDescribe:\n\n* Where each character stands.\n* What each character is holding.\n* Their facial expressions.\n* Their body language.\n* Important objects in the scene.\n* Background details.\n\nMOOD AND EMOTION:\n\nWonder and mystery: the first page of a great adventure, with a hint that the notebook hides a secret.\n\nLIGHTING AND QUALITY:\n\nCinematic lighting, dramatic rim lighting, realistic textures, expressive facial details, beautiful depth of field, detailed environments, professional color grading and premium 3D animated feature film rendering.\n\nThe final image should feel like the official cover of Episode 1 of the exact same animated series as previous episodes.\n\nMaintain absolute character consistency throughout the entire series.\n\nNo additional text, no random letters, no logos, no watermark.\n\nADDITIONAL TEXT – PEK YAKINDA:\n\nAdd the exact Turkish text:\n\n“PEK YAKINDA”\n\nTypography and positioning:\n\n* Place “PEK YAKINDA” prominently in the middle area of the image.\n* Use bold, uppercase cinematic lettering.\n* White or warm golden color with a subtle glowing effect.\n* Add a soft dark shadow for maximum readability.\n* Make it visually prominent, like an official animated movie trailer announcement.\n* Position it carefully without covering the main characters’ faces or important objects.\n* Maintain a premium cinematic movie-poster appearance.\n\nThe ONLY permitted text elements are:\n“BÖLÜM 1”\n“ESKİ DEFTER”\n“PEK YAKINDA”",
+   "sabit": [
+    {
+     "deger": 200000,
+     "sahneler": [
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "deger": 185000,
+     "sahneler": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+     ]
+    },
+    {
+     "deger": 186000,
+     "sahneler": [
+      14,
+      15
+     ]
+    }
+   ],
+   "senaryolar": [
+    {
+     "kod": "B01-S01",
+     "n": 1,
+     "rol": "Kanca",
+     "sure": "0:00–0:08",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 1 OF 15 — ROLE: HOOK\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nThe vaulted main corridor of Istanbul's Grand Bazaar at closing time, evening; shop lights switching off one by one, metal shutters rolling down.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem sprints straight toward the camera through the empty corridor, clutching the leather notebook to his chest; Defne and Kaan run right behind him.\n2–6 s: At the end of the corridor a heavy metal shutter is coming down; Defne points at it, shouting.\n6–8 s: All three dive and slide under the shutter at the last second; it slams shut behind them.\n\nCAMERA:\nLow-angle tracking shot moving backward fast in front of Kerem, then a sharp tilt down to the shutter.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nDEFNE: \"Kerem, kepenk iniyor!\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nRunning footsteps echoing under the domes, rattling shutter, fast tense percussion.\n\nMOOD AND TENSION:\nUrgent, breathless, thrilling.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Defne",
+      "Kerem, kepenk iniyor!"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": true
+    },
+    {
+     "kod": "B01-S02",
+     "n": 2,
+     "rol": "Varış",
+     "sure": "0:08–0:16",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 2 OF 15 — ROLE: ARRIVAL\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nEminönü waterfront in Istanbul on a sunny morning, Galata Tower and seagulls in the background; their small old white panel van with a dented sliding side door, a roof rack loaded with cardboard boxes and a faded blue stripe along its side is parked by the pier.\n\nACTION (EXACT TIMELINE):\n0–2 s: The three friends lean against the van; Kaan eats a sesame simit, Kerem gazes at the Golden Horn.\n2–6 s: Defne counts a thick stack of banknotes and writes the total in her black ledger.\n6–8 s: She snaps the ledger shut and looks at the other two seriously.\n\nCAMERA:\nSlow dolly-in from a wide shot to a medium shot on Defne.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nDEFNE: \"İki yüz bin. Tek kuruş fazlası yok.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nSeagulls, ferry horn, calm hopeful music.\n\nMOOD AND TENSION:\nHopeful, the calm before everything starts.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Defne",
+      "İki yüz bin. Tek kuruş fazlası yok."
+     ],
+     "altyazi": "ÜÇ SAAT ÖNCE",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S03",
+     "n": 3,
+     "rol": "Varış",
+     "sure": "0:16–0:24",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 3 OF 15 — ROLE: ARRIVAL\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nThe grand Nuruosmaniye Gate entrance of the Grand Bazaar in the morning, crowded with shoppers.\n\nACTION (EXACT TIMELINE):\n0–2 s: The three walk through the gate into the busy bazaar.\n2–6 s: Kaan stops at a Turkish delight stall glowing with colorful cubes and grabs a tester.\n6–8 s: Defne pulls him by the collar back into the crowd; he waves the cube at her.\n\nCAMERA:\nSteadicam following them from behind through the gate, then a quick whip pan to the stall.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKAAN: \"Önce lokum, sonra hayaller.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nBazaar crowd chatter, merchants calling out, upbeat playful music.\n\nMOOD AND TENSION:\nPlayful and lively.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kaan",
+      "Önce lokum, sonra hayaller."
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S04",
+     "n": 4,
+     "rol": "Ticaret",
+     "sure": "0:24–0:32",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 4 OF 15 — ROLE: TRADE\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nTHE BOOKSELLER: an elderly Turkish woman in her early 70s, small and slightly hunched, kind but piercing grey eyes, silver hair in a neat low bun, reading glasses hanging on a thin gold chain, a dark green knitted cardigan over a cream blouse, a long dark grey skirt and a plain silver ring on her right hand. Calm, knowing, mysterious expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nInside a tiny, very old secondhand bookshop in the Sahaflar Bazaar; dusty wooden shelves, sunbeams full of floating dust.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem runs his finger along the spines on a low shelf.\n2–6 s: He pulls out an old brown leather notebook with a golden compass rose on its cover and blows the dust off.\n6–8 s: Behind the counter, the bookseller slowly lowers her reading glasses and watches him.\n\nCAMERA:\nClose-up on Kerem's hand, then a rack focus to the bookseller in the background.\n\nDIALOGUE: No dialogue.\n\nSOUND:\nQuiet shop ambience, a clock ticking, a single mysterious music note.\n\nMOOD AND TENSION:\nMysterious, the feeling that something has been waiting.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": null,
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S05",
+     "n": 5,
+     "rol": "Ticaret",
+     "sure": "0:32–0:40",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 5 OF 15 — ROLE: TRADE\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nTHE BOOKSELLER: an elderly Turkish woman in her early 70s, small and slightly hunched, kind but piercing grey eyes, silver hair in a neat low bun, reading glasses hanging on a thin gold chain, a dark green knitted cardigan over a cream blouse, a long dark grey skirt and a plain silver ring on her right hand. Calm, knowing, mysterious expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nThe same old bookshop counter; the notebook lies between them.\n\nACTION (EXACT TIMELINE):\n0–2 s: Defne slides a small stack of banknotes across the counter with a confident smile.\n2–6 s: The bookseller calmly pushes the money back without looking at it.\n6–8 s: Defne sighs, adds more banknotes; Kerem hugs the notebook.\n\nCAMERA:\nOver-the-shoulder shot from Defne to the bookseller, then a top-down shot of the counter.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nSAHAF: \"On beş bin. Pazarlık yok.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nCoins and paper rustling, a short comic sting when Defne gives in.\n\nMOOD AND TENSION:\nTense negotiation that ends in a small defeat.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Sahaf",
+      "On beş bin. Pazarlık yok."
+     ],
+     "altyazi": "",
+     "kasa": [
+      200000,
+      185000
+     ],
+     "gizli": false
+    },
+    {
+     "kod": "B01-S06",
+     "n": 6,
+     "rol": "Sır",
+     "sure": "0:40–0:48",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 6 OF 15 — ROLE: SECRET\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nOutside the bookshop in a narrow bazaar passage, soft daylight.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem carefully opens the notebook to its first page; old faded ink handwriting, illegible.\n2–6 s: Defne and Kaan lean over his shoulders; the page seems to glow faintly.\n6–8 s: Kerem looks up slowly with a stunned expression.\n\nCAMERA:\nExtreme close-up on the yellowed page, then a slow pull back to their three faces.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKEREM: \"Kervan İstanbul'dan çıkar, Edirne'de ilk hanı bulur.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nSoft paper sounds, warm mysterious music swells.\n\nMOOD AND TENSION:\nWonder and curiosity.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kerem",
+      "Kervan İstanbul'dan çıkar, Edirne'de ilk hanı bulur."
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S07",
+     "n": 7,
+     "rol": "Ticaret",
+     "sure": "0:48–0:56",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 7 OF 15 — ROLE: TRADE\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nA wholesale Turkish delight shop near the Spice Bazaar in Eminönü, stacks of colorful boxes and rock candy jars.\n\nACTION (EXACT TIMELINE):\n0–2 s: Defne points at stacks of boxes while the shopkeeper nods.\n2–6 s: Kaan secretly tastes cube after cube from the open trays.\n6–8 s: Defne catches him and slaps his hand; a cube flies into the air.\n\nCAMERA:\nMedium two-shot, then a quick push-in on Kaan's guilty face.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nDEFNE: \"Kaan! Sattığımızı yiyoruz şu an!\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nShop noise, a comic pop when the cube flies, playful music.\n\nMOOD AND TENSION:\nFunny and energetic.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Defne",
+      "Kaan! Sattığımızı yiyoruz şu an!"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S08",
+     "n": 8,
+     "rol": "Sır",
+     "sure": "0:56–1:04",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 8 OF 15 — ROLE: SECRET\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nNext to their small old white panel van with a dented sliding side door, a roof rack loaded with cardboard boxes and a faded blue stripe along its side on a sloping Eminönü street, midday.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kaan and Defne load boxes of Turkish delight into the van.\n2–6 s: Kerem sits on the back step reading the notebook; a page shows a hand-drawn map of Anatolia with a dotted route.\n6–8 s: Kaan peeks over his shoulder and freezes with a box in his hands.\n\nCAMERA:\nLow angle from inside the van looking out, then an insert of the map page.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKAAN: \"Defter bize rota mı veriyor?\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nStreet traffic, cardboard thuds, curious music.\n\nMOOD AND TENSION:\nCurious excitement.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kaan",
+      "Defter bize rota mı veriyor?"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S09",
+     "n": 9,
+     "rol": "Kriz",
+     "sure": "1:04–1:12",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 9 OF 15 — ROLE: CRISIS\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nA steep, busy street in Eminönü with honking traffic; their small old white panel van with a dented sliding side door, a roof rack loaded with cardboard boxes and a faded blue stripe along its side has stalled.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem turns the key; the engine coughs and dies.\n2–6 s: Defne and Kaan push the van uphill while drivers honk behind them.\n6–8 s: Kaan slips, lands on his bottom, and the van rolls back a little; everyone screams.\n\nCAMERA:\nWide handheld shot from the front of the van, then a quick zoom on Kaan falling.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKAAN: \"İlk gün, ilk arıza!\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nHonking horns, engine coughing, comic chaos music.\n\nMOOD AND TENSION:\nComic panic.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kaan",
+      "İlk gün, ilk arıza!"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S10",
+     "n": 10,
+     "rol": "Kriz",
+     "sure": "1:12–1:20",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 10 OF 15 — ROLE: CRISIS\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nThe same street; a friendly taxi driver has parked beside the van with jumper cables.\n\nACTION (EXACT TIMELINE):\n0–2 s: The engine finally starts and the three cheer.\n2–6 s: Kerem opens the notebook again; a small old receipt with the bookshop's stamp falls out.\n6–8 s: On its back is fresh handwriting; Kerem's smile disappears.\n\nCAMERA:\nMedium shot of the cheering, then a slow-motion insert of the falling receipt.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKEREM: \"Kapanmadan geri gel, yazıyor.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nEngine roar, cheers, then sudden silence and a low suspense drone.\n\nMOOD AND TENSION:\nRelief turning into suspense.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kerem",
+      "Kapanmadan geri gel, yazıyor."
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S11",
+     "n": 11,
+     "rol": "Kriz",
+     "sure": "1:20–1:28",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 11 OF 15 — ROLE: CRISIS\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nThe vaulted main corridor of the Grand Bazaar at closing time, evening; metal shutters rolling down.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem, Defne and Kaan sprint through the emptying corridor.\n2–6 s: A heavy metal shutter is coming down at the end; Defne shouts and points.\n6–8 s: They dive and slide under it; it slams shut, and they lie panting inside the dark bookshop passage.\n\nCAMERA:\nFast tracking shot from behind, then a ground-level shot as they slide under the shutter.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKEREM: \"Bekleyin! Geliyoruz!\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nRunning footsteps echoing, shutter rattling, music hits a peak then cuts.\n\nMOOD AND TENSION:\nBreathless suspense.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kerem",
+      "Bekleyin! Geliyoruz!"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S12",
+     "n": 12,
+     "rol": "Sır",
+     "sure": "1:28–1:36",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 12 OF 15 — ROLE: SECRET\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nTHE BOOKSELLER: an elderly Turkish woman in her early 70s, small and slightly hunched, kind but piercing grey eyes, silver hair in a neat low bun, reading glasses hanging on a thin gold chain, a dark green knitted cardigan over a cream blouse, a long dark grey skirt and a plain silver ring on her right hand. Calm, knowing, mysterious expression.\n\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nInside the dark old bookshop, lit only by a single brass oil lamp on the counter.\n\nACTION (EXACT TIMELINE):\n0–2 s: The bookseller sits behind the counter as if she was waiting for them.\n2–6 s: She looks at the three for a long moment, then gently taps the notebook's back cover with one finger.\n6–8 s: She smiles a small, knowing smile; the three exchange puzzled looks.\n\nCAMERA:\nSlow push-in on the bookseller's face in the lamplight.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nSAHAF: \"Defteri yanlış ellere vermedim, değil mi?\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nLamp flame crackling, deep quiet, a mysterious music motif.\n\nMOOD AND TENSION:\nMysterious and warm.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Sahaf",
+      "Defteri yanlış ellere vermedim, değil mi?"
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S13",
+     "n": 13,
+     "rol": "Ticaret",
+     "sure": "1:36–1:44",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 13 OF 15 — ROLE: TRADE\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nEminönü square in front of the New Mosque at night, lit by street lamps; tourists walking around.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kaan opens a box of Turkish delight and offers a taste to a group of tourists.\n2–6 s: The tourists buy two boxes and hand him cash; Kaan bows dramatically.\n6–8 s: Defne writes in her ledger and can't hide her proud smile.\n\nCAMERA:\nHandheld medium shot, then a close-up of Defne's ledger and smile.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKAAN: \"İlk satış! Ortaklık kutlu olsun!\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nNight city ambience, tourists laughing, warm upbeat music.\n\nMOOD AND TENSION:\nJoy of the first success.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kaan",
+      "İlk satış! Ortaklık kutlu olsun!"
+     ],
+     "altyazi": "",
+     "kasa": [
+      185000,
+      186000
+     ],
+     "gizli": false
+    },
+    {
+     "kod": "B01-S14",
+     "n": 14,
+     "rol": "Sır",
+     "sure": "1:44–1:52",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 14 OF 15 — ROLE: SECRET\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nInside their small old white panel van with a dented sliding side door, a roof rack loaded with cardboard boxes and a faded blue stripe along its side at night, parked under a street lamp by the Golden Horn.\n\nACTION (EXACT TIMELINE):\n0–2 s: Kerem turns the notebook over and shines his phone's flashlight on the back cover.\n2–6 s: Under the light, a deep pressed mark appears in the leather: half of a bronze camel caravan seal.\n6–8 s: Kerem's eyes widen; Defne and Kaan lean in from the front seats.\n\nCAMERA:\nClose-up on the back cover as the flashlight moves, then a reaction shot of the three faces.\n\nDIALOGUE: No dialogue.\n\nSOUND:\nSilence, the hum of the city far away, a slow heartbeat-like drum.\n\nMOOD AND TENSION:\nRising mystery.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": null,
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    },
+    {
+     "kod": "B01-S15",
+     "n": 15,
+     "rol": "Cliffhanger",
+     "sure": "1:52–2:00",
+     "prompt": "Vertical 9:16 video, 8 seconds, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors — same animated series as previous episodes.\n\nSCENE 15 OF 15 — ROLE: CLIFFHANGER\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\nAll characters must keep absolute visual consistency: faces, hairstyles, clothing, accessories, proportions.\n\nSETTING:\nInside their small old white panel van with a dented sliding side door, a roof rack loaded with cardboard boxes and a faded blue stripe along its side at night; only the phone flashlight lights their faces.\n\nACTION (EXACT TIMELINE):\n0–2 s: Extreme close-up: Kerem's finger traces the pressed outline of the camel caravan; the right half of the seal is missing, broken off.\n2–6 s: Kerem slowly raises his eyes to the others.\n6–8 s: The flashlight flickers and goes out; darkness.\n\nCAMERA:\nVery slow push-in on the seal mark, then a quick cut to Kerem's eyes.\n\nDIALOGUE (TURKISH, SHORT, LIP-SYNCED):\nKEREM: \"Bu bir mühür. Ve yarısı eksik.\"\nPerfect Turkish pronunciation. No other spoken lines.\n\nSOUND:\nHeartbeat drum stops; a single deep bass hit at the blackout.\n\nMOOD AND TENSION:\nShock and suspense: the adventure has just begun.\n\nAVOID: subtitles, on-screen text, logos, watermark, extra characters, changes in character design.",
+     "replik": [
+      "Kerem",
+      "Bu bir mühür. Ve yarısı eksik."
+     ],
+     "altyazi": "",
+     "kasa": null,
+     "gizli": false
+    }
+   ]
+  }
+ },
+ "karakterler": [
+  {
+   "ad": "kerem",
+   "isim": "Kerem",
+   "alt": "20 · gezi şirketi",
+   "ozet": "Defteri okur, yolu bulur. Hardal ceket, boynunda pirinç pusula.",
+   "tarif": "KEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.",
+   "referans": "Character reference sheet, 16:9, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, soft even studio lighting, plain light grey background.\n\nShow the same single character three times side by side: full body front view, full body three-quarter view, and a close-up portrait of the face. Neutral standing pose, arms relaxed.\n\nCHARACTER:\nKEREM: a 20-year-old Turkish young man, tall and lean, warm olive skin, short wavy dark brown hair that is always slightly messy, thick dark eyebrows, hazel eyes, light stubble. He wears a faded mustard-yellow canvas jacket over a plain white t-shirt, dark green cargo trousers and worn brown leather boots. A small brass compass hangs on a leather cord around his neck. He carries a brown canvas messenger bag across his body, where he keeps an old brown leather notebook with a golden compass rose on its cover. Curious, dreamy, thoughtful expression.\n\nThis is the official fixed design for an animated series: every detail of the face, hair, clothing and accessories must be clear and consistent across all three views.\n\nNo text, no letters, no labels, no logos, no watermark."
+  },
+  {
+   "ad": "defne",
+   "isim": "Defne",
+   "alt": "19 · dükkân ve kasa",
+   "ozet": "Pazarlık ve hesap ustası. Bordo kapüşonlu, altın gözlük, kulağında kalem.",
+   "tarif": "DEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.",
+   "referans": "Character reference sheet, 16:9, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, soft even studio lighting, plain light grey background.\n\nShow the same single character three times side by side: full body front view, full body three-quarter view, and a close-up portrait of the face. Neutral standing pose, arms relaxed.\n\nCHARACTER:\nDEFNE: a 19-year-old Turkish young woman, medium height, slim, light olive skin, long straight black hair tied in a high ponytail, sharp dark brown eyes, thin round gold-rimmed glasses, small silver hoop earrings. She wears an oversized burgundy hoodie, light blue straight-leg jeans and clean white sneakers. A small black crossbody bag rests on her hip and a pencil is tucked behind her right ear. She often holds a smartphone or a small black ledger notebook. Confident, quick-witted, sharp expression.\n\nThis is the official fixed design for an animated series: every detail of the face, hair, clothing and accessories must be clear and consistent across all three views.\n\nNo text, no letters, no labels, no logos, no watermark."
+  },
+  {
+   "ad": "kaan",
+   "isim": "Kaan",
+   "alt": "18 · kafe",
+   "ozet": "Lezzet tutkunu, komik, aceleci. Ters lacivert şapka, turuncu tişört, tahta kaşık.",
+   "tarif": "KAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.",
+   "referans": "Character reference sheet, 16:9, semi-realistic stylized 3D animation, Pixar-like proportions with realistic textures, soft even studio lighting, plain light grey background.\n\nShow the same single character three times side by side: full body front view, full body three-quarter view, and a close-up portrait of the face. Neutral standing pose, arms relaxed.\n\nCHARACTER:\nKAAN: an 18-year-old Turkish young man, shorter and stocky, round friendly face, tanned skin, curly black hair under a backwards navy blue baseball cap, big brown eyes, wide playful grin. He wears a light-wash denim jacket with rolled-up sleeves over a bright orange t-shirt, black jogger pants and red sneakers. A wooden spoon sticks out of his jacket's chest pocket and a small tan leather food pouch hangs from his belt. Energetic, funny, impulsive expression.\n\nThis is the official fixed design for an animated series: every detail of the face, hair, clothing and accessories must be clear and consistent across all three views.\n\nNo text, no letters, no labels, no logos, no watermark."
+  },
+  {
+   "ad": "sahaf",
+   "isim": "Sahaf",
+   "alt": "70'li yaşlar · yan karakter",
+   "ozet": "Kapalıçarşı'daki sahaf. Gümüş topuz, zincirli gözlük, yeşil hırka.",
+   "tarif": "THE BOOKSELLER: an elderly Turkish woman in her early 70s, small and slightly hunched, kind but piercing grey eyes, silver hair in a neat low bun, reading glasses hanging on a thin gold chain, a dark green knitted cardigan over a cream blouse, a long dark grey skirt and a plain silver ring on her right hand. Calm, knowing, mysterious expression.",
+   "referans": null
+  }
+ ],
+ "profil": {
+  "kullanici": "kervan.dizi",
+  "ad": "Kervan",
+  "biyo_ig": "Üç genç, tek bir hayal ✨\nEllerinde bir defter, önlerinde bütün Türkiye 🐪\nKâr da var, zarar da, sır da…\nYeni bölümler yolda 👇",
+  "biyo_tt": "Üç genç, tek bir hayal ✨\nEllerinde bir defter, önlerinde bütün Türkiye 🐪",
+  "foto": "Square profile picture, 1:1 (1080x1080), semi-realistic stylized 3D render, Pixar-like quality with realistic textures, premium animated movie look.\n\nSUBJECT:\nA single old, worn brown leather travel journal from about a hundred years ago, seen from the front and slightly tilted, centered in the frame. The cover has hand stitching along its edges, brass corner caps and a small leather strap with a brass buckle on the right side. In the middle of the cover there is a large embossed golden compass rose with a round gold ring around it, catching warm light.\n\nCOMPOSITION:\nThe journal fills about 70% of the frame and sits exactly in the center, so the image still works when cropped to a circle and viewed very small. Clean, simple silhouette, nothing touching the edges.\n\nBACKGROUND:\nPlain deep dark brown background with a soft warm golden glow behind the journal. No other objects.\n\nLIGHTING AND COLOR:\nWarm golden key light from the upper left, soft rim light on the journal edges, gentle shadow under it. Palette: dark chocolate brown, warm leather brown, rich gold.\n\nMOOD:\nMysterious, adventurous, valuable — like a treasured secret.\n\nNo text, no letters, no numbers, no logos, no watermark, no people, no hands."
+ }
+}</script>
+<script>
+/* Kasa promptu motoru. Tek kaynak: "Dedemin Defteri" sayfası ve "Kasa Prompt Aracı" bu dosyayı build sırasında aynen içine alır.
+   parseLine(satır) -> {ok:true, sabit, old, neu, delta, abs, up} ya da {ok:false, msg, fixes?}
+   buildPrompt(o, cfg) -> Flow'a yapıştırılacak sabit İngilizce prompt.
+   cfg = {birim:"₺"|"TL", gecis:"akici"|"anlik", etiket:"var"|"yok"} */
+const KasaMotor = (function(){
+"use strict";
+const MAX = 999999999;
+const fmt = n => String(Math.abs(Math.trunc(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const sg = n => (n < 0 ? "−" : "+") + fmt(n);
+const bad = (msg, extra) => Object.assign({ ok: false, msg: msg }, extra || {});
+const canon = (a, b) => fmt(a) + " ₺ → " + fmt(b) + " ₺ (" + sg(b - a) + " ₺)";
+
+/* ---------- satırı oku ---------- */
+function norm(raw){
+  return raw
+    .replace(/[-−–—‒]{1,2}>|=+>|[→➜➝➔⇒>]/g, " → ")
+    .replace(/[−–—‒]/g, "-")
+    .replace(/₺|\bTRY\b|\bTL\b|\blira\b/gi, " ")
+    .replace(/\b(?:s[aA]b[iİıI]t|k[aA]s[aA])\b:?/gi, " ")
+    .replace(/[()\[\]{}]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseLine(raw){
+  const s = norm(raw);
+  if (!s) return null;
+  const arrows = (s.match(/→/g) || []).length;
+  if (arrows > 1) return bad("Satırda tek bir ok olmalı: eski → yeni.");
+  const arrowAt = s.indexOf("→");
+  const re = /([+-])?(\d{1,3}(?:[.,]\d{3})+|\d+)(?:([.,])(\d+))?/g;
+  const toks = [];
+  let m;
+  while ((m = re.exec(s))) {
+    if (m[3]) return bad("Kuruş desteklenmiyor. Tam lira yaz, örnek: 7.000");
+    if (m[1] && m.index > 0 && /\d/.test(s[m.index - 1])) {
+      return bad("Sayıların arasında eksi işareti var ve ok yok. Eski ve yeni bakiyenin arasına → koy: 7.000 ₺ → 6.700 ₺");
+    }
+    toks.push({ sign: m[1] || "", val: parseInt(m[2].replace(/[.,]/g, ""), 10), side: arrows && m.index > arrowAt ? 1 : 0 });
+  }
+  const rest = s.replace(new RegExp(re.source, "g"), " ").replace(/→/g, " ").replace(/\s+/g, " ").trim();
+  if (rest) return bad("\"" + rest + "\" kısmını anlayamadım. Satırda yalnızca sayı, ₺ ve → kullan.");
+  if (!toks.length) return bad("Bu satırda bakiye göremedim. Şöyle yaz: 7.000 ₺ → 6.700 ₺ (−300 ₺)");
+
+  let old, neu, typed = null;
+  if (arrows === 1) {
+    const L = toks.filter(t => t.side === 0), R = toks.filter(t => t.side === 1);
+    if (L.length !== 1 || L[0].sign) return bad("Okun soluna yalnızca eski bakiyeyi yaz: 7.000 ₺ → 6.700 ₺");
+    if (R.length < 1 || R.length > 2 || R[0].sign) return bad("Okun sağına yeni bakiyeyi, istersen parantez içinde farkı yaz: 7.000 ₺ → 6.700 ₺ (−300 ₺)");
+    old = L[0].val; neu = R[0].val;
+    if (R[1]) typed = { sign: R[1].sign === "-" ? -1 : R[1].sign === "+" ? 1 : 0, val: R[1].val };
+  } else if (toks.length === 1 && !toks[0].sign) {
+    old = neu = toks[0].val;
+  } else if (toks.length === 2 && !toks[0].sign && toks[1].sign) {
+    old = toks[0].val;
+    typed = { sign: toks[1].sign === "-" ? -1 : 1, val: toks[1].val };
+    neu = old + typed.sign * typed.val;
+  } else {
+    return bad("Eski ve yeni bakiyenin arasına → koy. Örnek: 7.000 ₺ → 6.700 ₺ (−300 ₺). Kasa değişmiyorsa tek sayı yaz: 7.000 ₺");
+  }
+
+  if (old > MAX || neu > MAX || (typed && typed.val > MAX)) return bad("Sayı çok büyük. En fazla " + fmt(MAX) + " ₺ yazabilirsin.");
+  if (neu < 0) return bad("Yeni bakiye eksiye düşüyor (" + sg(neu) + " ₺). Kasa eksiye inmez, sayıları kontrol et.");
+  const calc = neu - old;
+  const t = !typed ? calc : typed.sign !== 0 ? typed.sign * typed.val : (calc === 0 ? typed.val : Math.sign(calc) * typed.val);
+  if (t !== calc) {
+    const fixes = [{
+      label: calc === 0 ? "Bakiyeleri kullan (sabit kasa)" : "Bakiyeleri kullan (" + sg(calc) + " ₺)",
+      text: calc === 0 ? fmt(old) + " ₺" : canon(old, neu)
+    }];
+    if (t !== 0 && old + t >= 0 && old + t <= MAX) fixes.push({ label: "Farkı kullan (yeni bakiye " + fmt(old + t) + " ₺)", text: canon(old, old + t) });
+    return bad("Fark tutmuyor: " + fmt(old) + " ₺ ile " + fmt(neu) + " ₺ arası " + (calc === 0 ? "fark yok" : sg(calc) + " ₺") + ", ama sen " + sg(t) + " ₺ yazmışsın.", { fixes: fixes });
+  }
+  if (calc === 0) return { ok: true, sabit: true, old: old, neu: neu, delta: 0, abs: 0, up: false };
+  return { ok: true, sabit: false, old: old, neu: neu, delta: calc, abs: Math.abs(calc), up: calc > 0 };
+}
+
+/* ---------- sabit prompt ---------- */
+function buildPrompt(o, cfg){
+  const U = cfg && cfg.birim === "TL" ? "TL" : "₺";
+  const lab = !(cfg && cfg.etiket === "yok");
+  const anlik = !!(cfg && cfg.gecis === "anlik");
+  const money = n => fmt(n) + " " + U;
+  const b0 = money(o.old), b1 = money(o.neu);
+  const sabit = !!o.sabit;
+  const chg = (o.up ? "+" : "-") + money(o.abs);
+  const colorTxt = o.up ? "bright GREEN (#00E676)" : "bright RED (#FF1744)";
+  const colorWord = o.up ? "green" : "red";
+  const dir = o.up ? "UP" : "DOWN";
+  const balSize = "Its digits are about 3.2% of the frame height tall and it is the largest element";
+
+  const stack = [];
+  if (lab) stack.push("the label \"KASA\" in light grey (#A0A0A0), tiny capital letters, about 45% of the balance size");
+  if (sabit) {
+    stack.push("the BALANCE in bold white (#FFFFFF) monospaced cash-register digits followed by the currency sign, written exactly \"" + b0 + "\". " + balSize);
+  } else {
+    stack.push("the BALANCE in bold white (#FFFFFF) monospaced cash-register digits followed by the currency sign, written exactly \"" + b0 + "\" at the start. " + balSize);
+    stack.push("directly under the balance, with a small gap, the CHANGE line in " + colorTxt + ": \"" + chg + "\". Bold, same monospaced font, about 65% of the balance size");
+  }
+  const layout = stack.map((t, i) => (i + 1) + ") " + t + (i < stack.length - 1 ? ";" : ".")).join("\n")
+    + (sabit ? "\nThere is no change line: nothing appears under the balance." : "");
+
+  let tl;
+  if (sabit) {
+    tl = ["0.0-8.0 s: " + (lab ? "\"KASA\" and the balance \"" + b0 + "\" are" : "the balance \"" + b0 + "\" is") + " visible and perfectly still for the entire video. Nothing changes, nothing moves and nothing else appears."];
+  } else {
+    const first = lab ? "only \"KASA\" and the balance \"" + b0 + "\" are visible" : "only the balance \"" + b0 + "\" is visible";
+    tl = [
+      "0.0-1.0 s: " + first + ", perfectly still. The change line is not visible yet.",
+      "1.0-1.4 s: the change line \"" + chg + "\" fades in directly under the balance. Nothing else moves."
+    ];
+    if (anlik) {
+      tl.push("1.4 s: the balance changes instantly, in a single frame, from \"" + b0 + "\" to \"" + b1 + "\". No counting, no rolling, no fade, no animation.");
+      tl.push("1.4-8.0 s: everything stays frozen. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+    } else {
+      tl.push("1.4-3.4 s: the balance counts smoothly " + dir + " from \"" + b0 + "\" to \"" + b1 + "\": the digits roll in place like a simple counter, in one direction only, without flicker and without overshooting.");
+      tl.push("3.4-8.0 s: everything freezes. The final frame shows exactly \"" + b1 + "\" in white and \"" + chg + "\" in " + colorWord + ", unchanged until the end.");
+    }
+  }
+  const texts = sabit
+    ? (lab ? "\"KASA\" and \"" + b0 + "\"" : "\"" + b0 + "\"")
+    : (lab ? "\"KASA\", " : "") + "\"" + b0 + "\", \"" + b1 + "\" and \"" + chg + "\"";
+
+  return [
+    "Vertical 9:16 video, 8 seconds. Flat 2D motion-graphics overlay, not a cinematic scene. PURE SOLID BLACK background (#000000) filling the entire frame, made to be layered over another video with a Screen / Lighten blend mode. Locked static camera: no movement, no zoom, no cuts, no transitions. Silent: no sound, no music.",
+    "LAYOUT: one small cash counter in the TOP-RIGHT corner and nothing else. Its right edge is 5% from the right edge of the frame and its top edge is 6% from the top edge. All lines are right-aligned to the same right edge and stacked from top to bottom:\n" + layout + "\nThe counter stays within 45% of the frame width and 12% of the frame height. The rest of the frame stays pure black. Position, size and colors never change during the video.",
+    "TIMELINE (exact):\n" + tl.join("\n"),
+    "TEXT: the only text in the whole video is " + texts + ", written exactly like this. Digits are crisp, sharp and fully legible at all times.",
+    "AVOID: money effects, banknotes, coins, particles, sparkles, glow, light rays, shine, bloom, confetti, arrows, icons, boxes, borders, shadows, gradients, vignette, film grain, textures, characters, hands, objects, scenery, extra text, subtitles, logos, watermarks."
+  ].join("\n\n");
+}
+
+return { MAX: MAX, fmt: fmt, sg: sg, canon: canon, parseLine: parseLine, buildPrompt: buildPrompt };
+})();
+
+</script>
+<script>
+"use strict";
+const V = JSON.parse(document.getElementById("veri").textContent);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const para = n => KasaMotor.fmt(n) + " ₺";
+const fark = (a, b) => (b >= a ? "+" : "−") + KasaMotor.fmt(Math.abs(b - a)) + " ₺";
+const pad = n => String(n).padStart(2, "0");
+const BOLGELER = ["Marmara", "Ege", "Akdeniz", "Güneydoğu Anadolu", "Doğu Anadolu", "Karadeniz", "İç Anadolu"];
+const DURUM = ["Yapılmadı", "Üretiliyor", "Yayınlandı"];
+
+/* ── Tarayıcı hafızası (yoksa da sayfa çalışır) ── */
+function oku(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function yaz(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const durum = oku("kervan-durum", {});
+const uretildi = new Set(oku("kervan-uretildi", []));
+const KC = Object.assign({ birim: "₺", gecis: "akici", etiket: "var" }, oku("kervan-kasa-ayar", {}));
+
+/* ── Kopyala ── */
+const METIN = new Map();
+let sayac = 0;
+function kopyaBtn(metin, etiket, sinif){
+  const id = "k" + (++sayac);
+  METIN.set(id, metin);
+  return `<button type="button" class="btn ${sinif || ""}" data-kopya="${id}">${esc(etiket || "Kopyala")}</button>`;
+}
+function kopyalandi(btn){
+  const eski = btn.textContent;
+  btn.classList.add("done"); btn.textContent = "Kopyalandı ✓";
+  setTimeout(() => { btn.classList.remove("done"); btn.textContent = eski; }, 1600);
+}
+function yedekKopya(metin, btn){
+  const ta = document.createElement("textarea");
+  ta.value = metin; ta.setAttribute("readonly", ""); ta.className = "fallback";
+  btn.closest(".btns, section, .field, .kasa").appendChild(ta);
+  ta.focus(); ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  if (ok) { ta.remove(); kopyalandi(btn); }
+  else { btn.textContent = "Metni seçtim, uzun basıp kopyala"; }
+}
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-kopya]");
+  if (b) {
+    const metin = METIN.get(b.dataset.kopya) || "";
+    try { navigator.clipboard.writeText(metin).then(() => kopyalandi(b), () => yedekKopya(metin, b)); }
+    catch (e) { yedekKopya(metin, b); }
+    return;
+  }
+  const m = ev.target.closest("[data-made]");
+  if (m) {
+    const k = m.dataset.made;
+    if (uretildi.has(k)) uretildi.delete(k); else uretildi.add(k);
+    yaz("kervan-uretildi", [...uretildi]);
+    m.setAttribute("aria-pressed", uretildi.has(k)); m.textContent = uretildi.has(k) ? "✓ Ürettim" : "Ürettim";
+    return;
+  }
+  const d = ev.target.closest("[data-durum]");
+  if (d) {
+    const no = d.dataset.durum;
+    durum[no] = ((durum[no] || 0) + 1) % 3;
+    yaz("kervan-durum", durum);
+    d.dataset.d = durum[no]; d.textContent = DURUM[durum[no]];
+    ust();
+  }
+});
+const madeBtn = k => `<button type="button" class="made" data-made="${k}" aria-pressed="${uretildi.has(k)}">${uretildi.has(k) ? "✓ Ürettim" : "Ürettim"}</button>`;
+
+/* ── Üst özet ── */
+function ust(){
+  const yayin = V.rota.filter(r => durum[r.no] === 2);
+  const kasa = yayin.length ? Math.max(...yayin.map(r => r.no)) : 0;
+  const deger = kasa ? V.rota[kasa - 1].kasa_son : V.rota[0].kasa_bas;
+  const hazir = V.rota.filter(r => r.hazir).length;
+  $("#ozet").innerHTML = `<b>${yayin.length}</b> / 50 yayınlandı · ${hazir} bölüm hazır · Kasa <b>${para(deger)}</b>`;
+  $("#ilerleme").style.width = (yayin.length / 50 * 100) + "%";
+}
+
+/* ── Kasa promptu ── */
+function kasaPrompt(eski, yeni){
+  const o = eski === yeni ? { sabit: true, old: eski, neu: eski }
+    : { sabit: false, old: eski, neu: yeni, abs: Math.abs(yeni - eski), up: yeni > eski };
+  return KasaMotor.buildPrompt(o, KC);
+}
+function kasaAyarlari(){
+  const r = (ad, deger, metin) => `<label><input type="radio" name="${ad}" id="${ad}-${deger}" value="${deger}" ${KC[ad] === deger ? "checked" : ""}> ${metin}</label>`;
+  return `<div class="opts" id="kasa-ayar">
+    <span>${r("birim", "₺", "₺")} ${r("birim", "TL", "TL")}</span>
+    <span>${r("gecis", "akici", "Rakam sayarak değişir")} ${r("gecis", "anlik", "Anında değişir")}</span>
+    <span>${r("etiket", "var", "KASA yazısı var")} ${r("etiket", "yok", "Yazı yok")}</span></div>`;
+}
+document.addEventListener("change", ev => {
+  if (ev.target.closest("#kasa-ayar")) {
+    KC[ev.target.name] = ev.target.value; yaz("kervan-kasa-ayar", KC); goster();
+  }
+});
+
+/* ── Görünümler ── */
+function bolumListesi(){
+  let h = `<div class="ephead"><h2>Sezon 1 · 50 bölüm</h2><p class="muted">Durum düğmesine dokundukça Yapılmadı → Üretiliyor → Yayınlandı olarak değişir. Telefonun hatırlar.</p></div>`;
+  for (const bolge of BOLGELER) {
+    h += `<div class="region"><h3>${esc(bolge)}</h3>`;
+    for (const r of V.rota.filter(x => x.bolge === bolge)) {
+      const d = durum[r.no] || 0, up = r.kasa_son >= r.kasa_bas;
+      const t = `<b>${esc(r.baslik)}</b><span>${esc(r.sehir)}${r.hazir ? "" : " · hazırlanıyor"}</span>`;
+      h += `<div class="row ${r.hazir ? "" : "off"}"><span class="no">B${pad(r.no)}</span>
+        ${r.hazir ? `<a class="t" href="#b${pad(r.no)}">${t}</a>` : `<div class="t">${t}</div>`}
+        <div class="side"><span class="delta ${up ? "up" : "down"}">${fark(r.kasa_bas, r.kasa_son)}</span>
+        <button type="button" class="durum" data-durum="${r.no}" data-d="${d}">${DURUM[d]}</button></div></div>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function promptBlok(baslik, metin, kod, aciklama){
+  return `<section class="blk"><div class="blkhead"><h3>${esc(baslik)}</h3>${kod ? madeBtn(kod) : ""}</div>
+    ${aciklama ? `<p class="muted">${aciklama}</p>` : ""}
+    <details><summary>Promptu göster</summary><pre class="prompt">${esc(metin)}</pre></details>
+    <div class="btns">${kopyaBtn(metin)}</div></section>`;
+}
+
+function bolum(no){
+  const b = V.bolumler[no];
+  if (!b) return `<p>Bu bölüm henüz hazırlanıyor.</p><p><a href="#bolumler">Bölümlere dön</a></p>`;
+  const K = "B" + pad(b.no);
+  let h = `<div class="ephead"><span class="eyebrow">Bölüm ${b.no} · ${esc(b.sehir)} · ${esc(b.bolge)}</span>
+    <h2>${esc(b.baslik)}</h2>
+    <span class="kasaline">Kasa ${para(b.kasa_bas)} → ${para(b.kasa_son)} <span class="delta ${b.kasa_son >= b.kasa_bas ? "up" : "down"}">(${fark(b.kasa_bas, b.kasa_son)})</span></span></div>`;
+  h += promptBlok("Kapak 1 · Ana kapak", b.kapak1, K + "-K1");
+  h += promptBlok("Kapak 2 · Pek yakında", b.kapak2, K + "-K2");
+  h += `<section class="blk"><div class="blkhead"><h3>Video açıklaması</h3></div>
+    <div class="field"><div class="v">${esc(b.aciklama)}</div></div><div class="btns">${kopyaBtn(b.aciklama)}</div></section>`;
+  h += `<section class="blk"><div class="blkhead"><h3>Sabit kasa</h3></div>
+    <p class="muted">Para değişmeyen senaryolar için. Aynı rakamı taşıyan senaryolar tek klibi paylaşır. Klibi senaryonun üstüne koy, karıştırma modunu Ekran (Screen) yap.</p>
+    ${kasaAyarlari()}`;
+  for (const s of b.sabit) {
+    h += `<div class="kasa"><span class="val">${para(s.deger)} · Senaryo ${s.sahneler.join(", ")}</span>
+      <div class="btns">${kopyaBtn(kasaPrompt(s.deger, s.deger), "Sabit kasa promptunu kopyala", "ghost")}${madeBtn(K + "-SK" + s.deger)}</div></div>`;
+  }
+  h += `</section>`;
+  for (const s of b.senaryolar) {
+    h += `<section class="blk scene" id="${s.kod}"><div class="blkhead"><div class="meta"><span class="code">${s.kod}</span>
+      <span class="tag">${esc(s.rol)}</span><span class="tag">${s.sure}</span>${s.kasa ? `<span class="tag k">Kasa değişiyor</span>` : ""}</div>${madeBtn(s.kod)}</div>`;
+    if (s.altyazi) h += `<p class="say">Altyazı: <b>${esc(s.altyazi)}</b></p>`;
+    h += s.replik ? `<p class="say"><b>${esc(s.replik[0])}:</b> “${esc(s.replik[1])}”</p>` : `<p class="muted">Replik yok.</p>`;
+    h += `<details><summary>Promptu göster</summary><pre class="prompt">${esc(s.prompt)}</pre></details><div class="btns">${kopyaBtn(s.prompt)}</div>`;
+    if (s.kasa) {
+      h += `<div class="kasa"><span class="val">Kasa ${para(s.kasa[0])} → ${para(s.kasa[1])} <span class="delta ${s.kasa[1] > s.kasa[0] ? "up" : "down"}">(${fark(s.kasa[0], s.kasa[1])})</span></span>
+        <div class="btns">${kopyaBtn(kasaPrompt(s.kasa[0], s.kasa[1]), "Kasa promptunu kopyala", "ghost")}${madeBtn(s.kod + "-KASA")}</div></div>`;
+    } else if (s.gizli) {
+      h += `<p class="muted">Bu senaryoda kasa göstergesi yok.</p>`;
+    }
+    h += `</section>`;
+  }
+  const hazir = V.rota.filter(r => r.hazir).map(r => r.no);
+  const i = hazir.indexOf(b.no), once = hazir[i - 1], sonra = hazir[i + 1];
+  h += `<div class="pager"><span>${once ? `<a href="#b${pad(once)}">◀ Bölüm ${once}</a>` : ""}</span><span>${sonra ? `<a href="#b${pad(sonra)}">Bölüm ${sonra} ▶</a>` : ""}</span></div>`;
+  return h;
+}
+
+function rota(){
+  let h = `<div class="ephead"><h2>Rota</h2><p class="muted">İstanbul'dan Kapadokya'ya, defterin izinde 50 durak. Satıra dokununca ayrıntılar açılır.</p></div>`;
+  for (const bolge of BOLGELER) {
+    h += `<div class="region"><h3>${esc(bolge)}</h3>`;
+    for (const r of V.rota.filter(x => x.bolge === bolge)) {
+      h += `<details class="rt"><summary><span class="n">B${pad(r.no)}</span><span>${esc(r.sehir)} · ${esc(r.baslik)}</span>
+        <span class="delta ${r.kasa_son >= r.kasa_bas ? "up" : "down"}">${para(r.kasa_son)}</span></summary>
+        <dl><dt>Alınan</dt><dd>${esc(r.alinan)}</dd><dt>Satılan</dt><dd>${esc(r.satilan)}</dd>
+        <dt>Kasa</dt><dd>${para(r.kasa_bas)} → ${para(r.kasa_son)} (${fark(r.kasa_bas, r.kasa_son)})</dd>
+        <dt>Aksilik</dt><dd>${esc(r.aksilik)}</dd><dt>Defter</dt><dd>${esc(r.ipucu)}</dd><dt>Son</dt><dd>${esc(r.son)}</dd></dl></details>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function karakterler(){
+  let h = `<div class="ephead"><h2>Karakterler</h2><p class="muted">Önce her karakterin referans görselini Flow'da üret. Tarifler bütün promptlara harfi harfine aynı girer.</p></div>`;
+  for (const k of V.karakterler) {
+    h += `<section class="blk"><div class="blkhead"><h3>${esc(k.isim)} · ${esc(k.alt)}</h3></div><p>${esc(k.ozet)}</p>
+      <details><summary>İngilizce tarif</summary><pre class="prompt">${esc(k.tarif)}</pre></details>
+      <div class="btns">${k.referans ? kopyaBtn(k.referans, "Referans görsel promptunu kopyala") : ""}${kopyaBtn(k.tarif, "Tarifi kopyala", "ghost")}</div></section>`;
+  }
+  return h;
+}
+
+function profil(){
+  const p = V.profil;
+  const alan = (b, v, not) => `<div class="field"><h3>${esc(b)}</h3><div class="v">${esc(v)}</div>${not ? `<p class="muted">${not}</p>` : ""}<div class="btns">${kopyaBtn(v)}</div></div>`;
+  return `<div class="ephead"><h2>Profil</h2><p class="muted">Instagram ve TikTok'ta aynı kullanıcı adı. Alınmışsa sırayla kervandizisi, kervan.tr dene.</p></div>
+    <section class="blk">${alan("Kullanıcı adı", p.kullanici)}${alan("Ad", p.ad)}</section>
+    <section class="blk">${alan("Instagram biyografisi", p.biyo_ig, [...p.biyo_ig].length + " / 150 karakter")}
+      ${alan("TikTok biyografisi", p.biyo_tt, [...p.biyo_tt].length + " / 80 karakter")}</section>
+    <section class="blk"><div class="blkhead"><h3>Profil fotoğrafı</h3></div>
+      <div class="amblem" role="img" aria-label="Kervan amblemi: pusulalı deri defter">${AMBLEM}</div>
+      <p class="muted">Hazır amblem sohbette PNG olarak gönderildi. Flow'da 3D sürümünü üretmek için:</p>
+      <details><summary>Promptu göster</summary><pre class="prompt">${esc(p.foto)}</pre></details>
+      <div class="btns">${kopyaBtn(p.foto)}</div></section>`;
+}
+
+function kasaAraci(){
+  let metin = oku("kervan-kasa-arac", "200.000 → 185.000\n186.000");
+  return `<div class="ephead"><h2>Kasa aracı</h2><p class="muted">Her satıra bir kasa yaz: değişim için <b>eski → yeni</b>, sabit kasa için tek rakam. Her satır için Flow promptu çıkar.</p></div>
+    <section class="blk">${kasaAyarlari()}<label for="ka-metin" class="muted">Satırlar</label>
+    <textarea id="ka-metin" spellcheck="false">${esc(metin)}</textarea><div id="ka-sonuc" class="region"></div></section>`;
+}
+function kasaAraciCiz(){
+  const ta = $("#ka-metin"); if (!ta) return;
+  yaz("kervan-kasa-arac", ta.value);
+  let h = "";
+  ta.value.split("\n").forEach((satir, i) => {
+    const o = KasaMotor.parseLine(satir);
+    if (!o) return;
+    if (!o.ok) { h += `<p class="err">Satır ${i + 1}: ${esc(o.msg)}</p>`; return; }
+    const metin = KasaMotor.buildPrompt(o, KC);
+    const lbl = o.sabit ? "Sabit " + para(o.old) : para(o.old) + " → " + para(o.neu);
+    h += `<div class="kasa"><span class="val">${lbl}</span><div class="btns">${kopyaBtn(metin, "Kopyala", "ghost")}</div></div>`;
+  });
+  $("#ka-sonuc").innerHTML = h;
+}
+document.addEventListener("input", ev => { if (ev.target.id === "ka-metin") kasaAraciCiz(); });
+
+const AMBLEM = `<svg viewBox="0 0 1080 1080" width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="1080" height="1080" fill="#24130a"/><g transform="rotate(-7 540 545)"><rect x="300" y="238" width="492" height="624" rx="18" fill="#e9d9b4"/><rect x="282" y="226" width="492" height="628" rx="22" fill="#6b3d1f"/><rect x="282" y="226" width="64" height="628" rx="22" fill="#3d1d0b"/><rect x="368" y="252" width="380" height="576" rx="14" fill="none" stroke="#d9b465" stroke-width="5" stroke-dasharray="14 10"/><g transform="translate(558 540)"><circle r="168" fill="#d9a945"/><circle r="150" fill="#2a170a"/><path d="M0 -128L24 0L0 128L-24 0Z" fill="#fbe3a0"/><path d="M-128 0L0 24L128 0L0 -24Z" fill="#e0b25a"/><circle r="14" fill="#d9a945"/></g></g></svg>`;
+
+/* ── Yönlendirme ── */
+function goster(){
+  const h = location.hash.replace("#", "") || "bolumler";
+  const m = h.match(/^b(\d{2})$/);
+  const sekme = m ? "bolumler" : h;
+  METIN.clear();
+  let html;
+  if (m) html = bolum(String(parseInt(m[1], 10)));
+  else if (h === "rota") html = rota();
+  else if (h === "karakterler") html = karakterler();
+  else if (h === "kasa") html = kasaAraci();
+  else if (h === "profil") html = profil();
+  else html = bolumListesi();
+  $("#sayfa").innerHTML = html;
+  document.querySelectorAll("nav.tabs a").forEach(a => {
+    if (a.dataset.tab === sekme) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (h === "kasa") kasaAraciCiz();
+  ust();
+}
+let sonHash = null;
+window.addEventListener("hashchange", () => { goster(); if (location.hash !== sonHash) window.scrollTo(0, 0); sonHash = location.hash; });
+goster();
+</script>
