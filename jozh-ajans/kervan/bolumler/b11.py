@@ -1,0 +1,155 @@
+# -*- coding: utf-8 -*-
+"""B11 · İzmir · SAAT KULESİ — kasa 418.000 → 480.000 → 486.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    11,
+    aciklama=ac(11, "🕰️", "Sabri'nin emaneti İzmir'de, saat kulesinde. Kuru üzüm ihracatı için belge yetişmezse dört ton "
+                "üzüm elde kalacak; Defne bütün gece evrakla boğuşuyor. Gece yarısı saat kulesinin kaidesinde, "
+                "yüz yıldır kimsenin fark etmediği bir deve…", "Rüzgâr nerede sakız kokar, biliyor musunuz?"),
+    etiketler=et(11, "İzmir", "Kemeraltı", "SaatKulesi"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "Konak Square in İzmir at midnight; the ornate Ottoman clock tower lit up in warm gold, palm trees, "
+                "the dark sea and the harbor lights behind, pigeons sleeping on the fountain.",
+                "Kerem in the center kneeling at the base of the clock tower, his hand on a small carved camel relief "
+                "glowing under a phone light. Defne on the left holding a thick folder of documents and a coffee cup, "
+                "tired but alert. Kaan on the right holding up the phone light, looking around nervously. The clock "
+                "tower rises above them, its hands near midnight.",
+                "Nocturnal, thrilling, the city asleep while a secret wakes up."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem", "kaan"], "Konak Square in İzmir at midnight; the lit Ottoman clock tower, empty square.",
+          ("The clock tower strikes midnight; pigeons fly up.",
+           "Kerem kneels at its base, Kaan holding a phone light.",
+           "Under the light, a small camel relief appears on the marble."),
+          "Low-angle shot of the tower striking, then a tilt down to the relief.",
+          "Clock bells, fluttering wings, rising mysterious music.",
+          "Thrilling.",
+          r=("Kaan", "Kerem, burada da deve var!")),
+        # 2
+        s("SECRET", ["kerem"], "The Manisa vineyard house courtyard at dawn; the old grandmother sits wrapped in a shawl.",
+          ("The old grandmother holds Kerem's face in her hands.",
+           "She looks deep into his eyes.",
+           "She lets go and turns away without another word."),
+          "Close two-shot in soft dawn light.",
+          "Morning birds, a gentle sad melody.",
+          "Haunting.",
+          r=("Nine", "Birinin gözleri seninki gibiydi."),
+          alt="BİR GÜN ÖNCE"),
+        # 3
+        s("ARRIVAL", EKIP, VAN + " entering İzmir along the seaside Kordon promenade; palm trees and the bay.",
+          ("The van drives along the bay with palm trees.",
+           "Kerem stares out the window, thinking about the grandmother's words.",
+           "Defne breaks the silence with the exporter's address."),
+          "Drone shot along the Kordon, then a side shot of Kerem.",
+          "Sea breeze, city sounds, pensive music.",
+          "Thoughtful.",
+          alt="İZMİR"),
+        # 4
+        s("TRADE", ["defne"], "An export company office at İzmir port; containers visible through the window; an exporter in a suit.",
+          ("Defne presents a sample of the golden raisins.",
+           "The exporter tastes them and nods.",
+           "He slides a long checklist of documents across the desk."),
+          "Over-the-shoulder shot, close-up on the long list.",
+          "Office hum, port horns, tense music.",
+          "Opportunity with a catch.",
+          r=("İhracatçı", "Sabaha kadar belgeler hazırsa, alırım.")),
+        # 5
+        s("CRISIS", ["defne", "kerem"], "A 24-hour copy shop in İzmir at night; printers humming.",
+          ("Defne types fast on a borrowed computer.",
+           "Kerem staples documents; papers fly everywhere.",
+           "The printer jams with a loud crunch."),
+          "Handheld chaos shot, close-up on the jammed printer.",
+          "Typing, printer crunch, ticking clock music.",
+          "Pressure."),
+        # 6
+        s("CRISIS", ["kaan"], "The same copy shop; Kaan opens the printer cover.",
+          ("Kaan pulls the jammed paper out with dramatic effort.",
+           "The printer starts again; papers stream out.",
+           "Kaan blows on his fingers like a gunslinger."),
+          "Close-up on the printer, then a hero shot of Kaan.",
+          "Printer restarting, comic western sting.",
+          "Comic relief.",
+          r=("Kaan", "Teknik destek burada.")),
+        # 7
+        s("SECRET", ["kerem"], "Konak Square at night; Kerem walks toward the clock tower alone.",
+          ("While Defne works, Kerem walks to the clock tower.",
+           "He compares the tower to a sketch in the notebook.",
+           "The sketch has a small camel drawn at the base."),
+          "Tracking shot behind Kerem, match cut to the sketch.",
+          "Night city, soft mysterious music.",
+          "Curiosity."),
+        # 8
+        s("SECRET", ["kerem", "kaan"], "The base of the clock tower at midnight.",
+          ("Kaan arrives with tea and holds his phone light.",
+           "They find the small camel relief on the marble base.",
+           "Kerem feels a tiny gap around the relief."),
+          "Close-up on fingers tracing the relief.",
+          "Clock ticking inside the tower, heartbeat drum.",
+          "Suspense."),
+        # 9
+        s("SECRET", ["kerem", "kaan"], "The base of the clock tower.",
+          ("Kerem presses the relief; a thin marble plate shifts.",
+           "Behind it, a small brass tube is hidden in the stone.",
+           "Kaan almost drops his tea."),
+          "Extreme close-up on the marble plate sliding.",
+          "Stone scraping, a music sting.",
+          "Discovery.",
+          r=("Kerem", "Yüz yıldır burada bekliyormuş.")),
+        # 10
+        s("CRISIS", ["defne"], "The copy shop at dawn; Defne holds a perfect folder of documents.",
+          ("Defne puts the last document in the folder.",
+           "She looks at the clock: twenty minutes left.",
+           "She runs out the door."),
+          "Close-up on the folder, quick cut to the clock, then a tracking shot.",
+          "Clock ticking loudly, running music.",
+          "Race against time."),
+        # 11
+        s("TRADE", ["defne"], "The export company office at sunrise.",
+          ("Defne bursts in and drops the folder on the desk.",
+           "The exporter checks each page and smiles.",
+           "He signs the contract and the payment is sent."),
+          "Fast push-in, then a close-up of the signature.",
+          "Pen scratch, payment chime, triumphant music.",
+          "Victory.",
+          r=("Defne", "Dört ton üzüm, altmış iki bin kâr!"),
+          k=(418_000, 480_000)),
+        # 12
+        s("TRADE", ["kaan", "defne"], "The Kemeraltı bazaar in İzmir in the morning; stalls of Aegean herbs and spices.",
+          ("Kaan smells bundles of thyme, sage and mountain tea.",
+           "Defne buys sacks of Aegean herbs.",
+           "A restaurant owner passing by buys a few sacks on the spot."),
+          "Steadicam through the bazaar, close-up on herbs.",
+          "Bazaar chatter, cheerful music.",
+          "Easy win.",
+          k=(480_000, 486_000)),
+        # 13
+        s("SECRET", EKIP, "A seaside bench on the Kordon at sunset; the brass tube on Kerem's lap.",
+          ("Kerem unscrews the old brass tube.",
+           "A rolled piece of paper slides out.",
+           "Defne and Kaan lean in over his shoulders."),
+          "Close-up on the tube opening, sunset light.",
+          "Waves, a soft mysterious melody.",
+          "Anticipation."),
+        # 14
+        s("SECRET", ["kerem"], "The same bench at sunset.",
+          ("Kerem unrolls the paper; it is a short note in Sabri's handwriting.",
+           "A tiny drawing of a tree with thick twisted branches is under the words.",
+           "Kerem reads the riddle aloud."),
+          "Close-up on the note, then on Kerem's face.",
+          "Paper rustle, building music.",
+          "Riddle.",
+          r=("Kerem", "Rüzgârın sakız kokduğu yere…")),
+        # 15
+        s("CLIFFHANGER", EKIP, "The Kordon at sunset; the wind suddenly picks up.",
+          ("A gust of wind tears the note from Kerem's hands.",
+           "The note flies toward the sea; Kaan jumps after it.",
+           "Kaan's hand closes on air at the edge of the water. Cut to black."),
+          "Slow-motion jump, freeze on the outstretched hand, cut to black.",
+          "Wind gust, a splash, music cut.",
+          "Shock.",
+          r=("Defne", "Kaan! Not uçuyor!")),
+    ],
+)
+
+BOLUMLER = [B]

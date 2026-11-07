@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""B13 · Aydın · İNCİR HASADI — kasa 541.000 → 571.000 → 603.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    13,
+    aciklama=ac(13, "🍈", "Sabri'nin mektubu onları Aydın'ın incir bahçelerine getirdi. Hasadın ortasında yağmur "
+                "başlıyor ve kurutma alanını kurtarmak için köylülerle yarışıyorlar. Mektubun devamı ise 1926'daki "
+                "yolculuğun ikiye ayrıldığını söylüyor…", "Defterin kenarındaki eski harfleri kim okuyabilir?"),
+    etiketler=et(13, "Aydın", "incir"),
+    kapak=kapak("defne", ["kerem", "kaan"],
+                "Fig orchards near Aydın under a dramatic sky; half sunshine, half dark rain clouds; long drying racks "
+                "covered with purple and golden figs, villagers running with tarps.",
+                "Defne in the center pulling a big blue tarp over a drying rack, hair blowing, fierce determination. "
+                "Kerem on the left holding the open letter and notebook under his jacket against the first raindrops. "
+                "Kaan on the right with a fig in his mouth, carrying a crate, sprinting.",
+                "A race against the sky; teamwork, urgency and old secrets."),
+    senaryolar=[
+        # 1
+        s("HOOK", EKIP, "A fig drying field near Aydın; dark storm clouds rolling in, figs spread on long racks.",
+          ("Thunder rumbles; the first heavy raindrops fall on the figs.",
+           "Defne shouts and grabs a tarp; villagers start running.",
+           "The three sprint along the racks pulling tarps."),
+          "Wide shot of clouds rolling, then fast tracking shots.",
+          "Thunder, rain starting, urgent drums.",
+          "Race against time.",
+          r=("Defne", "Örtün! Hepsini örtün!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " driving through fig orchards near Aydın in the morning sun.",
+          ("The van drives between low fig trees heavy with fruit.",
+           "Kaan picks a fig through the open window.",
+           "Kerem rereads Sabri's letter."),
+          "Drone shot of orchards, close-up of Kaan's hand.",
+          "Birds, warm music.",
+          "Sunny calm.",
+          alt="SABAH · AYDIN"),
+        # 3
+        s("TRADE", ["defne"], "A busy dessert shop in Aydın; the owner tastes a piece of mastic.",
+          ("Defne offers the last small bags of mastic to the dessert shop.",
+           "The owner buys them for his famous puddings.",
+           "Defne also asks him about the best fig farmers."),
+          "Medium shot over the counter.",
+          "Shop ambience, light music.",
+          "Networking."),
+        # 4
+        s("TRADE", ["defne", "kaan"], "A family fig farm; a strong farmer woman in her forties with a headscarf and rolled sleeves.",
+          ("The farmer woman shows them golden dried figs on the racks.",
+           "Defne tests the figs' moisture with a small meter.",
+           "Kaan gives a thumbs up with his mouth full."),
+          "Close-up on the moisture meter, then a two-shot.",
+          "Farm sounds, warm music.",
+          "Careful trade.",
+          r=("Defne", "Önce ölçüyorum. Söz vermiştim.")),
+        # 5
+        s("TRADE", ["defne"], "The fig farm's yard.",
+          ("Defne and the farmer woman agree on four tons of dried figs.",
+           "A wholesaler from Bodrum calls Defne at the same moment.",
+           "She sells one ton of figs before even loading them."),
+          "Two-shot, then close-up on the phone.",
+          "Phone ring, a bright musical hit.",
+          "Clever timing.",
+          r=("Defne", "Bir tonu yüklemeden sattım!"),
+          k=(541_000, 571_000)),
+        # 6
+        s("SECRET", ["kerem"], "Under a fig tree on the farm, midday shade.",
+          ("Kerem reads the second part of Sabri's letter.",
+           "His finger stops at a line about splitting up.",
+           "He looks at Defne and Kaan working in the field."),
+          "Close-up on the letter, then a point-of-view shot of his friends.",
+          "Leaves rustling, pensive music.",
+          "Reflection.",
+          r=("Kerem", "Burada ayrılmışlar. Biri denize, ikisi karaya.")),
+        # 7
+        s("CRISIS", EKIP, "The fig drying field; the sky suddenly darkens.",
+          ("Thunder; the farmer woman looks up in alarm.",
+           "Rain starts; the three grab tarps with the villagers.",
+           "Kaan slips in the mud but keeps pulling a tarp."),
+          "Wide shot, then handheld chaos.",
+          "Thunder, rain, urgent drums.",
+          "Urgency."),
+        # 8
+        s("CRISIS", ["defne", "kaan"], "The drying field in heavy rain.",
+          ("Defne and Kaan hold a tarp against the wind together.",
+           "The wind almost lifts Kaan off the ground.",
+           "Villagers grab his legs; everyone laughs in the chaos."),
+          "Slow-motion wind shot, then a comic wide shot.",
+          "Howling wind, laughter in the storm.",
+          "Heroic comedy.",
+          r=("Kaan", "Uçuyorum! Biri beni tutsun!")),
+        # 9
+        s("CRISIS", EKIP, "The drying field after the rain; tarps covering all the racks.",
+          ("The rain stops; sunlight breaks through.",
+           "The farmer woman lifts a tarp: the figs are dry and safe.",
+           "Everyone cheers and hugs, soaked."),
+          "Wide shot as sun breaks through, close-up on dry figs.",
+          "Dripping water, cheers, triumphant music.",
+          "Relief."),
+        # 10
+        s("TRADE", ["defne"], "The farm yard at sunset; villagers sharing food at a long table.",
+          ("The farmer woman gives them a discount as thanks.",
+           "A trader from İzmir buys another ton right at the table.",
+           "Defne raises her tea glass."),
+          "Wide shot of the long table, then close-up of Defne.",
+          "Laughter, plates, warm folk music.",
+          "Celebration.",
+          r=("Defne", "Bugünün kârı otuz iki bin daha!"),
+          k=(571_000, 603_000)),
+        # 11
+        s("SECRET", ["kerem", "defne"], "The same long table at dusk; Kerem shows the notebook.",
+          ("Kerem shows a page with strange old-script writing in the margin.",
+           "Defne tries to read it and shakes her head.",
+           "The farmer woman says only her grandfather could read old script."),
+          "Close-up on the margin, then the farmer woman's face.",
+          "Evening insects, mysterious motif.",
+          "Puzzle."),
+        # 12
+        s("SECRET", EKIP, "A small village house; an elderly man in his nineties with a white beard in a chair by the window.",
+          ("The farmer woman leads them to her grandfather.",
+           "The old man puts on thick glasses and takes the notebook.",
+           "He reads silently, lips moving."),
+          "Slow dolly toward the old man, warm lamp light.",
+          "Clock ticking, soft music.",
+          "Anticipation."),
+        # 13
+        s("SECRET", ["kerem"], "The same room.",
+          ("The old man reads the old script aloud, slowly.",
+           "He traces the words with a shaking finger.",
+           "Kerem writes them down quickly."),
+          "Close-up on the finger, then on Kerem writing.",
+          "Old voice, quiet tension music.",
+          "Translation.",
+          r=("Dede", "İkinci parça kalenin gölgesinde, suyun altında.")),
+        # 14
+        s("SECRET", EKIP, "Outside the village house at night under stars.",
+          ("Kerem looks at a map: the nearest coastal castle is in Bodrum.",
+           "Defne checks the cargo of figs in the van.",
+           "Kaan looks at the sea on the map, gulping."),
+          "Three-shot under stars, close-up on the map.",
+          "Night breeze, rising music.",
+          "Decision."),
+        # 15
+        s("CLIFFHANGER", ["kaan", "kerem", "defne"], "Next to " + VAN + " at night.",
+          ("Kaan stares at the word 'suyun altında' in Kerem's notes.",
+           "He realizes he is the only one who swims well.",
+           "Defne and Kerem turn to him slowly. Cut to black."),
+          "Slow push-in on Kaan's face, then cut to black.",
+          "A comic gulp, then a deep music hit.",
+          "Comic suspense.",
+          r=("Kaan", "Suyun altında mı? Yani… ben mi?")),
+    ],
+)
+
+BOLUMLER = [B]
