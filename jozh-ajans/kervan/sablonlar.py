@@ -9,7 +9,7 @@ import io
 import os
 import re
 
-from karakterler import K, SOGUK
+from karakterler import K, SOGUK, tarif
 
 KAPAK1 = 'Instagram Reels cover image, vertical 9:16 (1080x1920), semi-realistic stylized 3D animation still, Pixar-like proportions with realistic textures, cinematic lighting, rich saturated colors, high detail, professional animated movie poster quality.\n\nTITLE TEXT (IMPORTANT):\n\nAdd a large, visually striking Turkish title at the top of the image:\n\n“BÖLÜM [BÖLÜM NUMARASI]”\n“[BÖLÜM ADI]”\n\nTypography:\n\n* “BÖLÜM [NUMARA]” in smaller, elegant, bold uppercase letters.\n* “[BÖLÜM ADI]” in large, bold, cinematic typography.\n* Use a slightly distressed white font with subtle warm golden lighting.\n* Make the most important words particularly prominent.\n* Add a subtle dark shadow behind the letters for readability.\n* Perfect Turkish spelling and clearly readable typography.\n* Position the title in the upper portion without covering the characters or important visual elements.\n\nKeep all main characters and important visual elements inside the central square area so the cover works when Instagram crops it to 1:1 or 4:5.\n\nCHARACTERS (SAME FIXED DESIGN AS PREVIOUS EPISODES):\n\n[ANA KARAKTERİN SABİT TASARIMI]\n\n[YAN KARAKTERLERİN SABİT TASARIMLARI]\n\nAll characters must maintain absolute visual consistency with their previous appearances, including faces, hairstyles, clothing, accessories and body proportions.\n\nSETTING:\n\n[MEKÂNIN DETAYLI AÇIKLAMASI]\n\nCOMPOSITION:\n\n[SAHNENİN NASIL GÖRÜNECEĞİ]\n\nDescribe:\n\n* Where each character stands.\n* What each character is holding.\n* Their facial expressions.\n* Their body language.\n* Important objects in the scene.\n* Background details.\n\nMOOD AND EMOTION:\n\n[SAHNENİN DUYGUSU VE HİKÂYENİN ATMOSFERİ]\n\nLIGHTING AND QUALITY:\n\nCinematic lighting, dramatic rim lighting, realistic textures, expressive facial details, beautiful depth of field, detailed environments, professional color grading and premium 3D animated feature film rendering.\n\nThe final image should feel like the official cover of Episode [BÖLÜM NUMARASI] of the exact same animated series as previous episodes.\n\nMaintain absolute character consistency throughout the entire series.\n\nNo additional text, no random letters, no logos, no watermark.\n\nThe ONLY permitted text elements are:\n“BÖLÜM [NUMARA]”\n“[BÖLÜM ADI]”'
 
@@ -30,7 +30,7 @@ def _doldur(metin, alanlar):
 
 
 def _tarifler(kimler, soguk):
-    metin = "\n\n".join(K[ad] for ad in kimler)
+    metin = "\n\n".join(tarif(ad) for ad in kimler)
     return metin + ("\n\n" + SOGUK if soguk else "")
 
 

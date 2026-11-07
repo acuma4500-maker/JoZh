@@ -48,3 +48,22 @@ def referans_prompt(ad):
         "accessories must be clear and consistent across all three views.\n\n"
         "No text, no letters, no labels, no logos, no watermark."
     )
+
+
+# Tekrar eden yan karakterler (sahnede varsa tarifleri de harfi harfine girer).
+YAN = {
+    "sahaf": (
+        "THE BOOKSELLER: an elderly Turkish woman in her early 70s, small and slightly hunched, kind but "
+        "piercing grey eyes, silver hair in a neat low bun, reading glasses hanging on a thin gold chain, a "
+        "dark green knitted cardigan over a cream blouse, a long dark grey skirt and a plain silver ring on "
+        "her right hand. Calm, knowing, mysterious expression."
+    ),
+}
+
+# Ekibin aracı; mekân tariflerinde aynen kullanılır.
+KAMYONET = ("their small old white panel van with a dented sliding side door, a roof rack loaded with "
+            "cardboard boxes and a faded blue stripe along its side")
+
+
+def tarif(ad):
+    return K[ad] if ad in K else YAN[ad]

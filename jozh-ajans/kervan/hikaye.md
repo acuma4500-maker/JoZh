@@ -11,7 +11,7 @@ Bölüm bölüm rota, kasa, aksilik ve ipuçları tek kaynakta: `rota.py`. Karak
   - şehir çizimleri,
   - eski harflerle yazılmış notlar,
   - yarım kalmış bir yolculuk.
-- **Defter nasıl gelir:** Kapalıçarşı'daki sahaf defteri gençlere tesadüfen satmış gibi görünür. Gerçekte sahaf, Sabri'nin **torununun kızıdır**. Defteri yıllardır "yolu tamamlayabilecek" birine vermeyi bekliyordur (B37'de ortaya çıkar).
+- **Defter nasıl gelir:** Kapalıçarşı'daki sahaf defteri gençlere tesadüfen satmış gibi görünür. Gerçekte sahaf, Sabri'nin **torunudur** (kızının kızı, 70'li yaşlarında). Defteri yıllardır "yolu tamamlayabilecek" birine vermeyi bekliyordur (B37'de ortaya çıkar).
 
 ## Kervan mührü
 
