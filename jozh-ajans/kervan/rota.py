@@ -287,7 +287,7 @@ _b("Rize", "Karadeniz", "ÇAY BAHÇESİ",
    "Yağmur durmuyor; çay toplama günleri ertelenir, kamyonet çamura saplanır.",
    "Sahaf Rize'de bir yaylada bekliyor; Sabri'nin kızının kızı olduğunu söyler.",
    "Sahaf: \"Defterin sonu yapıştırılmış, çünkü son sayfayı yüksek sesle okumaktan korktum.\"")
-_b("Trabzon", "Karadeniz", "HAMSİ",
+_b("Trabzon", "Karadeniz", "ÇAY ÇÖKÜŞÜ",
    "Trabzon hurması ve tereyağı",
    "Rize çayı — o hafta çay fiyatı aniden düşer",
    2_010_000,
@@ -324,7 +324,7 @@ _b("Safranbolu (Karabük)", "Karadeniz", "ALTINCI MÜHÜR",
    "Altı parça birleşince kervan tamamlanmak üzere; tek bir deve eksik. Arkasında: \"KAPI\".")
 
 # ── İÇ ANADOLU (B43–B50) ────────────────────────────────────────────────────
-_b("Beypazarı (Ankara)", "İç Anadolu", "TELKARİ",
+_b("Beypazarı (Ankara)", "İç Anadolu", "HAVUÇ LOKUMU",
    "Beypazarı'nın havucu, kurusu ve maden suyu",
    "Safranbolu safranı ve lokumu",
    2_450_000,
