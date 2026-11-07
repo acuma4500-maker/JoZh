@@ -38,6 +38,7 @@ Karakterlerin İngilizce **sabit görünüm tarifleri** hikâye kitabında bir k
 - Rota defterin izinden gider. İzleyici bir sonraki şehri önceden bilmez.
 - Harita mantıklı bir çizgide ilerler, gereksiz zikzak yoktur.
 - Her şehirde o şehrin gerçek ürünüyle ticaret yapılır (örneğin Rize'de çay, Gaziantep'te fıstık).
+- **Bölge kuralı:** "Yer" = il ya da ünlü ilçe (örneğin Bodrum, Alanya, Halfeti). İlk 50 bölümde 7 bölgenin **her birinden en az 7 yer** gezilir (7 × 7 = 49, bir bölgede 8 olur). 100 bölüm sonunda her bölgeden **en az 10 yer** olur.
 
 ## 3. Bölüm yapısı
 
