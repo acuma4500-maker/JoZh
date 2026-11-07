@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+"""B40 · Ordu · BOZTEPE — kasa 2.150.000 → 2.210.000 → 2.240.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    40,
+    aciklama=ac(40, "🪂", "Ordu'da fabrika fındığı nem ölçümü yüzünden geri çevirmek üzere; Defne ikinci laboratuvar "
+                "raporuyla yetişiyor. Boztepe'de ise yaşlı bir yamaç paraşütçüsü, kırk yıl önce adada bulduğu "
+                "bronz parçayı anlatıyor…", "Sinop'taki ev neden müze olmuş?"),
+    etiketler=et(40, "Ordu", "Boztepe", "fındık"),
+    kapak=kapak("kaan", ["kerem", "defne"],
+                "Boztepe hill above Ordu at sunset; paragliders flying over the city and the Black Sea, a cable car, "
+                "green hazelnut hills.",
+                "Kaan in the center strapped to a tandem paraglider with an old pilot, screaming with joy as they lift "
+                "off. Kerem on the left talking to the old pilot's friend, notebook open. Defne on the right holding "
+                "two lab reports, triumphant.",
+                "Soaring, joyful, a high point."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kaan"], "A tandem paraglider lifting off from Boztepe hill above Ordu at sunset.",
+          ("Kaan runs down the hill strapped to an old pilot.",
+           "They lift off into the air.",
+           "Kaan screams, then laughs with joy."),
+          "Wide shot of takeoff, then a GoPro-style shot of Kaan.",
+          "Wind, epic joyful music.",
+          "Pure joy.",
+          r=("Kaan", "Uçuyoruuum!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " arriving in Ordu; the cable car going up Boztepe.",
+          ("The van drives along the Ordu coast.",
+           "Cable cars climb the green hill.",
+           "Paragliders float in the sky."),
+          "Drone shot.",
+          "Warm music.",
+          "Arrival.",
+          alt="BİR GÜN ÖNCE · ORDU"),
+        # 3
+        s("TRADE", ["defne"], "A hazelnut factory's quality lab in Ordu.",
+          ("A lab technician tests the second-grade hazelnuts.",
+           "The moisture meter shows a high reading.",
+           "The manager shakes his head."),
+          "Close-up on the meter.",
+          "Beep, tense music.",
+          "Rejection coming.",
+          r=("Müdür", "Nem fazla. Alamayız.")),
+        # 4
+        s("CRISIS", ["defne"], "The factory lab.",
+          ("Defne asks for a second test from an independent lab.",
+           "The manager gives her one hour.",
+           "She runs out."),
+          "Medium shot, then running.",
+          "Ticking, urgent music.",
+          "Race."),
+        # 5
+        s("CRISIS", ["defne"], "An independent lab in Ordu.",
+          ("Defne pays for an express test.",
+           "She waits, tapping her foot.",
+           "The result: the moisture is normal; the first meter was faulty."),
+          "Close-up on the result.",
+          "Ticking, relief music.",
+          "Hope."),
+        # 6
+        s("CRISIS", ["defne"], "Back at the factory.",
+          ("Defne slaps the second report on the desk.",
+           "The manager checks his meter; it's broken.",
+           "He apologizes."),
+          "Medium shot.",
+          "Comic music hit.",
+          "Victory."),
+        # 7
+        s("TRADE", ["defne"], "The factory office.",
+          ("The manager accepts the hazelnuts.",
+           "He signs the deal.",
+           "Defne shakes his hand firmly."),
+          "Close-up on signing.",
+          "Pen, triumphant music.",
+          "Success."),
+        # 8
+        s("TRADE", ["defne"], "The factory office.",
+          ("Defne writes the profit.",
+           "She kisses the second lab report.",
+           "Kerem laughs."),
+          "Close-up.",
+          "Upbeat music.",
+          "Joy.",
+          r=("Defne", "İkinci rapor altmış bin kurtardı!"),
+          k=(2_150_000, 2_210_000)),
+        # 9
+        s("SECRET", ["kerem", "kaan"], "Boztepe hill; paragliders preparing.",
+          ("Kerem and Kaan look for the paraglider.",
+           "An old man in his seventies folds his wing.",
+           "Kerem shows him the camel drawing."),
+          "Medium shot.",
+          "Wind, mysterious music.",
+          "Search."),
+        # 10
+        s("SECRET", ["kerem"], "The hill.",
+          ("The old pilot smiles.",
+           "He says he found a bronze camel on the island forty years ago.",
+           "He gave it to his older brother."),
+          "Close-up.",
+          "Wind, strings.",
+          "Clue.",
+          r=("Pilot", "Kırk yıl önce adada buldum.")),
+        # 11
+        s("SECRET", ["kerem"], "The hill.",
+          ("Kerem asks where his brother is.",
+           "The pilot's smile fades.",
+           "He looks toward the west."),
+          "Close-up.",
+          "Soft sad music.",
+          "Emotion."),
+        # 12
+        s("TRADE", ["defne"], "A pestil and hazelnut paste workshop.",
+          ("Defne tastes hazelnut paste and fruit leather.",
+           "She orders and presells to a deli chain by phone.",
+           "She waves at the sky where Kaan is flying."),
+          "Medium shot.",
+          "Light music.",
+          "Success.",
+          k=(2_210_000, 2_240_000)),
+        # 13
+        s("SECRET", ["kerem"], "The hill at sunset.",
+          ("The pilot says his brother lived in Sinop.",
+           "He passed away years ago.",
+           "Kerem lowers his head."),
+          "Close-up.",
+          "Soft music.",
+          "Sadness."),
+        # 14
+        s("SECRET", ["kaan", "kerem"], "The landing field; Kaan lands, ecstatic.",
+          ("Kaan lands, laughing and shouting.",
+           "He sees Kerem's serious face.",
+           "Kerem explains."),
+          "Two-shot.",
+          "Wind calming.",
+          "Contrast."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The hill at dusk.",
+          ("The pilot adds one last detail.",
+           "His brother's house became a museum.",
+           "The three look west toward Sinop. Cut to black."),
+          "Close-up on the pilot, then the three, cut to black.",
+          "A deep music hit.",
+          "Lead.",
+          r=("Pilot", "Evi artık müze oldu.")),
+    ],
+)
+
+BOLUMLER = [B]

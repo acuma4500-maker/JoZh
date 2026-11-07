@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+"""B38 · Trabzon · ÇAY ÇÖKÜŞÜ — kasa 2.080.000 → 1.990.000 → 2.010.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    38,
+    aciklama=ac(38, "📉", "Çay fiyatı bir gecede çöküyor; alıcı siparişin yarısından vazgeçiyor ve kalan çay zararına "
+                "satılıyor. Ama Sümela yolunda, çaydanlığın buharıyla yapışık sayfalar açılıyor: Sabri'nin son "
+                "yolculuğunun haritası…", "Haritanın sonu nereye çıkıyor?"),
+    etiketler=et(38, "Trabzon", "Sümela", "çay"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "A misty forest valley below Sümela Monastery near Trabzon; the monastery clinging to a sheer cliff "
+                "far above, a wooden roadside café, a kettle steaming on a stove.",
+                "Kerem in the center holding the notebook over a steaming kettle, the glued pages peeling open to "
+                "reveal a hand-drawn map. Defne on the left looking at a falling price graph on her phone (no readable "
+                "text), worried. Kaan on the right holding persimmons and a block of butter, watching the steam.",
+                "Misty, tense, a long-awaited secret opening."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "A wooden roadside café in the misty valley below Sümela Monastery; a kettle steaming.",
+          ("Kerem holds the glued pages over the kettle's steam.",
+           "Slowly the pages begin to peel apart.",
+           "A hand-drawn map appears inside."),
+          "Macro on the peeling pages in steam.",
+          "Steam hiss, magical music.",
+          "Revelation.",
+          r=("Kerem", "Açılıyor… yavaş yavaş açılıyor!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " entering Trabzon along the coast; the Black Sea gray and wild.",
+          ("The van drives into Trabzon by the sea.",
+           "Defne's phone buzzes with news.",
+           "She reads it and goes pale."),
+          "Drone shot, close-up on Defne.",
+          "Waves, tense music.",
+          "Bad news.",
+          alt="ÖNCEKİ GÜN · TRABZON"),
+        # 3
+        s("CRISIS", ["defne"], "A café in Trabzon; Defne on the phone.",
+          ("Defne calls the tea buyer.",
+           "He says tea prices crashed overnight.",
+           "He cancels half of the order."),
+          "Close-up on Defne.",
+          "Phone voice, a dark music hit.",
+          "Shock.",
+          r=("Defne", "Yarısını iptal mi ediyorsunuz?")),
+        # 4
+        s("CRISIS", ["defne", "kaan"], "A tea wholesaler in Trabzon market.",
+          ("Defne tries to sell the rest of the tea.",
+           "Every wholesaler offers a very low price.",
+           "Kaan sees her frustration."),
+          "Medium shots.",
+          "Market, tense music.",
+          "Struggle."),
+        # 5
+        s("CRISIS", ["defne"], "The wholesaler.",
+          ("Defne has no choice.",
+           "She sells the rest of the tea at a loss.",
+           "She signs with a heavy hand."),
+          "Close-up on signing.",
+          "Pen, sad music.",
+          "Loss."),
+        # 6
+        s("CRISIS", ["defne", "kerem"], "Outside the market.",
+          ("Defne sits on a bench.",
+           "Kerem sits beside her.",
+           "She shows him the ledger."),
+          "Two-shot.",
+          "Seagulls, soft music.",
+          "Disappointment."),
+        # 7
+        s("CRISIS", ["defne"], "The bench.",
+          ("Defne calculates the total loss.",
+           "Ninety thousand.",
+           "She laughs bitterly."),
+          "Close-up on the ledger.",
+          "Silence.",
+          "Pain."),
+        # 8
+        s("CRISIS", ["defne", "kaan"], "The bench.",
+          ("Kaan brings her a cup of tea.",
+           "Defne looks at the tea and starts laughing for real.",
+           "Kaan laughs too."),
+          "Two-shot.",
+          "Laughter, comic music.",
+          "Healing.",
+          r=("Defne", "Çay yüzünden kaybettik, çayla teselli!"),
+          k=(2_080_000, 1_990_000)),
+        # 9
+        s("ARRIVAL", EKIP, "The road into the misty Altındere valley toward Sümela.",
+          ("The van drives into a deep forest valley.",
+           "Fog rolls between the trees.",
+           "Kerem holds the glued pages."),
+          "Drone shot of the misty valley.",
+          "Forest, mysterious music.",
+          "Mystery."),
+        # 10
+        s("SECRET", EKIP, "A wooden roadside café; a kettle on a stove.",
+          ("The café owner puts a kettle on.",
+           "Steam rises from the spout.",
+           "Kerem looks at the bookseller's suggestion."),
+          "Close-up on the kettle.",
+          "Kettle, heartbeat.",
+          "Anticipation."),
+        # 11
+        s("SECRET", ["kerem"], "The café.",
+          ("Kerem holds the glued pages over the steam.",
+           "The pages slowly peel apart.",
+           "A map appears."),
+          "Macro on peeling pages.",
+          "Hiss, magical music.",
+          "Revelation."),
+        # 12
+        s("TRADE", ["defne"], "A persimmon and butter seller near the café.",
+          ("Defne buys Trabzon persimmons and butter.",
+           "She sells some to the café and a passing tour bus.",
+           "A small recovery."),
+          "Medium shot.",
+          "Light music.",
+          "Recovery.",
+          k=(1_990_000, 2_010_000)),
+        # 13
+        s("SECRET", EKIP, "The café table; the open map.",
+          ("The map shows Sabri's final route.",
+           "It goes across Anatolia to a valley of fairy chimneys.",
+           "Defne recognizes it."),
+          "Top-down shot of the map.",
+          "Music building.",
+          "Destination."),
+        # 14
+        s("SECRET", ["kerem"], "The map.",
+          ("At the end of the route is a drawing of a stone door.",
+           "Seven camel shapes surround it.",
+           "Kerem reads the line under it."),
+          "Close-up on the door drawing.",
+          "Heartbeat.",
+          "Riddle.",
+          r=("Kerem", "Yedi parça olmadan kapı açılmaz.")),
+        # 15
+        s("CLIFFHANGER", EKIP, "The café porch; Sümela Monastery visible on the cliff above.",
+          ("Kerem counts the pieces in his bag: five.",
+           "Two are missing.",
+           "He looks at the map's end: Kapadokya. Cut to black."),
+          "Close-up on five pieces, then the map, cut to black.",
+          "A deep music hit.",
+          "Cliffhanger.",
+          r=("Defne", "Yolun sonu Kapadokya.")),
+    ],
+)
+
+BOLUMLER = [B]
