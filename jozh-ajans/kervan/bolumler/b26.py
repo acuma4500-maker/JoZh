@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+"""B26 · Diyarbakır · KARPUZ — kasa 1.210.000 → 1.255.000 → 1.305.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    26,
+    aciklama=ac(26, "🍉", "Pusula Diyarbakır'da, Hasan Paşa Hanı'nda duruyor. Kaan dev bir karpuzu anlaşma masasına "
+                "düşürüyor; herkes kahkahayı basıyor ve anlaşma imzalanıyor. Sabri'nin 1926'da kaldığı odanın "
+                "duvarında ise bir dize var…", "\"Taşın sustuğu şehir\" neresi?"),
+    etiketler=et(26, "Diyarbakır", "HasanPaşaHanı", "karpuz"),
+    kapak=kapak("kaan", ["kerem", "defne"],
+                "The courtyard of Hasan Pasha Han in Diyarbakır, striped black-and-white basalt arches, breakfast "
+                "tables, a fountain; the ancient black city walls visible behind.",
+                "Kaan in the center frozen mid-fall, a giant striped watermelon flying from his hands toward a table "
+                "of papers. Defne on the left with her hands on her face. Kerem on the right holding the old brass "
+                "compass whose needle points at a room door on the upper gallery.",
+                "Comic chaos frozen in time with a mystery above."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kaan"], "A business table in Hasan Pasha Han's courtyard; papers and tea glasses.",
+          ("Kaan carries a giant watermelon toward the table.",
+           "He trips; the watermelon flies in slow motion.",
+           "It smashes in the middle of the contract table."),
+          "Slow-motion flight, then a top-down splash.",
+          "Whoosh, splat, silence.",
+          "Comic disaster.",
+          r=("Kaan", "Hayıııır!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " passing through the ancient black basalt city walls of Diyarbakır.",
+          ("The van drives through a huge gate in the black walls.",
+           "Kerem holds the compass; the needle trembles.",
+           "It points down the main street."),
+          "Drone shot of the walls, close-up on the compass.",
+          "City sounds, mysterious music.",
+          "Purpose.",
+          alt="BİR SAAT ÖNCE · DİYARBAKIR"),
+        # 3
+        s("TRADE", ["defne"], "A dried fruit and nut wholesaler in the Diyarbakır bazaar.",
+          ("Defne sells the dried apricots and mulberries.",
+           "The wholesaler likes the quality.",
+           "He pays well."),
+          "Medium shot, close-up on the fruit.",
+          "Bazaar sounds, warm music.",
+          "Deal.",
+          r=("Defne", "Kuru meyve kırk beş bin getirdi!"),
+          k=(1_210_000, 1_255_000)),
+        # 4
+        s("TRADE", ["defne", "kaan"], "A watermelon field outside Diyarbakır; enormous watermelons.",
+          ("A farmer shows them gigantic watermelons.",
+           "Kaan tries to lift one and fails.",
+           "Defne sets up a meeting with a juice company."),
+          "Wide field shot, comic close-up.",
+          "Comic grunts, warm music.",
+          "Fun."),
+        # 5
+        s("SECRET", ["kerem"], "The gate of Hasan Pasha Han.",
+          ("Kerem follows the compass to the old han.",
+           "The needle swings toward the upper gallery.",
+           "He walks up the stone stairs."),
+          "Tracking shot, close-up on the needle.",
+          "Footsteps, mysterious music.",
+          "Search."),
+        # 6
+        s("SECRET", ["kerem"], "The upper gallery of the han; numbered room doors.",
+          ("The needle stops pointing at one room door.",
+           "Kerem checks the notebook: the same number is written there.",
+           "The door is now a carpet shop."),
+          "Close-up on the door number, then the notebook.",
+          "Heartbeat drum.",
+          "Discovery."),
+        # 7
+        s("CRISIS", ["defne", "kaan"], "Hasan Pasha Han's courtyard; a juice company manager with documents at a table.",
+          ("Defne and the manager discuss the watermelon deal.",
+           "Kaan brings a giant watermelon as a sample.",
+           "The manager looks impressed."),
+          "Medium shot.",
+          "Courtyard chatter.",
+          "Setup."),
+        # 8
+        s("CRISIS", ["kaan"], "The courtyard table.",
+          ("Kaan trips on a step.",
+           "The watermelon flies and smashes on the table.",
+           "Juice splashes over everyone and the papers."),
+          "Slow motion, then a splash.",
+          "Splat, silence.",
+          "Comic disaster."),
+        # 9
+        s("CRISIS", ["defne", "kaan"], "The courtyard; everyone covered in watermelon.",
+          ("Silence; the manager wipes juice off his face.",
+           "He tastes it from his finger.",
+           "He bursts out laughing; the whole courtyard laughs."),
+          "Close-up on the manager, then a wide laughing shot.",
+          "Explosive laughter.",
+          "Relief."),
+        # 10
+        s("TRADE", ["defne"], "The same table, cleaned.",
+          ("The manager signs a new contract.",
+           "He says the taste convinced him.",
+           "Defne high-fives Kaan."),
+          "Close-up on signing.",
+          "Pen, triumphant music.",
+          "Victory.",
+          r=("Müdür", "Bu tat her şeyi anlattı. Anlaştık!"),
+          k=(1_255_000, 1_305_000)),
+        # 11
+        s("SECRET", ["kerem"], "The carpet shop inside the old han room; an old carpet seller.",
+          ("Kerem asks the carpet seller about the room's history.",
+           "The seller moves a carpet hanging on the wall.",
+           "Behind it, old writing is painted on the plaster."),
+          "Reveal as the carpet moves.",
+          "Fabric, mysterious music.",
+          "Discovery."),
+        # 12
+        s("SECRET", EKIP, "The old wall with faded painted writing.",
+          ("Defne and Kaan arrive, still sticky with juice.",
+           "Kerem reads the faded line on the wall.",
+           "Next to it is a small painted camel."),
+          "Close-up on the writing.",
+          "Heartbeat.",
+          "Riddle.",
+          r=("Kerem", "Taşın sustuğu şehirde gümüş konuşur.")),
+        # 13
+        s("SECRET", ["defne"], "The carpet shop.",
+          ("Defne thinks out loud.",
+           "The carpet seller smiles and says the stone city is near.",
+           "He points southeast."),
+          "Close-up on the seller.",
+          "Soft music.",
+          "Hint."),
+        # 14
+        s("SECRET", EKIP, "The han's upper gallery at sunset.",
+          ("The three look out over the city.",
+           "Kerem opens the compass again.",
+           "The needle has moved; it points southeast."),
+          "Wide sunset shot, close-up on the compass.",
+          "Wind, music building.",
+          "Next step."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The han's gallery at dusk.",
+          ("The carpet seller calls after them.",
+           "He says his grandfather saw the 1926 travelers.",
+           "His last words stop them cold. Cut to black."),
+          "Slow push-in on the seller, cut to black.",
+          "Deep music hit.",
+          "Cliffhanger.",
+          r=("Halıcı", "Onlar dört kişiydi, üç değil.")),
+    ],
+)
+
+BOLUMLER = [B]

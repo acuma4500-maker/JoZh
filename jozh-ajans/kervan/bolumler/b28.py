@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""B28 · Midyat · DÖRDÜNCÜ MÜHÜR — kasa 1.390.000 → 1.445.000 → 1.480.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    28,
+    aciklama=ac(28, "🪙", "İç kapaktaki gizli imza: sadece bir harf, \"R\". Midyat'ta gümüş fiyatı bir gecede fırlıyor; "
+                "Defne'nin hızı büyük kâr getiriyor. Telkari ustası ise dedesinin yaptığı gümüş deveyi saklamış: "
+                "dördüncü mühür parçası!", "Dördüncü yolcu neden Van'da kaldı?"),
+    etiketler=et(28, "Midyat", "Mardin", "telkari"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "A filigree silver workshop in Midyat's old stone town at night; delicate silver jewelry glittering in "
+                "lamp light, carved stone walls, a window showing a stone church tower and mansion rooftops.",
+                "Kerem in the center holding four bronze-and-silver camel pieces joined in a row, the new silver camel "
+                "shining. Defne on the left holding a phone showing a rising price graph (no readable text). Kaan on "
+                "the right wearing three silver rings and a silver bracelet, admiring himself.",
+                "Precious, glittering, a big step closer."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "A filigree workshop in Midyat at night; lamp light on silver.",
+          ("An old silversmith opens a carved wooden box.",
+           "Inside lies a delicate silver filigree camel.",
+           "Kerem reaches for it slowly."),
+          "Macro on the silver camel glittering.",
+          "Magical chime, strings.",
+          "Wonder.",
+          r=("Kerem", "Gümüş deve… dördüncü parça!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " arriving at Midyat; carved stone mansions and church towers.",
+          ("The van enters Midyat's old town.",
+           "Kerem studies the hidden 'R' signature.",
+           "Defne checks silver prices on her phone."),
+          "Drone shot of the stone town.",
+          "Bells, warm music.",
+          "Arrival.",
+          alt="BİR GÜN ÖNCE · MİDYAT"),
+        # 3
+        s("TRADE", ["defne", "kaan"], "An organic shop's delivery point in Midyat.",
+          ("They deliver soap and almond candy to the shop chain's truck.",
+           "Kaan reluctantly gives away the last candy box.",
+           "Defne pats his head."),
+          "Medium shot.",
+          "Comic music.",
+          "Delivery."),
+        # 4
+        s("TRADE", ["defne"], "A filigree silver workshop's display.",
+          ("Defne studies silver jewelry prices.",
+           "She notices news of rising silver prices.",
+           "She decides to buy immediately, not tomorrow."),
+          "Close-up on her phone, then her decision.",
+          "Ticking, focused music.",
+          "Smart instinct.",
+          r=("Defne", "Yarın değil. Bugün alıyoruz.")),
+        # 5
+        s("TRADE", ["defne"], "The silver workshop.",
+          ("Defne buys a large batch of filigree jewelry.",
+           "The silversmith wraps each piece.",
+           "Kaan tries rings on every finger."),
+          "Close-ups on wrapping, comic Kaan.",
+          "Wrapping, light music.",
+          "Purchase."),
+        # 6
+        s("TRADE", ["defne"], "The next morning; Defne at a jewelry shop in town.",
+          ("Silver prices jumped overnight.",
+           "Defne sells part of the jewelry to another shop at the new price.",
+           "She shows Kerem the ledger, grinning."),
+          "Close-up on the ledger.",
+          "Upbeat music.",
+          "Big win.",
+          r=("Defne", "Bir gecede elli beş bin kâr!"),
+          k=(1_390_000, 1_445_000)),
+        # 7
+        s("SECRET", ["kerem"], "The silversmith's workshop; an elderly master silversmith with a white mustache.",
+          ("Kerem shows the old master the notebook.",
+           "The master sees the 'R' signature.",
+           "He nods and goes to a cabinet."),
+          "Close-up on the signature, then the master.",
+          "Mysterious music.",
+          "Discovery."),
+        # 8
+        s("SECRET", ["kerem"], "The cabinet.",
+          ("The master takes out a carved wooden box.",
+           "He tells the story of his grandfather.",
+           "He opens the box: a silver camel."),
+          "Close-up on the box opening.",
+          "Chime.",
+          "Revelation.",
+          r=("Usta", "Dedem bunu R. için yaptı.")),
+        # 9
+        s("SECRET", EKIP, "The workshop table.",
+          ("Kerem takes out the three joined pieces.",
+           "He adds the silver camel; it clicks.",
+           "Four camels now walk in a row."),
+          "Macro on the click.",
+          "Click, emotional swell.",
+          "Joy."),
+        # 10
+        s("CRISIS", ["kaan"], "The workshop; Kaan wearing many silver rings.",
+          ("Kaan tries to take off a ring; it is stuck.",
+           "He pulls, twists, uses soap.",
+           "The master laughs and helps him with oil."),
+          "Comic close-ups.",
+          "Comic music.",
+          "Comedy."),
+        # 11
+        s("SECRET", ["kerem"], "The workshop.",
+          ("Kerem asks who 'R.' was.",
+           "The master says he was a guide from the east who joined in Mardin.",
+           "He knew every mountain road."),
+          "Two-shot.",
+          "Soft music.",
+          "Clue."),
+        # 12
+        s("TRADE", ["defne"], "A café in Midyat; Defne on the phone.",
+          ("Defne calls a jewelry shop in Istanbul from her ledger list.",
+           "They order the rest of the silver.",
+           "She does a little victory dance."),
+          "Medium shot.",
+          "Triumphant music.",
+          "Success.",
+          r=("Defne", "Gümüşün kalanı İstanbul'a gidiyor!"),
+          k=(1_445_000, 1_480_000)),
+        # 13
+        s("SECRET", EKIP, "A rooftop in Midyat at sunset; stone towers.",
+          ("The three sit on a rooftop.",
+           "Kerem turns the silver camel over.",
+           "Fine letters are engraved on the back."),
+          "Close-up on the engraving.",
+          "Wind, music building.",
+          "Clue."),
+        # 14
+        s("SECRET", ["defne"], "The rooftop.",
+          ("Defne reads the tiny engraving with her phone magnifier.",
+           "She reads the first words.",
+           "She gasps."),
+          "Macro.",
+          "Heartbeat.",
+          "Suspense."),
+        # 15
+        s("CLIFFHANGER", EKIP, "The rooftop at dusk.",
+          ("Defne reads the full line aloud.",
+           "Kerem looks northeast toward the mountains.",
+           "The sun sets behind the towers. Cut to black."),
+          "Close-up on Defne, then a wide sunset shot, cut to black.",
+          "A deep music hit.",
+          "Next destination.",
+          r=("Defne", "Dördüncü yolcu Van'da kaldı.")),
+    ],
+)
+
+BOLUMLER = [B]

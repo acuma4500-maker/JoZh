@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""B24 · Şanlıurfa · İSOT — kasa 1.185.000 → 1.215.000 → 1.260.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    24,
+    aciklama=ac(24, "🌶️", "Minarenin tepesinden çıkan teneke kutu onları Harran'ın konik kubbeli evlerine götürüyor. "
+                "Balıklıgöl'de Kaan'ın telefonu suya düşüyor, bütün müşteri listesi de onunla birlikte… Sabri'nin "
+                "haritasında ise bir dağ ve taş başlar var.", "Taş başlar hangi dağda?"),
+    etiketler=et(24, "Şanlıurfa", "Harran", "isot"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "The beehive-shaped mud-brick dome houses of Harran near Şanlıurfa at golden hour; warm orange earth, "
+                "a flat endless plain, red isot peppers drying on rooftops.",
+                "Kerem in the center inside a beehive house doorway unrolling an old hand-drawn map toward the light. "
+                "Defne on the left holding a basket of dark-red isot peppers. Kaan on the right holding a dripping wet "
+                "phone with a heartbroken face.",
+                "Warm, ancient, adventurous with a comic heartbreak."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem", "kaan"], "The top of the sunken minaret at night in Halfeti; a boat tilting below.",
+          ("Kaan throws his weight to balance the tilting boat.",
+           "Kerem reaches behind the camel carving and pulls out a small rusty tin.",
+           "He drops back into the boat; it rocks but stays upright."),
+          "Slow-motion reach, then a wide shot of the rocking boat.",
+          "Splash, gasp, relieved music.",
+          "Thrilling.",
+          r=("Kerem", "Aldım! Kutu bende!")),
+        # 2
+        s("SECRET", EKIP, "The Halfeti dock at dawn; the three sit wrapped in blankets.",
+          ("Kerem opens the rusty tin.",
+           "Inside is a small drawing of cone-shaped houses.",
+           "Defne recognizes them instantly."),
+          "Close-up on the tin and drawing.",
+          "Dawn birds, mysterious music.",
+          "Clue.",
+          r=("Defne", "Konik evler… Harran!")),
+        # 3
+        s("ARRIVAL", EKIP, VAN + " entering Şanlıurfa; the old city and the castle hill.",
+          ("The van enters the old city.",
+           "They see Balıklıgöl, the sacred fish pool, with crowds.",
+           "Kaan wants to feed the fish."),
+          "Drone shot of the city, then the pool.",
+          "City sounds, warm music.",
+          "Wonder.",
+          alt="ŞANLIURFA"),
+        # 4
+        s("TRADE", ["defne"], "A spice and herbal tea shop in the Şanlıurfa bazaar.",
+          ("Defne shows dried black rose petals to the shop owner.",
+           "He smells them and is amazed.",
+           "He buys all of them for his special teas."),
+          "Close-up on the petals.",
+          "Bazaar chatter, warm music.",
+          "Deal."),
+        # 5
+        s("TRADE", ["defne"], "The spice shop counter.",
+          ("The owner pays Defne.",
+           "Defne writes the profit happily.",
+           "She buys sacks of isot pepper from him."),
+          "Close-up on the ledger.",
+          "Cash, upbeat music.",
+          "Success.",
+          r=("Defne", "Gül yaprakları otuz bin getirdi!"),
+          k=(1_185_000, 1_215_000)),
+        # 6
+        s("CRISIS", ["kaan"], "Balıklıgöl pool; Kaan feeding the fish with simit.",
+          ("Kaan leans over the pool throwing simit pieces.",
+           "His phone slips out of his jacket pocket.",
+           "It falls into the water among the fish."),
+          "Slow-motion fall into the water.",
+          "Splash, comic horror music.",
+          "Comic disaster.",
+          r=("Kaan", "Hayır! Müşteri listesi!")),
+        # 7
+        s("CRISIS", ["kaan", "defne"], "The edge of Balıklıgöl.",
+          ("A guard helps Kaan fish the phone out with a net.",
+           "The phone is dead; water drips out.",
+           "Defne asks if he made a backup; Kaan's face says no."),
+          "Close-up on the dripping phone.",
+          "Drips, comic sad music.",
+          "Funny despair."),
+        # 8
+        s("CRISIS", ["defne"], "A café near the pool.",
+          ("Defne opens her ledger.",
+           "Every customer's name and number is written there by hand.",
+           "Kaan hugs her ledger."),
+          "Close-up on the handwritten list.",
+          "Relief music.",
+          "Relief.",
+          r=("Defne", "Ben her şeyi deftere yazarım.")),
+        # 9
+        s("ARRIVAL", EKIP, "The road to Harran across the flat plain; " + VAN + " in the distance.",
+          ("The van drives across the endless flat plain.",
+           "Cone-shaped houses appear on the horizon.",
+           "Kerem leans forward."),
+          "Drone shot, then a reveal.",
+          "Wind, epic music.",
+          "Awe."),
+        # 10
+        s("SECRET", ["kerem"], "Harran's beehive mud-brick houses at golden hour.",
+          ("Kerem walks among the beehive houses with the drawing.",
+           "He finds one with a small camel scratched above the door.",
+           "An old woman in the doorway invites him in."),
+          "Tracking shot, then a reveal of the carving.",
+          "Wind, mysterious music.",
+          "Discovery."),
+        # 11
+        s("SECRET", ["kerem"], "Inside a cool, dim beehive house.",
+          ("The old woman lifts a stone from the floor.",
+           "Underneath is an old leather tube.",
+           "Kerem opens it and unrolls a hand-drawn map."),
+          "Close-up on the stone and tube.",
+          "Stone scraping, heartbeat drum.",
+          "Revelation."),
+        # 12
+        s("TRADE", ["defne"], "Outside the beehive house; Defne on her phone, using her ledger's list.",
+          ("Defne calls an Istanbul kebab chain from her ledger list.",
+           "They order most of the isot pepper at a high price.",
+           "She shows Kaan the ledger proudly."),
+          "Medium shot, close-up on the ledger.",
+          "Phone sounds, triumphant music.",
+          "Victory.",
+          r=("Defne", "Defterden aradım. İsotun çoğu satıldı!"),
+          k=(1_215_000, 1_260_000)),
+        # 13
+        s("SECRET", EKIP, "Inside the beehive house; the map spread on a rug.",
+          ("The map shows a mountain with giant heads at its top.",
+           "Sabri's handwriting is next to it.",
+           "Kerem reads it slowly."),
+          "Top-down shot of the map.",
+          "Silence, music builds.",
+          "Riddle.",
+          r=("Kerem", "Taş başların gözüne bak.")),
+        # 14
+        s("SECRET", ["defne", "kaan"], "Outside at dusk.",
+          ("Defne searches 'giant stone heads mountain'.",
+           "Kaan peeks over her shoulder.",
+           "The answer appears: Nemrut."),
+          "Close-up on the phone.",
+          "A music hit.",
+          "Next destination."),
+        # 15
+        s("CLIFFHANGER", EKIP, "Harran at night under a sky full of stars.",
+          ("The three look east toward the dark mountains.",
+           "A distant thunder rolls; clouds gather over the peaks.",
+           "Lightning lights up a mountain shape. Cut to black."),
+          "Wide starry shot, lightning flash, cut to black.",
+          "Thunder, deep music hit.",
+          "Ominous.",
+          r=("Kaan", "Nemrut'ta fırtına mı var?")),
+    ],
+)
+
+BOLUMLER = [B]
