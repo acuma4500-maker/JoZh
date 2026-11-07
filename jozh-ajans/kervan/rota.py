@@ -330,7 +330,7 @@ _b("Beypazarı (Ankara)", "İç Anadolu", "HAVUÇ LOKUMU",
    2_450_000,
    "Kaan havuç lokumu tarifini yanlış anlar; bin kutu 'havuçlu lokum' siparişi yanlış basılır.",
    "Defterde Beypazarı'nın konak evlerinden birinin kapı tokmağı; tokmak deve şeklinde.",
-   "Konağın sahibi: \"Sabri buradan geçtiğinde yanında üç değil, iki kişi vardı.\"")
+   "Konağın sahibi: \"Sabri buradan geçtiğinde yanında yalnızca bir ortağı vardı.\"")
 _b("Eskişehir", "İç Anadolu", "LÜLETAŞI",
    "Eskişehir lületaşı işlemeleri ve met helvası",
    "Beypazarı ürünleri",

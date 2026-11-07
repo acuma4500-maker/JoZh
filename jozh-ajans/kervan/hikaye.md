@@ -36,7 +36,7 @@ Yedi parça birleşince mühür, Derinkuyu yeraltı şehrinin en alt katındaki 
 - **Sabri Kervancı:** Defterin sahibi.
 - **İki ortak:** İsimleri Sezon 1'de açıklanmaz. Biri **Kerem'in büyük dedesidir** (B50).
 - **Rüstem:** Güneydoğu'da yola katılan rehber. Van'da kalır (B29–B30); torunları bugün Van'da kahvaltı salonu işletiyor.
-- **Ayrılık:** Edirne'de yaşlı bir kadın der ki: *"Üç genç gelmişti… biri hiç geri dönmedi."* Beypazarı'nda Sabri'nin yanında artık iki kişi vardır. Kimin, neden ayrıldığı **Sezon 2'nin ana sorusu.**
+- **Ayrılık:** Edirne'de yaşlı bir kadın der ki: *"Üç genç gelmişti… biri hiç geri dönmedi."* Beypazarı'nda Sabri'nin yanında artık yalnızca bir ortağı vardır. Kimin, neden ayrıldığı **Sezon 2'nin ana sorusu.**
 
 ## Sezon 1'in sonu (B50)
 

@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""B49 · Kayseri · PASTIRMA — kasa 2.710.000 → 2.750.000 → 2.860.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    49,
+    aciklama=ac(49, "🥩", "Kayseri'de bir tüccar pastırma için daha iyi fiyat teklif ediyor; Defne eski müşterisine "
+                "sadık kalıyor. Bedesten'deki yaşlı bakırcı mührün ortasındaki boşluğa uyan pimi yapıyor. Tıpkı "
+                "1926'daki gibi… Ve sahaftan bir mesaj geliyor.", "Yarın sabah Derinkuyu'da ne olacak?"),
+    etiketler=et(49, "Kayseri", "pastırma", "Bedesten"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "The historic covered Bedesten bazaar of Kayseri; a coppersmith's workshop with glowing forge, copper "
+                "pots, strings of pastırma and sucuk hanging in a nearby shop, Mount Erciyes snowy through an arch.",
+                "Kerem in the center holding the complete seven-camel circle with a small glowing copper pin locked "
+                "in the middle, sparks behind him. Defne on the left holding her phone with a message notification "
+                "lit up (no readable text). Kaan on the right with a string of pastırma around his neck like a scarf.",
+                "Complete, glowing, the night before everything."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "A coppersmith's forge in Kayseri's Bedesten; sparks flying.",
+          ("An old coppersmith taps a tiny copper pin into the center of the seal.",
+           "The seven camels lock into a perfect circle.",
+           "The seal glows in the forge light."),
+          "Macro on the pin entering, sparks around.",
+          "Hammer tap, magical music swell.",
+          "Completion.",
+          r=("Kerem", "Mühür tamamlandı!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " entering Kayseri; snowy Mount Erciyes behind the city.",
+          ("The van enters Kayseri.",
+           "Mount Erciyes rises white behind the city.",
+           "Kerem holds the seven loose pieces."),
+          "Drone shot.",
+          "Wind, epic music.",
+          "Arrival.",
+          alt="BİR GÜN ÖNCE · KAYSERİ"),
+        # 3
+        s("TRADE", ["defne"], "A wholesale vegetable market in Kayseri.",
+          ("Defne sells the Niğde potatoes to a wholesaler.",
+           "He pays quickly.",
+           "She writes it down."),
+          "Medium shot.",
+          "Market sounds, light music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne"], "The market.",
+          ("Defne counts the earnings.",
+           "She calls her old customer: a deli in Istanbul.",
+           "The deli wants pastırma."),
+          "Close-up.",
+          "Upbeat music.",
+          "Plan."),
+        # 5
+        s("TRADE", ["defne"], "The market.",
+          ("Defne writes the potato profit.",
+           "She smiles at Kerem.",
+           "She heads to the pastırma shops."),
+          "Close-up on the ledger.",
+          "Upbeat music.",
+          "Success.",
+          r=("Defne", "Patatesler kırk bin getirdi."),
+          k=(2_710_000, 2_750_000)),
+        # 6
+        s("TRADE", ["defne", "kaan"], "A traditional pastırma shop; strings of pastırma and sucuk hanging.",
+          ("The pastırma maker shows them his best pastırma.",
+           "Kaan wraps a string of sucuk around his neck.",
+           "Defne buys a large amount."),
+          "Close-up on the meat.",
+          "Shop sounds, comic music.",
+          "Trade."),
+        # 7
+        s("CRISIS", ["defne"], "Outside the shop; a slick trader in a leather jacket.",
+          ("A trader offers Defne a much better price for all the pastırma.",
+           "It's more money than her old customer.",
+           "Defne hesitates."),
+          "Two-shot.",
+          "Tension music.",
+          "Temptation.",
+          r=("Tüccar", "Hepsini alırım. İki katı fiyat.")),
+        # 8
+        s("CRISIS", ["defne", "kerem"], "Outside the shop.",
+          ("Defne looks at Kerem.",
+           "Kerem shows her a page from Sabri: 'Söz, paradan önce gelir.'",
+           "Defne nods."),
+          "Close-up on the page.",
+          "Soft strings.",
+          "Decision."),
+        # 9
+        s("CRISIS", ["defne"], "Outside the shop.",
+          ("Defne politely refuses the trader.",
+           "She says she promised her old customer.",
+           "The trader shrugs and leaves."),
+          "Two-shot.",
+          "Warm music.",
+          "Integrity.",
+          r=("Defne", "Söz verdim. Sözüm sözdür.")),
+        # 10
+        s("SECRET", ["kerem"], "Kayseri's historic Bedesten; a coppersmith's workshop.",
+          ("Kerem enters the Bedesten.",
+           "An old coppersmith works at a small forge.",
+           "Kerem shows him the seven pieces."),
+          "Tracking shot.",
+          "Hammering, mysterious music.",
+          "Search."),
+        # 11
+        s("SECRET", ["kerem"], "The forge.",
+          ("The coppersmith looks at the hole in the center.",
+           "He smiles; his grandfather made the same pin in 1926.",
+           "He starts working."),
+          "Close-up on the coppersmith.",
+          "Forge roar, strings.",
+          "Revelation.",
+          r=("Bakırcı", "Dedem bu pimi bir kez yapmıştı.")),
+        # 12
+        s("TRADE", ["defne"], "The pastırma shop; Defne on the phone with her old customer.",
+          ("Defne's old customer hears she refused a better offer.",
+           "He doubles his order out of respect.",
+           "Defne almost cries with happiness."),
+          "Close-up on Defne.",
+          "Triumphant music.",
+          "Reward.",
+          r=("Defne", "Siparişi ikiye katladı! Yüz on bin!"),
+          k=(2_750_000, 2_860_000)),
+        # 13
+        s("SECRET", EKIP, "The forge; the pin is ready.",
+          ("The coppersmith taps the pin into the center.",
+           "The seven camels lock into a circle.",
+           "The seal is complete."),
+          "Macro on the pin.",
+          "Tap, magical swell.",
+          "Completion."),
+        # 14
+        s("SECRET", EKIP, "The Bedesten at night.",
+          ("The three stare at the complete seal.",
+           "Kaan wipes a tear and says it's the forge smoke.",
+           "Defne laughs."),
+          "Three-shot.",
+          "Warm music.",
+          "Emotion."),
+        # 15
+        s("CLIFFHANGER", EKIP, "Outside the Bedesten at night; Mount Erciyes in moonlight.",
+          ("Kerem's phone buzzes with a message.",
+           "It's from the bookseller.",
+           "He reads it aloud. Cut to black."),
+          "Close-up on Kerem, cut to black.",
+          "Notification ping, a deep music hit.",
+          "Final countdown.",
+          r=("Kerem", "Yarın sabah Derinkuyu. Ben de geliyorum.")),
+    ],
+)
+
+BOLUMLER = [B]

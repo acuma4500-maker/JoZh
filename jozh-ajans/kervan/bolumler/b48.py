@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""B48 · Niğde · ELMA BAHÇESİ — kasa 2.640.000 → 2.675.000 → 2.710.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    48,
+    aciklama=ac(48, "🍎", "Yüz yıllık elma ağacının sahibi ağacı kazdırmak istemiyor. Üç gün bahçede çalışıp güvenini "
+                "kazanıyorlar. Ağacın altındaki kurşun kutudan yedinci mühür parçası çıkıyor… ama mühür "
+                "birleşmiyor!", "Ortadaki boşluğa ne gerekiyor?"),
+    etiketler=et(48, "Niğde", "elma", "bahçe"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "A huge, ancient apple tree in an orchard near Niğde in autumn; red apples, golden leaves, the "
+                "snow-capped Aladağlar mountains behind, an old farmer with a shovel.",
+                "Kerem in the center kneeling at the roots holding seven bronze camel pieces in a circle, with a "
+                "small empty hole in the middle, puzzled. Defne on the left holding a basket of red apples. Kaan on "
+                "the right leaning on a shovel, dirt on his face, grinning.",
+                "Golden autumn, triumph with a final puzzle."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "The roots of an ancient apple tree; a lead box in the soil.",
+          ("A shovel hits metal with a clang.",
+           "Kerem brushes the soil from a small lead box.",
+           "He opens it; a bronze camel lies inside."),
+          "Close-up on the shovel, then the box opening.",
+          "Clang, magical chime.",
+          "Triumph.",
+          r=("Kerem", "Yedinci parça! Son deve!")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " arriving at Niğde; apple orchards and snowy Aladağlar mountains.",
+          ("The van drives through autumn orchards.",
+           "Snowy mountains rise behind.",
+           "Kerem searches for the oldest tree."),
+          "Drone shot.",
+          "Autumn wind, warm music.",
+          "Arrival.",
+          alt="ÜÇ GÜN ÖNCE · NİĞDE"),
+        # 3
+        s("TRADE", ["defne"], "A dried fruit shop in Niğde.",
+          ("Defne delivers dried pumpkin to the shop chain's truck.",
+           "She sells extra to a local shop.",
+           "The owner pays."),
+          "Medium shot.",
+          "Light music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne"], "The shop.",
+          ("Defne writes the profit.",
+           "She asks about old apple orchards.",
+           "The owner points to an old farmer's land."),
+          "Close-up.",
+          "Upbeat music.",
+          "Lead.",
+          r=("Defne", "Otuz beş bin. Şimdi elma bahçesi."),
+          k=(2_640_000, 2_675_000)),
+        # 5
+        s("SECRET", EKIP, "An old orchard; an ancient apple tree; an old farmer in his eighties.",
+          ("They find the oldest apple tree.",
+           "An old farmer comes out with a stick.",
+           "Kerem explains they need to dig under it."),
+          "Wide shot.",
+          "Wind, tense music.",
+          "Meeting."),
+        # 6
+        s("CRISIS", ["kerem"], "The orchard.",
+          ("The farmer refuses angrily.",
+           "He says the tree is older than his grandfather.",
+           "He tells them to leave."),
+          "Close-up on the farmer.",
+          "Silence.",
+          "Rejection.",
+          r=("Çiftçi", "Bu ağaca kimse dokunamaz!")),
+        # 7
+        s("CRISIS", EKIP, "The orchard the next day.",
+          ("The three return and ask to help with the harvest.",
+           "The farmer is suspicious but lets them.",
+           "They pick apples all day."),
+          "Wide shot.",
+          "Birds, folk music.",
+          "Patience."),
+        # 8
+        s("CRISIS", ["kaan"], "The orchard.",
+          ("Kaan juggles apples to make the farmer's grandchildren laugh.",
+           "He drops all of them.",
+           "The farmer smiles for the first time."),
+          "Comic medium shot.",
+          "Laughter.",
+          "Warmth."),
+        # 9
+        s("CRISIS", ["defne", "kerem"], "The orchard on the third evening.",
+          ("The farmer invites them for dinner.",
+           "Kerem shows him the notebook.",
+           "The farmer reads the apple tree line."),
+          "Warm interior shot.",
+          "Soft music.",
+          "Trust."),
+        # 10
+        s("SECRET", ["kerem"], "The farmhouse.",
+          ("The farmer remembers his grandfather's words.",
+           "He nods slowly.",
+           "He gives them a shovel."),
+          "Close-up on the farmer.",
+          "Strings.",
+          "Permission.",
+          r=("Çiftçi", "Dedem 'bir gün gelecekler' derdi.")),
+        # 11
+        s("SECRET", EKIP, "The ancient apple tree at sunrise.",
+          ("Kaan digs carefully at the roots.",
+           "The shovel hits metal.",
+           "Kerem kneels and opens a lead box."),
+          "Close-up on digging.",
+          "Clang, heartbeat.",
+          "Discovery."),
+        # 12
+        s("TRADE", ["defne"], "The orchard; Defne on the phone.",
+          ("Defne sells the farmer's apples to a juice company at a fair price.",
+           "The farmer also sells them potatoes for Kayseri.",
+           "Everyone shakes hands."),
+          "Medium shot.",
+          "Triumphant music.",
+          "Success.",
+          r=("Defne", "Elmalar ve patatesler otuz beş bin!"),
+          k=(2_675_000, 2_710_000)),
+        # 13
+        s("SECRET", EKIP, "Under the tree.",
+          ("Kerem lays all seven pieces together.",
+           "They form a circle of seven camels.",
+           "Everyone holds their breath."),
+          "Top-down macro.",
+          "Music swell.",
+          "Joy."),
+        # 14
+        s("SECRET", ["kerem"], "Under the tree.",
+          ("Kerem tries to lock the circle together.",
+           "It won't hold; the pieces slip apart.",
+           "There is a small hole in the middle."),
+          "Close-up on the hole.",
+          "Music stops.",
+          "Puzzle."),
+        # 15
+        s("CLIFFHANGER", EKIP, "Under the tree at sunset.",
+          ("Kerem looks at the small hole in the center.",
+           "Something is missing to lock the seal.",
+           "The farmer says only a master coppersmith could make it. Cut to black."),
+          "Close-up on the hole, cut to black.",
+          "A deep music hit.",
+          "Final puzzle.",
+          r=("Kerem", "Yedi parça tamam. Ama birleşmiyor.")),
+    ],
+)
+
+BOLUMLER = [B]

@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""B44 · Eskişehir · LÜLETAŞI — kasa 2.450.000 → 2.480.000 → 2.520.000"""
+from bolumler._ortak import EKIP, VAN, EP, s, ac, et, kapak
+
+B = EP(
+    44,
+    aciklama=ac(44, "🗿", "Lületaşı ustası malı vermeden önce üçünden de birer parça oymalarını istiyor; Kaan'ınki "
+                "kırılıyor! Odunpazarı'ndaki ahşap bir evde ise Sabri'nin 1926'dan bir fotoğrafı duruyor. Kerem "
+                "fotoğraftaki yüze uzun uzun bakıyor…", "Kerem o yüzü nereden tanıyor olabilir?"),
+    etiketler=et(44, "Eskişehir", "Odunpazarı", "lületaşı"),
+    kapak=kapak("kerem", ["defne", "kaan"],
+                "The colorful wooden Ottoman houses of Odunpazarı in Eskişehir at golden hour; a meerschaum carving "
+                "workshop with white stone carvings, the Porsuk river with small boats in the distance.",
+                "Kerem in the center holding an old sepia photograph close to his face, a strange recognition in his "
+                "eyes. Defne on the left carving a small white meerschaum camel with focus. Kaan on the right holding "
+                "two halves of a broken white carving, embarrassed grin.",
+                "Colorful, warm and quietly unsettling."),
+    senaryolar=[
+        # 1
+        s("HOOK", ["kerem"], "A wooden house in Odunpazarı; an old sepia photograph in Kerem's hands.",
+          ("Kerem stares at an old photograph of a young man in 1926 clothes.",
+           "He holds it closer.",
+           "His hand starts trembling."),
+          "Slow push-in on Kerem's eyes and the photo.",
+          "Silence, a haunting music note.",
+          "Unsettling.",
+          r=("Kerem", "Bu yüzü… bir yerden tanıyorum.")),
+        # 2
+        s("ARRIVAL", EKIP, VAN + " entering Eskişehir; trams and the Porsuk river with gondola boats.",
+          ("The van drives past trams and the river.",
+           "Students crowd the bridges.",
+           "Kaan waves at a gondola."),
+          "Drone shot.",
+          "City music.",
+          "Arrival.",
+          alt="BİR GÜN ÖNCE · ESKİŞEHİR"),
+        # 3
+        s("TRADE", ["defne"], "An organic market in Eskişehir.",
+          ("Defne sells Beypazarı dried carrots and mineral water.",
+           "The shop owner orders more.",
+           "Defne writes quickly."),
+          "Medium shot.",
+          "Light music.",
+          "Deal."),
+        # 4
+        s("TRADE", ["defne"], "The market.",
+          ("Defne gets paid.",
+           "She asks about meerschaum.",
+           "The owner points to Odunpazarı."),
+          "Close-up.",
+          "Upbeat music.",
+          "Lead."),
+        # 5
+        s("TRADE", ["defne"], "The market.",
+          ("Defne writes the profit.",
+           "She buys sesame helva for the road.",
+           "Kaan steals a bite."),
+          "Close-up on the ledger.",
+          "Comic music.",
+          "Success.",
+          r=("Defne", "Beypazarı ürünleri otuz bin getirdi."),
+          k=(2_450_000, 2_480_000)),
+        # 6
+        s("TRADE", EKIP, "A meerschaum carving workshop; an old master with white dust on his apron.",
+          ("The master shows beautiful white meerschaum pipes and figures.",
+           "Defne wants to buy a large batch.",
+           "The master says first each must carve something."),
+          "Close-up on carvings.",
+          "Carving sounds, warm music.",
+          "Challenge.",
+          r=("Usta", "Önce elinizle tanıyın taşı.")),
+        # 7
+        s("TRADE", EKIP, "The workshop; three small blocks of meerschaum.",
+          ("The three start carving with small tools.",
+           "Defne carves carefully; Kerem slowly.",
+           "Kaan carves fast and confident."),
+          "Close-ups of hands.",
+          "Scraping, focused music.",
+          "Concentration."),
+        # 8
+        s("CRISIS", ["kaan"], "The workshop.",
+          ("Kaan's carving cracks in half.",
+           "He holds the two pieces, shocked.",
+           "The master laughs kindly."),
+          "Close-up on the crack.",
+          "Crack, comic sad music.",
+          "Comedy."),
+        # 9
+        s("TRADE", ["defne"], "The workshop.",
+          ("Defne finishes a small camel carving.",
+           "The master nods, impressed.",
+           "He agrees to sell to them."),
+          "Close-up on Defne's camel.",
+          "Warm music.",
+          "Respect."),
+        # 10
+        s("SECRET", ["kerem"], "Odunpazarı's colorful wooden houses.",
+          ("Kerem follows the notebook to a yellow wooden house.",
+           "An old woman invites him in.",
+           "On the wall hang old photographs."),
+          "Tracking shot.",
+          "Mysterious music.",
+          "Discovery."),
+        # 11
+        s("SECRET", ["kerem"], "Inside the wooden house; a wall of old photos.",
+          ("The old woman takes down one photo.",
+           "She says Sabri stayed here in 1926.",
+           "It shows a young man smiling."),
+          "Close-up on the photo.",
+          "Soft strings.",
+          "Revelation.",
+          r=("Yaşlı Kadın", "Bu Sabri. Evimizde kaldı.")),
+        # 12
+        s("TRADE", ["defne"], "The workshop.",
+          ("Defne calls a design store in Istanbul.",
+           "They order meerschaum pieces.",
+           "The master packs them."),
+          "Medium shot.",
+          "Triumphant music.",
+          "Success.",
+          r=("Defne", "Lületaşları kırk bin getirdi!"),
+          k=(2_480_000, 2_520_000)),
+        # 13
+        s("SECRET", ["kerem"], "The wooden house.",
+          ("Kerem turns the photo over.",
+           "An address in Ankara is written on the back.",
+           "It is an old han in Ulus."),
+          "Close-up on the back.",
+          "Heartbeat.",
+          "Clue."),
+        # 14
+        s("SECRET", EKIP, "The wooden house; Defne and Kaan arrive.",
+          ("Kerem shows them the photo.",
+           "Defne says the young man looks kind.",
+           "Kerem doesn't answer; he is staring."),
+          "Three-shot.",
+          "Soft tension music.",
+          "Unease."),
+        # 15
+        s("CLIFFHANGER", ["kerem"], "The wooden house at dusk.",
+          ("Kerem notices a second young man at the edge of the photo, half cut off.",
+           "The face feels strangely familiar.",
+           "He whispers. Cut to black."),
+          "Extreme close-up on the half face, cut to black.",
+          "A deep music hit.",
+          "Cliffhanger.",
+          r=("Kerem", "Neden bu yüz bu kadar tanıdık?")),
+    ],
+)
+
+BOLUMLER = [B]
