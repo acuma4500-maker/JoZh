@@ -9,6 +9,7 @@ export const COUPLE_ID = 'main';
 // İlişki başlangıcı: 22 Ağustos 2026, cihazın yerel saatiyle gece yarısı.
 export const START_DATE = Object.freeze({ year: 2026, month: 8, day: 22 });
 export const APP_VERSION = '1.0.0';
+export const BUILD = 'dev'; // tools/make-zip.sh dağıtımda bunu sürüm karmasıyla değiştirir
 
 export const isAllowedUid = (uid) => typeof uid === 'string' && ALLOWED_UIDS.includes(uid);
 export const partnerOf = (uid) => ALLOWED_UIDS.find((u) => u !== uid) || null;

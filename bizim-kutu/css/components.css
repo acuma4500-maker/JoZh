@@ -479,3 +479,4 @@ button.star:hover { transform: scale(1.15); }
 .user-cards--mini .user-card { padding: 10px 8px; pointer-events: none; }
 .user-cards--mini .user-card__avatar { width: 48px; height: 48px; font-size: 26px; }
 .auth-card.is-busy .pin-pad { opacity: .5; pointer-events: none; }
+.auth-version { color: var(--muted); font-size: .7rem; opacity: .7; }

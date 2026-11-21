@@ -1,5 +1,5 @@
 // Giriş, PIN kurulumu ve kilit ekranı.
-import { USERS, ALLOWED_UIDS } from '../constants.js';
+import { USERS, ALLOWED_UIDS, BUILD } from '../constants.js';
 import { loginWithPin } from '../auth.js';
 import { h, clear, vibrate, sleep, fill, add } from '../utils/helpers.js';
 import { icons, logoSvg } from '../utils/icons.js';
@@ -66,7 +66,7 @@ export function renderLogin(root, { onLoggedIn }) {
     h('div', { class: 'user-cards user-cards--mini', 'aria-hidden': 'true' },
       ALLOWED_UIDS.map((uid) => h('div', { class: `user-card user-card--${USERS[uid].tone}${last === uid ? ' is-selected' : ''}` },
         h('span', { class: 'user-card__avatar' }, USERS[uid].emoji), h('span', { class: 'user-card__name' }, USERS[uid].name)))),
-    msg, pad.el);
+    msg, pad.el, h('small', { class: 'auth-version' }, `Sürüm: ${BUILD}`));
   fill(root, h('div', { class: 'auth-screen' }, floatingHearts(), card));
 }
 

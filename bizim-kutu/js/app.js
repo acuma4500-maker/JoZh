@@ -266,16 +266,12 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('service-worker.js', { scope: './' });
-      // Yalnızca kullanıcı "Güncelle" dediğinde yeniden yükle (ilk kurulumdaki clients.claim() sayfayı yenilemesin).
-      let updateAccepted = false;
-      const promptUpdate = (w) => toast('Yeni sürüm hazır ✨', { duration: 0, action: { label: 'Güncelle', onClick: () => { updateAccepted = true; w.postMessage({ type: 'SKIP_WAITING' }); } } });
-      if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
-      reg.addEventListener('updatefound', () => {
-        const w = reg.installing;
-        w?.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) promptUpdate(w); });
-      });
+      // Yeni sürüm otomatik devreye girer; daha önce bir sürüm çalışıyorsa sayfa bir kez yenilenir.
+      // (İlk kurulumda yenileme yapılmaz.)
+      const hadController = !!navigator.serviceWorker.controller;
       let reloaded = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => { if (updateAccepted && !reloaded) { reloaded = true; location.reload(); } });
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+      reg.update().catch(() => {});
       setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
     } catch (e) { console.warn('SW kaydı başarısız', e); }
   });

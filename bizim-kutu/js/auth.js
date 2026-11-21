@@ -68,9 +68,16 @@ export async function loginWithPin(pin) {
     }
     const n = (current?.n || 0) + 1;
     const attempt = { pin: Number(pin), pinText: pin, person, n };
-    try { await set(tryRef(), attempt); } // her deneme sayılır; kurallar sayaç atlamaya izin vermez
-    catch (e) { throw fail('app/rtdb-rules', 'Realtime Database kuralları yüklenmemiş (Kurulum 3. adım).'); }
-    current = attempt;
+    try { await set(tryRef(), attempt); current = attempt; } // her deneme sayılır; kurallar sayaç atlamaya izin vermez
+    catch (e) {
+      // Eski biçimde/takılı kalmış bir deneme kaydı olabilir: yeni cihaz kimliğiyle bir kez daha dene
+      try {
+        devId = await ensureDeviceId(true);
+        const fresh = { ...attempt, n: 1 };
+        await set(tryRef(), fresh);
+        current = fresh;
+      } catch { throw fail('app/rtdb-rules', 'Realtime Database kuralları reddetti (Kurulum 3. adım: kuralları kontrol et).'); }
+    }
     if (await canRead()) {
       // Firestore için de aynı doğrulama kaydı (iki veritabanının kuralları birbirini okuyamaz)
       const fsRef = doc(db, 'pinTry', devId);

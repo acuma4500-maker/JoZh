@@ -12,6 +12,7 @@ cp -r css js data assets "$STAGE/"
 rm -f "$STAGE"/assets/fonts/*.txt.bak
 HASH=$(cd "$STAGE" && find . -type f ! -name service-worker.js -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c1-12)
 sed -i "s/const VERSION = '[^']*';/const VERSION = 'bk-$HASH';/" "$STAGE/service-worker.js"
+sed -i "s/export const BUILD = '[^']*';/export const BUILD = 'bk-$HASH';/" "$STAGE/js/constants.js"
 grep -q "bk-$HASH" "$STAGE/service-worker.js"
 (cd "$STAGE" && zip -qr -X "../bizimkutu-public_html.zip" . -x '.DS_Store')
 echo "✔ $OUT/bizimkutu-public_html.zip  (sürüm bk-$HASH, $(du -h "$OUT/bizimkutu-public_html.zip" | cut -f1))"
