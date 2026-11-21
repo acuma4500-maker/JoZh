@@ -39,5 +39,17 @@ window.addEventListener('orientationchange', () => { fullHeight = 0; schedule();
 // Klavye animasyonu boyunca birkaç kez ölç (bazı tarayıcılar olay göndermeyi geciktirir)
 document.addEventListener('focusin', () => { [0, 100, 300, 600].forEach((t) => setTimeout(schedule, t)); });
 document.addEventListener('focusout', () => { [0, 100, 300, 600].forEach((t) => setTimeout(schedule, t)); });
+// Eski iOS sürümleri touch-action'ı her yerde uygulamayabilir: 350 ms içindeki ikinci dokunuşta
+// yakınlaştırmayı engelle (dokunuş yine tıklama olarak çalışır; iki parmak yakınlaştırması etkilenmez).
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 350 && e.touches.length === 0 && e.changedTouches.length === 1) {
+    const t = e.target.closest?.('button, a, [role="button"], .pin-key');
+    if (t) { e.preventDefault(); t.click(); }
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+
 sync();
 export const syncViewport = schedule;

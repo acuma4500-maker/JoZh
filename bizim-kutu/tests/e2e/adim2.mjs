@@ -79,6 +79,21 @@ try {
     await login(third.page, 'x', { pin: '9999', expectError: 'PIN hatalı' });
     assert.equal(await third.page.locator('.shell').count(), 0);
   });
+  await step('Çift dokunuş: aynı rakama hızlı iki dokunuş iki rakam girer, yakınlaştırma olmaz', async () => {
+    const phone = await newUser(devices['iPhone 13']);
+    const p = phone.page;
+    await p.goto(`${BASE}#/home`);
+    await p.locator('.pin-pad').waitFor();
+    const key = p.locator('.pin-key', { hasText: '2' }).first();
+    const scale0 = await p.evaluate(() => window.visualViewport?.scale || 1);
+    await key.tap(); await key.tap();
+    await p.waitForTimeout(150);
+    assert.equal(await p.locator('.pin-dot.is-filled').count(), 2, 'iki rakam girilmeli');
+    assert.equal(await p.evaluate(() => window.visualViewport?.scale || 1), scale0, 'yakınlaştırma olmamalı');
+    assert.equal(await p.evaluate(() => getComputedStyle(document.documentElement).touchAction), 'manipulation');
+    await phone.ctx.close();
+  });
+
   await step('Adım 2: Cuma PIN ile giriyor, ana sayfa açılıyor', async () => { await login(cuma.page, 'cuma'); });
   await step('Adım 2: İlayda PIN ile giriyor', async () => { await login(ilayda.page, 'ilayda'); });
   await step('Adım 2: menüde Ana Sayfa, Sohbet, Profil; kapalı bölüm "yakında"', async () => {
