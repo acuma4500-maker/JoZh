@@ -51,10 +51,16 @@ export function deleteMessage(id) {
 }
 
 // --- Yazıyor göstergesi ---
+// Yazarken sinyal en fazla 2 sn'de bir yenilenir (karşı taraf 8 sn içinde yenilenmeyen sinyali yok sayar).
+export const TYPING_REFRESH_MS = 2000;
+export const TYPING_STALE_MS = 8000;
 let typingSet = false;
+let lastTypingWrite = 0;
 export function setTyping(uid, typing) {
-  if (typing === typingSet && !typing) return Promise.resolve();
+  if (!typing && !typingSet) return Promise.resolve();
+  if (typing && typingSet && Date.now() - lastTypingWrite < TYPING_REFRESH_MS) return Promise.resolve();
   typingSet = typing;
+  lastTypingWrite = typing ? Date.now() : 0;
   const r = ref(rtdb, `typing/${uid}`);
   if (typing) onDisconnect(r).remove().catch(() => {});
   return set(r, typing ? { typing: true, ts: rtdbServerTimestamp() } : null).catch(() => {});

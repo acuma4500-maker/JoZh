@@ -6,7 +6,7 @@ import { icons } from '../utils/icons.js';
 import { toast, confirmDialog, emptyState, openModal, emojiPicker, errorMessage } from '../utils/ui.js';
 import { dayKey, dayLabel, formatTime, lastSeenText } from '../utils/dates.js';
 import { LIMITS } from '../utils/validation.js';
-import { subscribeMessages, loadOlderMessages, sendMessage, deleteMessage, setTyping, subscribeTyping, markReceipt, messageStatus } from '../services/realtime.js';
+import { subscribeMessages, loadOlderMessages, sendMessage, deleteMessage, setTyping, subscribeTyping, markReceipt, messageStatus, TYPING_STALE_MS } from '../services/realtime.js';
 
 const PAGE = 40;
 
@@ -28,13 +28,13 @@ export default async function chat(page, { scope }) {
     const s = getState();
     const p = s.presence[partnerUid];
     if (!s.connected) { statusLine.textContent = 'Bağlanıyor…'; statusLine.className = 'chat-head__status'; return; }
-    if (partnerTyping && serverNow() - (partnerTyping.ts || 0) < 10000) { statusLine.textContent = 'yazıyor…'; statusLine.className = 'chat-head__status is-typing'; return; }
+    if (partnerTyping?.typing && serverNow() - (partnerTyping.ts || 0) < TYPING_STALE_MS) { statusLine.textContent = 'yazıyor…'; statusLine.className = 'chat-head__status is-typing'; return; }
     statusLine.className = 'chat-head__status';
     statusLine.textContent = p?.online ? 'Çevrim içi' : lastSeenText(p?.lastSeen);
   };
   scope.add(subscribe(drawStatus, ['presence', 'connected']));
   scope.add(subscribeTyping(partnerUid, (v) => { partnerTyping = v; drawStatus(); }));
-  scope.interval(drawStatus, 5000);
+  scope.interval(drawStatus, 1000); // eskiyen 'yazıyor' sinyali en geç 1 sn'de kalksın
   drawStatus();
 
   // ---- Liste ----
@@ -173,13 +173,17 @@ export default async function chat(page, { scope }) {
   const emojiBtn = h('button', { class: 'composer__btn', type: 'button', 'aria-label': 'Emoji', 'aria-expanded': 'false', svg: icons.smile, onclick: () => {
     emojiPanel.hidden = !emojiPanel.hidden; emojiBtn.setAttribute('aria-expanded', String(!emojiPanel.hidden));
   } });
-  const stopTyping = debounce(() => setTyping(uid, false), 3000);
+  // Son tuştan 6 sn sonra yazma bitti sayılır (düşünürken/öneri seçerken gösterge kaybolmasın)
+  const stopTyping = debounce(() => setTyping(uid, false), 6000);
+  const activity = () => { if (input.value.trim()) { setTyping(uid, true); stopTyping(); } };
   const autosize = () => { input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 140)}px`; };
   input.addEventListener('input', () => {
     autosize();
     sendBtn.disabled = !input.value.trim();
-    if (input.value.trim()) { setTyping(uid, true); stopTyping(); } else { stopTyping.cancel(); setTyping(uid, false); }
+    if (input.value.trim()) activity(); else { stopTyping.cancel(); setTyping(uid, false); }
   });
+  // iPhone klavyesi: öneri seçme/tuş olayları da 'yazıyor' sayılır
+  ['keydown', 'compositionupdate', 'compositionend'].forEach((ev) => input.addEventListener(ev, () => setTimeout(activity, 0)));
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(hover: hover)').matches) { e.preventDefault(); form.requestSubmit(); }
   });

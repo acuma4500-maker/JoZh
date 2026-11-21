@@ -132,12 +132,28 @@ try {
     assert.equal(await cuma.page.locator('.composer__send').isDisabled(), true);
   });
 
+  await step('Yazıyor göstergesi yazmaya devam ettikçe kesintisiz kalıyor', async () => {
+    await go(cuma.page, '#/chat'); await go(ilayda.page, '#/chat');
+    await ilayda.page.locator('.composer__input').fill('');
+    await ilayda.page.locator('.composer__input').click();
+    const samples = [];
+    const sampler = (async () => { for (let i = 0; i < 26; i++) { await cuma.page.waitForTimeout(500); samples.push(await cuma.page.locator('.chat-head__status').innerText()); } })();
+    // Düşünerek yazma: kelimeler arasında 4 sn duraklama
+    for (const word of ['seni ', 'çok ', 'seviyorum']) { await ilayda.page.keyboard.type(word, { delay: 120 }); await ilayda.page.waitForTimeout(4000); }
+    await sampler;
+    console.log('    durumlar:', samples.join(' | '));
+    assert.ok(samples.slice(2, 24).every((t) => t === 'yazıyor…'), 'duraklamalarla yazarken de "yazıyor…" sürmeli');
+    // Gönderince hemen kalkmalı
+    await ilayda.page.locator('.composer__send').click();
+    await cuma.page.locator('.chat-head__status:not(.is-typing)').waitFor({ timeout: 3000 });
+  });
+
   await step('Klavye düzeni: üst bar sabit, klavye açıkken alt menü gizli, yazı kutusu görünür', async () => {
     await go(cuma.page, '#/chat');
     await cuma.page.locator('.composer__input').waitFor();
     const top0 = (await cuma.page.locator('.topbar').boundingBox()).y;
     // Klavyeyi taklit: görünen alan 400px'e düşer
-    await cuma.page.evaluate(() => { window.__vvTest = { height: 400 }; });
+    await cuma.page.evaluate(() => { document.activeElement?.blur(); window.__vvTest = { height: 400 }; });
     await cuma.page.locator('.composer__input').focus();
     await cuma.page.waitForTimeout(500);
     const top1 = (await cuma.page.locator('.topbar').boundingBox()).y;
