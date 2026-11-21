@@ -3,7 +3,7 @@
 // Nasıl çalışır (kullanıcı hiçbir e-posta/parola görmez):
 //  1. Cihaz Firebase'e sessizce ANONİM olarak bağlanır (her cihazın kendi gizli kimliği olur).
 //  2. Girilen PIN, "pinTry/{cihazKimliği}" kaydına { pin (sayı), pinText (metin), person, n } olarak yazılır.
-//     Böylece secrets/pins'te PIN sayı (822) ya da metin ("0822") olarak kayıtlı olsa da eşleşir.
+//     Böylece secrets/pins'te PIN sayı (ör. 123) ya da metin (ör. "0123") olarak kayıtlı olsa da eşleşir.
 //  3. Firebase güvenlik kuralları bu PIN'i, yalnızca sunucunun okuyabildiği "secrets/pins"
 //     kaydıyla karşılaştırır. Eşleşirse o cihaz Cuma'nın / İlayda'nın verilerine erişir,
 //     eşleşmezse hiçbir veriye erişemez.
