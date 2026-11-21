@@ -20,7 +20,10 @@ export default async function memories(page, { scope }) {
 
   function sub() {
     unsub?.();
-    unsub = listen(query(col('memories'), orderBy('date', order), orderBy('createdAt', order), limit(pageSize)), (items) => {
+    // Tek alana göre sıralama: Firestore'da ek (bileşik) dizin gerekmez. Aynı gündeki anılar eklenme sırasına göre.
+    unsub = listen(query(col('memories'), orderBy('date', order), limit(pageSize)), (items) => {
+      const t = (m) => m.createdAt?.toMillis?.() || 0;
+      items.sort((a, b) => (a.date === b.date ? (order === 'desc' ? t(b) - t(a) : t(a) - t(b)) : 0));
       draw(items);
       more.hidden = items.length < pageSize;
     }, (e) => fill(listEl, errorState(errorMessage(e), sub)));

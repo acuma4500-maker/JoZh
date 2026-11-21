@@ -1,7 +1,7 @@
 /* Temel stiller, tipografi ve uygulama kabuğu */
 *, *::before, *::after { box-sizing: border-box; }
-/* touch-action: manipulation → iPhone'da çift dokunarak yakınlaştırma kapalı (iki parmakla yakınlaştırma açık kalır) */
-html { touch-action: manipulation; height: 100%; overflow: hidden; overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+/* Çift dokunuş ve iki parmakla yakınlaştırma kapalı (js/viewport.js de hareketleri engeller) */
+html { touch-action: pan-x pan-y; height: 100%; overflow: hidden; overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 body {
   margin: 0; height: 100%; overflow: hidden; position: fixed; inset: 0; width: 100%;
   font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--text);
@@ -16,7 +16,7 @@ body {
 body.no-scroll { overflow: hidden; }
 img, svg { display: block; max-width: 100%; }
 button, input, textarea, select { font: inherit; color: inherit; }
-button, a, input, textarea, select, label { touch-action: manipulation; }
+button, a, input, textarea, select, label { touch-action: pan-x pan-y; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 button:disabled { cursor: not-allowed; }
 a { color: var(--primary-ink); text-decoration: none; }

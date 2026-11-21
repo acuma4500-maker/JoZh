@@ -40,7 +40,7 @@ window.addEventListener('orientationchange', () => { fullHeight = 0; schedule();
 document.addEventListener('focusin', () => { [0, 100, 300, 600].forEach((t) => setTimeout(schedule, t)); });
 document.addEventListener('focusout', () => { [0, 100, 300, 600].forEach((t) => setTimeout(schedule, t)); });
 // Eski iOS sürümleri touch-action'ı her yerde uygulamayabilir: 350 ms içindeki ikinci dokunuşta
-// yakınlaştırmayı engelle (dokunuş yine tıklama olarak çalışır; iki parmak yakınlaştırması etkilenmez).
+// yakınlaştırmayı engelle (dokunuş yine tıklama olarak çalışır).
 let lastTouchEnd = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
@@ -50,6 +50,11 @@ document.addEventListener('touchend', (e) => {
   }
   lastTouchEnd = now;
 }, { passive: false });
+
+// İki parmakla yakınlaştırma da kapalı (kullanıcı isteği). iOS Safari "user-scalable=no"
+// ayarını yok saydığı için hareket olaylarını da engelliyoruz.
+['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => document.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
 sync();
 export const syncViewport = schedule;

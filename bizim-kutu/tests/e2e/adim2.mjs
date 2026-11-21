@@ -90,7 +90,7 @@ try {
     await p.waitForTimeout(150);
     assert.equal(await p.locator('.pin-dot.is-filled').count(), 2, 'iki rakam girilmeli');
     assert.equal(await p.evaluate(() => window.visualViewport?.scale || 1), scale0, 'yakınlaştırma olmamalı');
-    assert.equal(await p.evaluate(() => getComputedStyle(document.documentElement).touchAction), 'manipulation');
+    assert.equal(await p.evaluate(() => getComputedStyle(document.documentElement).touchAction), 'pan-x pan-y');
     await phone.ctx.close();
   });
 

@@ -3,7 +3,7 @@
 // Giriş (PIN), Ana sayfa ve Profil her zaman açıktır.
 export const FEATURES = Object.freeze({
   chat: true,           // Sohbet (2. adım)
-  memories: false,      // Anı defteri
+  memories: true,       // Anı defteri (3. adım)
   movies: false,        // Film & dizi
   tasks: false,         // Yapılacaklar
   vault: false,         // Özel kasa

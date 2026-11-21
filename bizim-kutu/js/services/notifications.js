@@ -6,6 +6,7 @@ import { db } from '../firebase-config.js';
 import { getState, setState } from '../state.js';
 import { cleanText, LIMITS } from '../utils/validation.js';
 import { toast } from '../utils/ui.js';
+import { on } from '../features.js';
 
 const PREF_OF = { message: 'message', game_invite: 'game', game_accept: 'game', memory: 'memory', task: 'task', task_done: 'task' };
 export const NOTIF_EMOJI = { message: '💬', game_invite: '🎮', game_accept: '🎉', memory: '📖', task: '📝', task_done: '✅' };
@@ -18,7 +19,7 @@ export function allowed(type) {
 /** Partnere bildirim gönderir. Başarısız olsa bile ana işlemi engellemez. */
 export async function notify(type, { title, body = '', link = '' }) {
   const { uid, partnerUid } = getState();
-  if (!uid || !partnerUid) return;
+  if (!uid || !partnerUid || !on('notifications')) return; // bildirimler bölümü açılınca devreye girer
   try {
     await addDoc(col('notifications'), {
       type, to: partnerUid, from: uid,
