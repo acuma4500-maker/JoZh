@@ -5,11 +5,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ---- Kimlik: PIN ile doğrulanmış cihaz ----
+    // Her cihaz anonim Firebase oturumu açar ve pinTry/{cihaz} kaydına {pin, person, n} yazar.
+    // Kayıttaki PIN, yalnızca kuralların okuyabildiği secrets/pins belgesiyle eşleşiyorsa
+    // cihaz "person" (Cuma veya İlayda) kimliğiyle işlem yapabilir. PIN'ler sitenin kodunda yoktur.
     function signedIn() { return request.auth != null; }
+    function tryPath() { return /databases/$(database)/documents/pinTry/$(request.auth.uid); }
+    function tryDoc() { return get(tryPath()).data; }
     function isCouple() {
-      return signedIn() && request.auth.uid in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'];
+      return signedIn() && exists(tryPath())
+        && tryDoc().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
+        && tryDoc().pin == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person];
     }
-    function me() { return request.auth.uid; }
+    function me() { return tryDoc().person; }
     function partner() {
       return me() == 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' ? 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1' : 'pt0Kmbc9rqdJekFyvA1wLItUnxw1';
     }
@@ -25,6 +33,24 @@ service cloud.firestore {
     function updated() {
       return d().createdBy == resource.data.createdBy && d().createdAt == resource.data.createdAt
         && d().updatedBy == me() && d().updatedAt == request.time;
+    }
+
+    // ---- PIN denemeleri: her deneme sayılır, sayaç atlanamaz/sıfırlanamaz, cihaz başına en fazla 10 ----
+    match /pinTry/{deviceId} {
+      function validTry() {
+        return d().keys().hasOnly(['pin', 'person', 'n']) && d().keys().hasAll(['pin', 'person', 'n'])
+          && d().pin is string && d().pin.matches('^[0-9]{4}$')
+          && d().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
+          && d().n is int && d().n <= 10;
+      }
+      allow read: if signedIn() && request.auth.uid == deviceId;
+      allow create: if signedIn() && request.auth.uid == deviceId && validTry() && d().n == 1;
+      allow update: if signedIn() && request.auth.uid == deviceId && validTry() && d().n == resource.data.n + 1;
+      allow delete: if false;
+    }
+    // PIN'ler: istemciler asla okuyamaz/yazamaz (Firebase Console'dan girilir).
+    match /secrets/{doc} {
+      allow read, write: if false;
     }
 
     match /couples/main {

@@ -1,6 +1,7 @@
 // Bizim Kutu — uygulama giriş noktası.
 import { partnerOf, userName, userEmoji } from './constants.js';
-import { watchAuth, logoutFirebase } from './auth.js';
+import { watchAuth, logoutDevice } from './auth.js';
+import { auth } from './firebase-config.js';
 import { getState, setState, subscribe } from './state.js';
 import { startRouter } from './router.js';
 import { h, clear, createScope, debounce, fill } from './utils/helpers.js';
@@ -11,15 +12,13 @@ import { subscribeRecent, subscribeReceipts, markReceipt, primeReceipts, unreadC
 import { startNotifications, announce, systemNotify, allowed } from './services/notifications.js';
 import { subscribeInvites, isInviteLive, acceptInvite, cleanupOldGames } from './services/games.js';
 import { col, listen } from './services/firestore.js';
-import { hasPin, watchAutoLock } from './services/pinlock.js';
-import { renderLogin, renderLock, renderPinSetup } from './pages/login.js';
+import { renderLogin } from './pages/login.js';
 import { gameById } from './games/registry.js';
 import { lastSeenText } from './utils/dates.js';
 
 const root = document.getElementById('app');
 const DEFAULT_PREFS = { theme: 'system', reduceMotion: false, notif: { message: true, game: true, memory: true, task: true }, system: false, lockAfter: 2 };
 let appScope = null;
-let unlocked = false;
 
 // ---------- Tercihler (tema, hareket) ----------
 export function applyPrefs(prefs) {
@@ -45,43 +44,44 @@ function showSplash() {
 }
 
 showSplash();
-watchAuth((user, reason) => {
-  if (!user) {
-    teardown();
-    unlocked = false;
-    setState({ user: null, uid: null, partnerUid: null });
-    renderLogin(root, { reason, onLoggedIn: (u, fresh) => afterLogin(u, fresh) });
-    return;
-  }
-  if (getState().uid === user.uid && appScope) return; // zaten açık
-  setState({ user, uid: user.uid, partnerUid: partnerOf(user.uid) });
-  const p = cachedPrefs(user.uid); if (p) setPrefs(p);
-  if (hasPin(user.uid) && !unlocked) lockScreen();
-  else { unlocked = true; startApp(); }
-});
+// Firebase önceki (anonim) cihaz oturumunu geri yükleyince PIN ekranını göster.
+// Uygulama her açılışta ve arka plandan dönüşte PIN ister.
+let authReady = false;
+watchAuth(() => { if (!authReady) { authReady = true; showLogin(); } });
 
-function afterLogin(user, fresh) {
-  setState({ user, uid: user.uid, partnerUid: partnerOf(user.uid) });
-  unlocked = true;
-  if (fresh && !hasPin(user.uid)) renderPinSetup(root, { uid: user.uid, onDone: () => startApp() });
-  else startApp();
-}
-
-function lockScreen() {
+function showLogin() {
   teardown();
-  unlocked = false;
-  renderLock(root, {
-    uid: getState().uid,
-    onUnlock: () => { unlocked = true; startApp(); },
-    onSwitch: () => logout(),
+  setState({ user: null, uid: null, partnerUid: null });
+  renderLogin(root, {
+    onLoggedIn: (person) => {
+      setState({ user: auth.currentUser, uid: person, partnerUid: partnerOf(person) });
+      const p = cachedPrefs(person); if (p) setPrefs(p);
+      startApp();
+    },
   });
+}
+const lockScreen = () => showLogin();
+
+/** Uygulama arka planda belirlenen süreden uzun kalırsa kilitlenir. */
+function watchAutoLock(getMinutes, onLock) {
+  let hiddenAt = 0;
+  const handler = () => {
+    if (document.visibilityState === 'hidden') hiddenAt = Date.now();
+    else if (hiddenAt) {
+      const min = getMinutes();
+      if (min >= 0 && Date.now() - hiddenAt >= min * 60000) onLock();
+      hiddenAt = 0;
+    }
+  };
+  document.addEventListener('visibilitychange', handler);
+  return () => document.removeEventListener('visibilitychange', handler);
 }
 
 export async function logout() {
   try { await stopPresence(); } catch {}
   teardown();
   try { sessionStorage.clear(); } catch {}
-  await logoutFirebase().catch(() => {});
+  await logoutDevice();
   // Bellekte kalan her şeyi temizlemek için sayfayı yeniden yükle.
   location.replace(location.pathname + '#/home');
   location.reload();
@@ -253,7 +253,7 @@ function startApp() {
   scope.interval(updateBadges, 15000);
 
   // Otomatik kilit
-  if (hasPin(uid)) scope.add(watchAutoLock(() => Number(getState().prefs.lockAfter ?? 2), () => lockScreen()));
+  scope.add(watchAutoLock(() => Number(getState().prefs.lockAfter ?? 2), () => lockScreen()));
 
   scope.timeout(() => cleanupOldGames(), 8000);
 }

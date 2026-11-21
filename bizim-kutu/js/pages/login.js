@@ -1,10 +1,9 @@
 // Giriş, PIN kurulumu ve kilit ekranı.
-import { USERS, ALLOWED_UIDS, userName, userEmoji } from '../constants.js';
-import { login, rememberedEmail, resetPassword } from '../auth.js';
-import { setPin, verifyPin, MAX_FAILS, removePin } from '../services/pinlock.js';
+import { USERS, ALLOWED_UIDS } from '../constants.js';
+import { loginWithPin } from '../auth.js';
 import { h, clear, vibrate, sleep, fill, add } from '../utils/helpers.js';
 import { icons, logoSvg } from '../utils/icons.js';
-import { toast, errorMessage, setLoading } from '../utils/ui.js';
+import { errorMessage } from '../utils/ui.js';
 
 function floatingHearts() {
   const wrap = h('div', { class: 'hearts-bg', 'aria-hidden': 'true' });
@@ -27,17 +26,6 @@ function brand(sub = 'İki kişi, bir dünya, binlerce anı.') {
     h('p', { class: 'auth-brand__slogan' }, sub));
 }
 
-function userCard(uid, { selected, disabled, onClick, sub }) {
-  const u = USERS[uid];
-  return h('button', {
-    class: `user-card user-card--${u.tone}${selected ? ' is-selected' : ''}`, type: 'button', disabled,
-    'aria-pressed': selected ? 'true' : 'false', onclick: onClick
-  },
-    h('span', { class: 'user-card__avatar', 'aria-hidden': 'true' }, u.emoji),
-    h('span', { class: 'user-card__name' }, u.name),
-    sub ? h('span', { class: 'user-card__sub' }, sub) : null);
-}
-
 /** Kalp patlaması animasyonu (giriş başarılı). */
 async function celebrate(container) {
   const burst = h('div', { class: 'burst', 'aria-hidden': 'true' });
@@ -50,64 +38,35 @@ async function celebrate(container) {
   await sleep(650);
 }
 
-// ---------------- Giriş ----------------
-export function renderLogin(root, { reason, onLoggedIn }) {
-  let selected = null;
-  const cards = h('div', { class: 'user-cards', role: 'group', 'aria-label': 'Kim giriş yapıyor?' });
-  const formWrap = h('div', { class: 'auth-form-wrap' });
-  const screen = h('div', { class: 'auth-screen' }, floatingHearts(),
-    h('div', { class: 'auth-card glass' }, brand(), h('p', { class: 'auth-q' }, 'Kim geldi bakalım?'), cards, formWrap));
-  fill(root, screen);
-
-  if (reason === 'not-allowed') toast('Bu hesabın Bizim Kutu\'ya erişimi yok.', { type: 'error', duration: 6000 });
-
-  const drawCards = () => {
-    fill(cards, ...ALLOWED_UIDS.map((uid) => userCard(uid, { selected: selected === uid, onClick: () => { selected = uid; drawCards(); drawForm(); } })));
-  };
-
-  function drawForm() {
-    clear(formWrap);
-    if (!selected) {
-      add(formWrap, h('p', { class: 'auth-hint' }, 'Kartına dokun, ardından hesabınla güvenli giriş yap.'));
-      return;
+// ---------------- Giriş: yalnızca PIN ----------------
+export function renderLogin(root, { onLoggedIn }) {
+  const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'PIN\'ini gir');
+  const card = h('div', { class: 'auth-card glass' });
+  let last = null;
+  try { last = localStorage.getItem('bk.lastPerson'); } catch {}
+  const pad = pinPad({ onComplete: async (v) => {
+    msg.textContent = 'Kutumuz açılıyor…';
+    card.classList.add('is-busy');
+    try {
+      const person = await loginWithPin(v);
+      pad.destroy();
+      await celebrate(card);
+      onLoggedIn(person);
+    } catch (e) {
+      card.classList.remove('is-busy');
+      pad.shake();
+      msg.textContent = e.code === 'app/bad-pin' ? 'PIN hatalı, tekrar dene 🙈'
+        : e.code === 'app/offline' ? 'İnternet bağlantısı yok.'
+        : /admin-restricted|operation-not-allowed/.test(e.code || '') ? 'Firebase\'de "Anonim" giriş kapalı (kurulum adımı eksik).'
+        : errorMessage(e);
     }
-    const email = h('input', { class: 'input', type: 'email', autocomplete: 'username', inputmode: 'email', required: true, placeholder: 'ornek@eposta.com', value: rememberedEmail(selected), 'aria-label': 'E-posta' });
-    const pass = h('input', { class: 'input', type: 'password', autocomplete: 'current-password', required: true, placeholder: 'Parolan', 'aria-label': 'Parola', minlength: '6' });
-    const toggle = h('button', { class: 'input-addon', type: 'button', 'aria-label': 'Parolayı göster', svg: icons.eye, onclick: () => { pass.type = pass.type === 'password' ? 'text' : 'password'; toggle.setAttribute('aria-label', pass.type === 'password' ? 'Parolayı göster' : 'Parolayı gizle'); } });
-    const remember = h('input', { type: 'checkbox', checked: true });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const submit = h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, `${userName(selected)} olarak giriş yap`);
-    const forgot = h('button', { class: 'link-btn', type: 'button', onclick: async () => {
-      if (!email.value.trim()) { err.textContent = 'Önce e-posta adresini yaz.'; email.focus(); return; }
-      try { await resetPassword(email.value); toast('Parola sıfırlama bağlantısı e-postana gönderildi 💌'); }
-      catch (e) { err.textContent = errorMessage(e); }
-    } }, 'Parolamı unuttum');
-    const form = h('form', { class: 'auth-form', novalidate: true, onsubmit: async (e) => {
-      e.preventDefault();
-      err.textContent = '';
-      if (!email.value.trim() || !pass.value) { err.textContent = 'E-posta ve parola gerekli.'; return; }
-      setLoading(submit, true, 'Kutumuz açılıyor…');
-      try {
-        const user = await login(email.value, pass.value, selected, remember.checked);
-        pass.value = '';
-        await celebrate(screen);
-        onLoggedIn(user, true);
-      } catch (e2) {
-        err.textContent = e2.code?.startsWith('app/') ? e2.message : errorMessage(e2);
-        screen.querySelector('.auth-card')?.classList.add('shake');
-        setTimeout(() => screen.querySelector('.auth-card')?.classList.remove('shake'), 500);
-        setLoading(submit, false);
-      }
-    } },
-      h('label', { class: 'field__label' }, 'E-posta', email),
-      h('label', { class: 'field__label' }, 'Parola', h('div', { class: 'input-group' }, pass, toggle)),
-      h('label', { class: 'check' }, remember, h('span', {}, 'E-postamı bu cihazda hatırla')),
-      err, submit, forgot,
-      h('p', { class: 'auth-note' }, h('span', { svg: icons.shield }), ' İlk girişten sonra bu cihaz için 4 haneli PIN belirleyip uygulamayı PIN ile açabilirsin.'));
-    add(formWrap, form);
-    requestAnimationFrame(() => (email.value ? pass : email).focus());
-  }
-  drawCards(); drawForm();
+  } });
+  add(card, brand(),
+    h('div', { class: 'user-cards user-cards--mini', 'aria-hidden': 'true' },
+      ALLOWED_UIDS.map((uid) => h('div', { class: `user-card user-card--${USERS[uid].tone}${last === uid ? ' is-selected' : ''}` },
+        h('span', { class: 'user-card__avatar' }, USERS[uid].emoji), h('span', { class: 'user-card__name' }, USERS[uid].name)))),
+    msg, pad.el);
+  fill(root, h('div', { class: 'auth-screen' }, floatingHearts(), card));
 }
 
 // ---------------- PIN tuş takımı ----------------
@@ -145,48 +104,3 @@ function pinPad({ onComplete, length = 4 }) {
   return { el, shake: () => { dots.classList.add('shake'); vibrate([30, 40, 30]); setTimeout(() => dots.classList.remove('shake'), 450); }, destroy: () => document.removeEventListener('keydown', onKey) };
 }
 
-export function renderPinSetup(root, { uid, onDone }) {
-  let first = null;
-  const title = h('h2', { class: 'auth-step-title' }, 'Bu cihaz için PIN belirle');
-  const msg = h('p', { class: 'auth-hint' }, 'Uygulamayı her açtığında bu 4 haneli PIN istenir.');
-  const pad = pinPad({ onComplete: async (v) => {
-    if (!first) { first = v; title.textContent = 'PIN\'i tekrar gir'; msg.textContent = 'Onaylamak için aynı PIN\'i bir kez daha gir.'; return; }
-    if (v !== first) { first = null; pad.shake(); title.textContent = 'PIN\'ler eşleşmedi'; msg.textContent = 'Baştan başlayalım: yeni PIN\'i gir.'; return; }
-    await setPin(uid, v);
-    pad.destroy();
-    toast('PIN kaydedildi 🔐');
-    onDone();
-  } });
-  fill(root, h('div', { class: 'auth-screen' }, floatingHearts(),
-    h('div', { class: 'auth-card glass' }, brand(`Hoş geldin ${userName(uid)} ${userEmoji(uid)}`), title, msg, pad.el,
-      h('details', { class: 'auth-details' }, h('summary', {}, 'PIN ne kadar güvenli?'),
-        h('p', {}, 'PIN yalnızca bu cihazda uygulamayı kilitler; karması (PBKDF2) bu cihazda saklanır, sunucuya gönderilmez. Hesabın asıl güvenliği Firebase parolanla sağlanır. 5 hatalı denemede PIN silinir ve tekrar parolayla giriş gerekir.')),
-      h('button', { class: 'btn btn--ghost btn--block', type: 'button', onclick: () => { pad.destroy(); onDone(); } }, 'Şimdilik geç'))));
-}
-
-export function renderLock(root, { uid, onUnlock, onSwitch }) {
-  const other = ALLOWED_UIDS.find((u) => u !== uid);
-  const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'PIN\'ini gir');
-  const card = h('div', { class: 'auth-card glass' });
-  const pad = pinPad({ onComplete: async (v) => {
-    const r = await verifyPin(uid, v);
-    if (r.ok) { pad.destroy(); card.classList.add('unlocking'); await celebrate(card); onUnlock(); return; }
-    pad.shake();
-    if (r.wiped) {
-      pad.destroy();
-      toast('Çok fazla hatalı deneme. Güvenliğin için parolayla yeniden giriş yapmalısın.', { type: 'error', duration: 7000 });
-      removePin(uid);
-      onSwitch();
-      return;
-    }
-    msg.textContent = `Hatalı PIN. ${r.remaining} deneme hakkın kaldı.`;
-  } });
-  add(card, brand(),
-    h('div', { class: 'user-cards' },
-      userCard(uid, { selected: true, sub: 'Bu cihazda oturum açık' }),
-      userCard(other, { disabled: true, sub: 'Kilitli' })),
-    msg, pad.el,
-    h('button', { class: 'link-btn', type: 'button', onclick: () => { pad.destroy(); onSwitch(); } }, 'Parolayla / farklı hesapla giriş yap'),
-    h('p', { class: 'auth-note' }, `En fazla ${MAX_FAILS} deneme hakkın var.`));
-  fill(root, h('div', { class: 'auth-screen' }, floatingHearts(), card));
-}

@@ -476,3 +476,6 @@ button.star:hover { transform: scale(1.15); }
 .settings { display: grid; gap: 12px; }
 .settings h3 { font-size: 1.15rem; }
 .settings h4 { font-size: .95rem; margin-top: 6px; }
+.user-cards--mini .user-card { padding: 10px 8px; pointer-events: none; }
+.user-cards--mini .user-card__avatar { width: 48px; height: 48px; font-size: 26px; }
+.auth-card.is-busy .pin-pad { opacity: .5; pointer-events: none; }

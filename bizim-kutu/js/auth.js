@@ -1,55 +1,85 @@
-// Kimlik doğrulama: Firebase Authentication (e-posta/parola).
-// Yetki UID ile kontrol edilir; izinli iki UID dışındaki her hesap anında oturumdan çıkarılır
-// (asıl engel Firebase güvenlik kurallarıdır — bkz. firebase/).
-import { auth } from './firebase-config.js';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from './vendor/firebase.js';
-import { isAllowedUid, userName } from './constants.js';
+// Giriş: yalnızca 4 haneli PIN.
+//
+// Nasıl çalışır (kullanıcı hiçbir e-posta/parola görmez):
+//  1. Cihaz Firebase'e sessizce ANONİM olarak bağlanır (her cihazın kendi gizli kimliği olur).
+//  2. Girilen PIN, "pinTry/{cihazKimliği}" kaydına { pin, person, n } olarak yazılır.
+//  3. Firebase güvenlik kuralları bu PIN'i, yalnızca sunucunun okuyabildiği "secrets/pins"
+//     kaydıyla karşılaştırır. Eşleşirse o cihaz Cuma'nın / İlayda'nın verilerine erişir,
+//     eşleşmezse hiçbir veriye erişemez.
+//  4. PIN'ler sitenin kaynak kodunda YOKTUR; tarayıcı doğru PIN'i hiçbir zaman bilmez.
+//  5. Her deneme sayılır (n artar). Bir cihaz kimliği en fazla 10 deneme yapabilir; sonra
+//     uygulama yeni bir anonim kimlik alır (Firebase yeni anonim hesap açmayı IP başına sınırlar).
+import { auth, rtdb, db } from './firebase-config.js';
+import { onAuthStateChanged, signInAnonymously, signOut } from './vendor/firebase.js';
+import { ref, get, set } from './vendor/firebase.js';
+import { doc, setDoc, getDoc } from './vendor/firebase.js';
+import { ALLOWED_UIDS } from './constants.js';
+import { isPin } from './utils/validation.js';
 
-const EMAIL_KEY = (uid) => `bk.email.${uid}`;
+export const MAX_TRIES_PER_DEVICE_ID = 10;
+const LAST_KEY = 'bk.lastPerson';
 
-export function rememberedEmail(uid) { try { return localStorage.getItem(EMAIL_KEY(uid)) || ''; } catch { return ''; } }
-function rememberEmail(uid, email, remember) {
-  try { remember ? localStorage.setItem(EMAIL_KEY(uid), email) : localStorage.removeItem(EMAIL_KEY(uid)); } catch {}
-}
+const lastPerson = () => { try { return localStorage.getItem(LAST_KEY); } catch { return null; } };
+const rememberPerson = (p) => { try { localStorage.setItem(LAST_KEY, p); } catch {} };
 
-// Giriş formu işlemi sürerken (doğrulama + kart kontrolü) dinleyici araya girmesin.
-let loginInProgress = false;
-
-/** cb(user | null, reason?) — yalnızca izinli kullanıcılar geçer. */
+/** Firebase oturum durumunu dinler (anonim cihaz oturumu). */
 export function watchAuth(cb) {
-  return onAuthStateChanged(auth, async (user) => {
-    if (loginInProgress) return;
-    if (user && !isAllowedUid(user.uid)) {
-      await signOut(auth).catch(() => {});
-      cb(null, 'not-allowed');
-      return;
+  return onAuthStateChanged(auth, (user) => cb(user));
+}
+
+async function ensureDeviceId(forceNew = false) {
+  if (forceNew && auth.currentUser) await signOut(auth);
+  if (!auth.currentUser) await signInAnonymously(auth);
+  return auth.currentUser.uid;
+}
+
+/** RTDB'de bu cihazın doğrulanmış olup olmadığını dener (yalnızca doğrulanmışlar okuyabilir). */
+async function canRead() {
+  try { await get(ref(rtdb, 'presence')); return true; } catch { return false; }
+}
+
+/**
+ * PIN ile giriş. Döner: person (sabit kullanıcı kimliği) ya da hata fırlatır.
+ * Hata kodları: app/bad-pin, app/offline
+ */
+export async function loginWithPin(pin) {
+  if (!isPin(pin)) throw Object.assign(new Error('PIN 4 rakam olmalı.'), { code: 'app/bad-pin' });
+  if (!navigator.onLine) throw Object.assign(new Error('İnternet bağlantısı yok.'), { code: 'app/offline' });
+  let devId = await ensureDeviceId();
+
+  // Bu cihaz kimliğinin kaç denemesi kaldı?
+  const tryRef = () => ref(rtdb, `pinTry/${devId}`);
+  let current = (await get(tryRef()).catch(() => null))?.val() || null;
+  const order = [lastPerson(), ...ALLOWED_UIDS].filter((p, i, a) => p && ALLOWED_UIDS.includes(p) && a.indexOf(p) === i);
+
+  for (const person of order) {
+    if ((current?.n || 0) >= MAX_TRIES_PER_DEVICE_ID) {
+      devId = await ensureDeviceId(true);
+      current = null;
     }
-    cb(user);
-  });
-}
-
-export async function login(email, password, expectedUid, remember = true) {
-  loginInProgress = true;
-  try { return await doLogin(email, password, expectedUid, remember); } finally { loginInProgress = false; }
-}
-
-async function doLogin(email, password, expectedUid, remember) {
-  const cred = await signInWithEmailAndPassword(auth, String(email).trim(), password);
-  const uid = cred.user.uid;
-  if (!isAllowedUid(uid)) {
-    await signOut(auth);
-    throw Object.assign(new Error('Bu hesap Bizim Kutu\'ya erişemez.'), { code: 'app/not-allowed' });
+    const n = (current?.n || 0) + 1;
+    const attempt = { pin, person, n };
+    await set(tryRef(), attempt); // her deneme sayılır; kurallar sayaç atlamaya izin vermez
+    current = attempt;
+    if (await canRead()) {
+      // Firestore için de aynı doğrulama kaydı (iki veritabanının kuralları birbirini okuyamaz)
+      const fsRef = doc(db, 'pinTry', devId);
+      const prev = await getDoc(fsRef).catch(() => null);
+      const fn = ((prev?.exists() && prev.data().n) || 0) + 1;
+      if (fn > MAX_TRIES_PER_DEVICE_ID) {
+        // Firestore sayacı dolduysa yeni cihaz kimliğiyle baştan doğrula
+        await ensureDeviceId(true);
+        return loginWithPin(pin);
+      }
+      await setDoc(fsRef, { pin, person, n: fn });
+      rememberPerson(person);
+      return person;
+    }
   }
-  if (expectedUid && uid !== expectedUid) {
-    await signOut(auth);
-    throw Object.assign(new Error(`Bu hesap ${userName(uid)}'ya ait. Lütfen doğru kartı seç.`), { code: 'app/wrong-card' });
-  }
-  rememberEmail(uid, String(email).trim(), remember);
-  return cred.user;
+  throw Object.assign(new Error('PIN hatalı.'), { code: 'app/bad-pin' });
 }
 
-export const logoutFirebase = () => signOut(auth);
-
-export function resetPassword(email) {
-  return sendPasswordResetEmail(auth, String(email).trim());
+/** Çıkış: cihazın doğrulamasını bozar ve anonim oturumu kapatır. */
+export async function logoutDevice() {
+  try { await signOut(auth); } catch {}
 }

@@ -5,9 +5,8 @@ import { h, clear, fill, add } from '../utils/helpers.js';
 import { icons } from '../utils/icons.js';
 import { toast, confirmDialog, openModal, errorMessage, field } from '../utils/ui.js';
 import { lastSeenText, formatLongDate } from '../utils/dates.js';
-import { LIMITS, validateText, isPin } from '../utils/validation.js';
+import { LIMITS, validateText } from '../utils/validation.js';
 import { saveProfile } from '../services/firestore.js';
-import { hasPin, setPin, removePin, verifyPin } from '../services/pinlock.js';
 import { setPrefs, logout } from '../app.js';
 
 export default async function profile(page, { scope }) {
@@ -69,48 +68,10 @@ export default async function profile(page, { scope }) {
     persist({ system: v });
   }, 'Uygulama açıkken arka plandaki sekmede bildirim gösterir.');
 
-  // Cihaz PIN'i
-  const pinSection = h('div', {});
-  const drawPin = () => {
-    const on = hasPin(uid);
-    const lockSel = h('select', { class: 'input', onchange: (e) => persist({ lockAfter: Number(e.target.value) }) },
-      [[0, 'Hemen'], [1, '1 dakika'], [2, '2 dakika'], [5, '5 dakika'], [15, '15 dakika'], [-1, 'Otomatik kilitleme yok']].map(([v, l]) => h('option', { value: String(v), selected: Number(prefs().lockAfter ?? 2) === v }, l)));
-    fill(pinSection, 
-      h('p', { class: 'muted small' }, on ? '🔐 Bu cihazda PIN kilidi açık.' : 'Bu cihazda PIN kilidi kapalı.'),
-      on ? field('Arka plandan dönünce kilitle', lockSel) : null,
-      h('div', { class: 'row' },
-        h('button', { class: 'btn btn--soft btn--sm', type: 'button', onclick: () => pinDialog(on) }, on ? 'PIN\'i değiştir' : 'PIN belirle'),
-        on ? h('button', { class: 'btn btn--ghost btn--sm', type: 'button', onclick: removeDialog }, 'PIN\'i kaldır') : null));
-  };
-  function removeDialog() {
-    const cur = h('input', { class: 'input', type: 'password', inputmode: 'numeric', maxlength: '4', autocomplete: 'off' });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const m = openModal({ title: 'PIN kilidini kaldır', sheet: false, content: h('form', { class: 'form', onsubmit: async (e) => {
-      e.preventDefault();
-      const r = await verifyPin(uid, cur.value);
-      if (!r.ok && !r.wiped) { err.textContent = `PIN hatalı (${r.remaining} hak).`; return; }
-      removePin(uid); m.close(); drawPin();
-      toast(r.ok ? 'PIN kilidi kaldırıldı' : 'Çok fazla hata: PIN silindi.', { type: r.ok ? 'info' : 'error' });
-    } }, field('Mevcut PIN', cur), err, h('button', { class: 'btn btn--danger btn--block', type: 'submit' }, 'Kaldır')) });
-  }
-  function pinDialog(change) {
-    const cur = h('input', { class: 'input', type: 'password', inputmode: 'numeric', maxlength: '4', autocomplete: 'off' });
-    const p1 = h('input', { class: 'input', type: 'password', inputmode: 'numeric', maxlength: '4', autocomplete: 'off' });
-    const p2 = h('input', { class: 'input', type: 'password', inputmode: 'numeric', maxlength: '4', autocomplete: 'off' });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const m = openModal({ title: change ? 'PIN\'i değiştir' : 'Cihaz PIN\'i belirle', sheet: false, content: h('form', { class: 'form', onsubmit: async (e) => {
-      e.preventDefault();
-      if (change) { const r = await verifyPin(uid, cur.value); if (!r.ok) { err.textContent = r.wiped ? 'Çok fazla hata: PIN silindi.' : `Mevcut PIN hatalı (${r.remaining} hak).`; if (r.wiped) { m.close(); drawPin(); } return; } }
-      if (!isPin(p1.value)) { err.textContent = 'PIN 4 rakam olmalı.'; return; }
-      if (p1.value !== p2.value) { err.textContent = 'PIN\'ler eşleşmiyor.'; return; }
-      await setPin(uid, p1.value);
-      toast('PIN kaydedildi 🔐'); m.close(); drawPin();
-    } }, change ? field('Mevcut PIN', cur) : null, field('Yeni PIN (4 rakam)', p1), field('Yeni PIN tekrar', p2), err,
-      h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, 'Kaydet')) });
-  }
-  drawPin();
+  // Otomatik kilit
+  const lockSel = h('select', { class: 'input', onchange: (e) => persist({ lockAfter: Number(e.target.value) }) },
+    [[0, 'Hemen'], [1, '1 dakika'], [2, '2 dakika'], [5, '5 dakika'], [15, '15 dakika'], [-1, 'Otomatik kilitleme yok']].map(([v, l]) => h('option', { value: String(v), selected: Number(prefs().lockAfter ?? 2) === v }, l)));
 
-  const lastSignIn = user?.metadata?.lastSignInTime ? new Date(user.metadata.lastSignInTime) : null;
   add(page, 
     h('div', { class: 'page-head' }, h('div', {}, h('h2', { class: 'page-title' }, 'Profil'), h('p', { class: 'page-sub' }, 'İkimiz ve ayarlarımız.'))),
     cards,
@@ -123,14 +84,13 @@ export default async function profile(page, { scope }) {
       h('p', { class: 'muted small' }, 'Not: Tarayıcı tamamen kapalıyken gelen push bildirimleri için Firebase Cloud Messaging + sunucu tarafı gönderici (Cloud Functions, Blaze planı) gerekir; bu sürümde yoktur.')),
     h('section', { class: 'card settings' }, h('h3', {}, 'Oturum güvenliği'),
       h('dl', { class: 'kv' },
-        h('dt', {}, 'Giriş yöntemi'), h('dd', {}, 'Firebase Authentication (e-posta/parola)'),
-        h('dt', {}, 'E-posta'), h('dd', {}, user?.email || '—'),
-        h('dt', {}, 'Son giriş'), h('dd', {}, lastSignIn ? lastSignIn.toLocaleString('tr-TR') : '—'),
-        h('dt', {}, 'Veri erişimi'), h('dd', {}, 'Güvenlik kurallarıyla yalnızca iki kullanıcı kimliğine (UID) açık')),
-      h('h4', {}, 'Cihaz PIN kilidi'), pinSection,
-      h('p', { class: 'muted small' }, 'PIN yalnızca bu cihazda uygulamayı kilitler; hesabın asıl koruması parolandır. Ortak bir cihazda mutlaka çıkış yap.'),
+        h('dt', {}, 'Giriş yöntemi'), h('dd', {}, '4 haneli PIN (Firebase sunucusunda doğrulanır, sitede yazmaz)'),
+        h('dt', {}, 'Bu cihaz'), h('dd', { class: 'mono' }, user?.uid || '—'),
+        h('dt', {}, 'Veri erişimi'), h('dd', {}, 'Yalnızca doğru PIN girilmiş cihazlar')),
+      field('Arka plandan dönünce PIN iste', lockSel),
+      h('p', { class: 'muted small' }, 'PIN\'i değiştirmek için Firebase Console\'da secrets/pins kaydını güncelleyin (README). Ortak bir cihazda mutlaka çıkış yap.'),
       h('button', { class: 'btn btn--danger btn--block', type: 'button', onclick: async () => {
-        if (await confirmDialog({ title: 'Çıkış yapılsın mı?', message: 'Bu cihazdaki oturum kapanacak. Tekrar girmek için e-posta ve parola gerekir.', confirmText: 'Çıkış yap', danger: true })) logout();
+        if (await confirmDialog({ title: 'Çıkış yapılsın mı?', message: 'Bu cihazdaki oturum kapanacak. Tekrar girmek için PIN gerekir.', confirmText: 'Çıkış yap', danger: true })) logout();
       } }, h('span', { svg: icons.logout }), 'Oturumu kapat')),
     h('p', { class: 'muted small center' }, `Bizim Kutu v${APP_VERSION} · İki kişi, bir dünya, binlerce anı.`));
 }

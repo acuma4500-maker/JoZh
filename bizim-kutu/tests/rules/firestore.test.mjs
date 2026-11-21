@@ -1,14 +1,14 @@
 import test, { before, after, beforeEach } from 'node:test';
 import { assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
 import { doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { env, A, B, X } from './setup.mjs';
+import { env, A, B, X, DEV, PINS, seedFirestore } from './setup.mjs';
 
 let t;
 before(async () => { t = await env(); });
 after(async () => { await t.cleanup(); });
-beforeEach(async () => { await t.clearFirestore(); });
+beforeEach(async () => { await t.clearFirestore(); await seedFirestore(t); });
 
-const fs = (uid) => (uid ? t.authenticatedContext(uid).firestore() : t.unauthenticatedContext().firestore());
+const fs = (who) => (who ? t.authenticatedContext(DEV[who] || who).firestore() : t.unauthenticatedContext().firestore());
 const p = (...s) => ['couples', 'main', ...s].join('/');
 const memory = (uid, extra = {}) => ({ title: 'İlk kahve', date: '2026-08-22', description: 'Moda sahili', emoji: '☕', createdBy: uid, createdAt: serverTimestamp(), updatedBy: uid, updatedAt: serverTimestamp(), ...extra });
 
@@ -17,7 +17,7 @@ test('oturumsuz kullanıcı hiçbir şey okuyamaz/yazamaz', async () => {
   await assertFails(setDoc(doc(fs(), p('memories', 'm1')), memory('x')));
 });
 
-test('üçüncü hesap engellenir', async () => {
+test('yanlış PIN girmiş cihaz hiçbir veriye erişemez', async () => {
   await assertFails(getDoc(doc(fs(X), p('memories', 'm1'))));
   await assertFails(setDoc(doc(fs(X), p('memories', 'm1')), memory(X)));
   await assertFails(getDocs(collection(fs(X), p('tasks'))));
@@ -112,4 +112,28 @@ test('couples/main dışındaki yollar kapalı', async () => {
   await assertFails(setDoc(doc(fs(A), 'couples/other/memories/m1'), memory(A)));
   await assertFails(setDoc(doc(fs(A), 'anything/else'), { a: 1 }));
   await assertFails(getDoc(doc(fs(A), 'users/' + A)));
+});
+
+test('PIN kayıtları: herkes yalnızca kendi cihaz kaydını yazar, sayaç atlanamaz ve 10\'u geçemez', async () => {
+  const yeni = t.authenticatedContext('yeniCihaz').firestore();
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '1111', person: A, n: 5 }), 'ilk deneme n=1 olmalı');
+  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '0000', person: A, n: 1 }));
+  await assertFails(getDoc(doc(yeni, p('memories', 'x'))), 'yanlış PIN → erişim yok');
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '1111', person: A, n: 1 }), 'sayaç sıfırlanamaz');
+  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: PINS[A], person: A, n: 2 }));
+  await assertSucceeds(getDoc(doc(yeni, p('memories', 'x'))), 'doğru PIN → erişim var');
+  await assertFails(setDoc(doc(yeni, 'pinTry/cihazCuma'), { pin: '0000', person: A, n: 2 }), 'başka cihazın kaydı');
+  await assertFails(deleteDoc(doc(yeni, 'pinTry/yeniCihaz')), 'silinip sayaç sıfırlanamaz');
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '0000', person: A, n: 11 }));
+});
+
+test('PIN\'ler (secrets) okunamaz ve yazılamaz', async () => {
+  await assertFails(getDoc(doc(fs(A), 'secrets/pins')));
+  await assertFails(setDoc(doc(fs(A), 'secrets/pins'), { [A]: '0000' }));
+});
+
+test('Cuma\'nın PIN\'iyle İlayda olunamaz', async () => {
+  const c = t.authenticatedContext('sahte').firestore();
+  await assertSucceeds(setDoc(doc(c, 'pinTry/sahte'), { pin: PINS[A], person: B, n: 1 }));
+  await assertFails(getDoc(doc(c, p('memories', 'x'))));
 });

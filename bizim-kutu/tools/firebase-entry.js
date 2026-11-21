@@ -1,7 +1,7 @@
 // Bizim Kutu'nun kullandığı Firebase modülleri (Storage bilinçli olarak YOK).
 export { initializeApp } from 'firebase/app';
 export {
-  getAuth, initializeAuth, indexedDBLocalPersistence, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+  getAuth, initializeAuth, indexedDBLocalPersistence, onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, signOut,
   setPersistence, browserLocalPersistence, sendPasswordResetEmail, connectAuthEmulator
 } from 'firebase/auth';
 export {

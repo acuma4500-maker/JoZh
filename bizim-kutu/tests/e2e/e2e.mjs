@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 
 const A = 'pt0Kmbc9rqdJekFyvA1wLItUnxw1', B = 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1';
-const USERS = { cuma: { uid: A, email: 'cuma@test.local', password: 'Test-Parola-1' }, ilayda: { uid: B, email: 'ilayda@test.local', password: 'Test-Parola-2' }, x: { uid: 'ucuncuKisi', email: 'x@test.local', password: 'Test-Parola-3' } };
+const PINS = { cuma: '1111', ilayda: '2222' }; // test PIN'leri (gerçekleri değil)
 const PORT = 5174;
 const BASE = `http://127.0.0.1:${PORT}/?emulator`;
 const SHOTS = process.env.SHOTS_DIR || '';
@@ -25,18 +25,17 @@ async function step(name, fn) {
   console.log(results.at(-1));
 }
 
-async function createUsers() {
-  // Temiz başlangıç: emülatördeki hesapları ve verileri sil
+async function seed() {
+  // Temiz başlangıç + emülatöre test PIN'lerini (secrets/pins) yerleştir
   await fetch('http://127.0.0.1:9099/emulator/v1/projects/jozh-love/accounts', { method: 'DELETE' });
   await fetch('http://127.0.0.1:8080/emulator/v1/projects/jozh-love/databases/(default)/documents', { method: 'DELETE' });
-  await fetch('http://127.0.0.1:9000/.json?ns=jozh-love-default-rtdb', { method: 'PUT', headers: { Authorization: 'Bearer owner' }, body: 'null' });
-  for (const u of Object.values(USERS)) {
-    const r = await fetch('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/jozh-love/accounts', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer owner' },
-      body: JSON.stringify({ localId: u.uid, email: u.email, password: u.password }),
-    });
-    if (!r.ok) throw new Error(`kullanıcı oluşturulamadı: ${await r.text()}`);
-  }
+  const pins = { [A]: PINS.cuma, [B]: PINS.ilayda };
+  await fetch('http://127.0.0.1:9000/.json?ns=jozh-love-default-rtdb', { method: 'PUT', headers: { Authorization: 'Bearer owner' }, body: JSON.stringify({ secrets: { pins } }) });
+  const r = await fetch('http://127.0.0.1:8080/v1/projects/jozh-love/databases/(default)/documents/secrets/pins', {
+    method: 'PATCH', headers: { Authorization: 'Bearer owner', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: { [A]: { stringValue: PINS.cuma }, [B]: { stringValue: PINS.ilayda } } }),
+  });
+  if (!r.ok) throw new Error('secrets yazılamadı: ' + await r.text());
 }
 
 async function firestoreDocs(path) {
@@ -58,47 +57,39 @@ async function newUser(device) {
 }
 const shot = async (page, name) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}.png` }); };
 
-async function login(page, who, { cardIndex, expectError } = {}) {
-  const u = USERS[who];
+async function enterPin(page, pin) {
+  for (const d of pin) await page.locator('.pin-key', { hasText: d }).first().click();
+}
+async function login(page, who, { pin, expectError } = {}) {
   await page.goto(`${BASE}#/home`);
-  await page.locator('.user-card').nth(cardIndex ?? (who === 'ilayda' ? 1 : 0)).click();
-  await page.fill('input[type=email]', u.email);
-  await page.fill('input[autocomplete=current-password]', u.password);
-  await page.click('form.auth-form button[type=submit]');
-  if (expectError) { await page.locator('.form-error', { hasText: expectError }).waitFor({ timeout: 10000 }); return; }
+  await page.locator('.pin-pad').waitFor();
+  await enterPin(page, pin || PINS[who]);
+  if (expectError) { await page.locator('.auth-hint', { hasText: expectError }).waitFor({ timeout: 15000 }); return; }
+  await page.locator('.hero').waitFor({ timeout: 20000 });
 }
 const go = (page, hash) => page.evaluate((h) => { location.hash = h; }, hash);
 
 try {
-  await createUsers();
+  await seed();
   const cuma = await newUser(devices['iPhone 13']);
   const ilayda = await newUser(devices['Pixel 5']);
   const third = await newUser({ viewport: { width: 1280, height: 800 } });
   Object.assign(live, { cuma: cuma.page, ilayda: ilayda.page });
 
-  await step('3. Üçüncü hesap engelleniyor (giriş reddedilir)', async () => {
-    await login(third.page, 'x', { cardIndex: 0, expectError: 'erişemez' });
-    assert.equal(await third.page.locator('.shell').count(), 0, 'uygulama kabuğu açılmamalı');
+  await step('3. Yanlış PIN (üçüncü kişi) engelleniyor; e-posta alanı yok', async () => {
+    await login(third.page, 'x', { pin: '9999', expectError: 'PIN hatalı' });
+    assert.equal(await third.page.locator('.shell').count(), 0, 'uygulama açılmamalı');
+    assert.equal(await third.page.locator('input[type=email], input[type=password]').count(), 0, 'e-posta/parola alanı olmamalı');
   });
 
-  await step('Yanlış kartla giriş reddedilir (İlayda hesabı Cuma kartında)', async () => {
-    await login(third.page, 'ilayda', { cardIndex: 0, expectError: 'İlayda' });
-  });
-
-  await step('1. Cuma giriş yapabiliyor (PIN kurulumunu atlıyor)', async () => {
+  await step('1. Cuma PIN ile giriyor', async () => {
     await login(cuma.page, 'cuma');
-    await cuma.page.getByRole('button', { name: 'Şimdilik geç' }).click();
-    await cuma.page.locator('.hero').waitFor({ timeout: 15000 });
+    await cuma.page.locator('.partner-chip__name', { hasText: 'İlayda' }).waitFor();
   });
 
-  await step('2. İlayda giriş yapabiliyor ve cihaz PIN\'i belirliyor', async () => {
+  await step('2. İlayda PIN ile giriyor', async () => {
     await login(ilayda.page, 'ilayda');
-    for (const d of '1357') await ilayda.page.getByRole('button', { name: d, exact: true }).click();
-    await ilayda.page.getByText('PIN\'i tekrar gir').waitFor();
-    for (const d of '1357') await ilayda.page.getByRole('button', { name: d, exact: true }).click();
-    await ilayda.page.locator('.hero').waitFor({ timeout: 15000 });
-    const stored = await ilayda.page.evaluate((k) => localStorage.getItem(k), `bk.pin.${B}`);
-    assert.ok(stored && !stored.includes('1357'), 'PIN karması saklanmalı, düz metin değil');
+    await ilayda.page.locator('.partner-chip__name', { hasText: 'Cuma' }).waitFor();
   });
 
   await step('Ana sayfa: birliktelik sayacı (22.08.2026\'dan beri gün) ve canlı saniye', async () => {
@@ -382,24 +373,16 @@ try {
     await cuma.page.locator('.offline-banner[hidden]').waitFor({ state: 'attached', timeout: 20000 });
   });
 
-  await step('Cihaz PIN kilidi: yeniden açılışta kilit ekranı, hatalı PIN sayacı, doğru PIN', async () => {
+  await step('Uygulama her açılışta PIN istiyor; yanlış PIN açmıyor', async () => {
     const again = await newUser(devices['Pixel 5']);
     await login(again.page, 'ilayda');
-    await again.page.getByRole('button', { name: 'Şimdilik geç' }).click();
-    await again.page.locator('.hero').waitFor({ timeout: 15000 });
-    await go(again.page, '#/profile');
-    await again.page.getByRole('button', { name: 'PIN belirle' }).click();
-    await again.page.locator('.modal input').nth(0).fill('2468');
-    await again.page.locator('.modal input').nth(1).fill('2468');
-    await again.page.click('.modal button[type=submit]');
-    await again.page.getByText('PIN kaydedildi').waitFor();
     await again.page.reload();
     await again.page.locator('.pin-pad').waitFor({ timeout: 15000 });
-    assert.equal(await again.page.locator('.shell').count(), 0, 'kilitliyken uygulama görünmemeli');
-    for (const d of '1111') await again.page.getByRole('button', { name: d, exact: true }).click();
-    await again.page.getByText('4 deneme hakkın kaldı').waitFor();
-    for (const d of '2468') await again.page.getByRole('button', { name: d, exact: true }).click();
-    await again.page.locator('.shell').waitFor({ timeout: 15000 });
+    assert.equal(await again.page.locator('.shell').count(), 0, 'PIN girilmeden uygulama görünmemeli');
+    await enterPin(again.page, '1234');
+    await again.page.locator('.auth-hint', { hasText: 'PIN hatalı' }).waitFor({ timeout: 15000 });
+    await enterPin(again.page, PINS.ilayda);
+    await again.page.locator('.shell').waitFor({ timeout: 20000 });
     await again.ctx.close();
   });
 
@@ -407,7 +390,7 @@ try {
     await go(cuma.page, '#/profile');
     await cuma.page.getByRole('button', { name: 'Oturumu kapat' }).click();
     await cuma.page.getByRole('button', { name: 'Çıkış yap' }).click();
-    await cuma.page.locator('.user-cards').waitFor({ timeout: 15000 });
+    await cuma.page.locator('.pin-pad').waitFor({ timeout: 15000 });
     await go(cuma.page, '#/chat');
     await cuma.page.waitForTimeout(800);
     assert.equal(await cuma.page.locator('.msg').count(), 0, 'çıkıştan sonra mesaj görünmemeli');
@@ -417,8 +400,6 @@ try {
   await step('Masaüstü yerleşim (kenar menü) ve koyu tema', async () => {
     const desk = await newUser({ viewport: { width: 1280, height: 800 }, colorScheme: 'dark' });
     await login(desk.page, 'cuma');
-    await desk.page.getByRole('button', { name: 'Şimdilik geç' }).click();
-    await desk.page.locator('.hero').waitFor({ timeout: 15000 });
     const nav = await desk.page.locator('.tabbar').boundingBox();
     assert.ok(nav.height > 600 && nav.width < 300, 'masaüstünde dikey kenar menü');
     await shot(desk.page, '08-desktop-dark');

@@ -1,17 +1,17 @@
 import test, { before, after, beforeEach } from 'node:test';
 import { assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
 import { ref, set, update, get, remove, serverTimestamp } from 'firebase/database';
-import { env, A, B, X } from './setup.mjs';
+import { env, A, B, X, DEV, PINS, seedDatabase } from './setup.mjs';
 
 let t;
 before(async () => { t = await env(); });
 after(async () => { await t.cleanup(); });
-beforeEach(async () => { await t.clearDatabase(); });
+beforeEach(async () => { await t.clearDatabase(); await seedDatabase(t); });
 
-const db = (uid) => (uid ? t.authenticatedContext(uid).database() : t.unauthenticatedContext().database());
+const db = (who) => (who ? t.authenticatedContext(DEV[who] || who).database() : t.unauthenticatedContext().database());
 const seed = (path, val) => t.withSecurityRulesDisabled((ctx) => set(ref(ctx.database(), path), val));
 
-test('varsayılan erişim kapalı; oturumsuz ve üçüncü hesap okuyamaz', async () => {
+test('varsayılan erişim kapalı; oturumsuz ve yanlış PIN\'li cihaz okuyamaz', async () => {
   await assertFails(get(ref(db(), 'chat/messages')));
   await assertFails(get(ref(db(X), 'chat/messages')));
   await assertFails(get(ref(db(X), 'presence')));
@@ -110,4 +110,25 @@ test('skorlar yalnızca birer artar', async () => {
   await assertFails(set(ref(db(A), `games/scores/xox/${A}`), 10));
   await assertFails(set(ref(db(A), `games/scores/xox/${X}`), 1));
   await assertFails(set(ref(db(A), `games/scores/poker/${A}`), 1));
+});
+
+test('PIN denemeleri: sayaç her denemede 1 artar, en fazla 10, silinemez; secrets okunamaz', async () => {
+  const d = t.authenticatedContext('yeni').database();
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n: 3 }));
+  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n: 1 }));
+  await assertFails(get(ref(d, 'chat/messages')));
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 1 }), 'sıfırlanamaz');
+  await assertFails(remove(ref(d, 'pinTry/yeni')), 'silinemez');
+  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 2 }));
+  await assertSucceeds(get(ref(d, 'chat/messages')));
+  await assertFails(set(ref(d, 'pinTry/cihazCuma'), { pin: '0000', person: A, n: 2 }), 'başka cihaz');
+  await assertFails(get(ref(d, 'secrets/pins')));
+  await assertFails(get(ref(d, 'pinTry/cihazCuma')));
+  for (let n = 3; n <= 10; n++) await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n }));
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 11 }), '10 deneme sınırı');
+});
+
+test('yanlış PIN\'li cihaz Cuma adına mesaj yazamaz', async () => {
+  await assertFails(set(ref(db(X), 'chat/messages/m9'), { uid: A, text: 'sahte', ts: serverTimestamp() }));
+  await assertFails(set(ref(db(X), `presence/${A}/connections/c1`), true));
 });
