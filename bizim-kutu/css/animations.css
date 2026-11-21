@@ -1,0 +1,37 @@
+/* Animasyonlar — yalnızca transform/opacity (GPU dostu). */
+@keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.15); } 28% { transform: scale(1); } 42% { transform: scale(1.1); } 70% { transform: scale(1); } }
+@keyframes pulse-on { 0% { box-shadow: 0 0 0 0 rgba(101, 184, 154, .55); } 70% { box-shadow: 0 0 0 8px rgba(101, 184, 154, 0); } 100% { box-shadow: 0 0 0 0 rgba(101, 184, 154, 0); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes float-up { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: .4; } 90% { opacity: .25; } 100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes pop-in { from { opacity: 0; transform: scale(.92); } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(12px); } }
+@keyframes page-enter { from { opacity: 0; transform: translateY(8px); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(10px) scale(.96); } }
+@keyframes msg-in { from { opacity: 0; transform: translateY(6px) scale(.98); } }
+@keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(3px); } 30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); } }
+@keyframes burst { from { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(.6); } to { opacity: 0; transform: rotate(var(--a)) translateY(-90px) scale(1.2); } }
+@keyframes unlock { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(-8deg) scale(1.08); } 60% { transform: rotate(6deg) scale(1.1); } 100% { transform: rotate(0) scale(1); } }
+@keyframes soft-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes flip-in { from { opacity: 0; transform: perspective(600px) rotateX(-70deg); } }
+
+.page-enter { animation: page-enter .32s var(--ease); }
+.heartbeat svg, .heartbeat { animation: heartbeat 2.2s var(--ease) infinite; transform-origin: center; }
+.auth-brand__logo.heartbeat { animation: none; }
+.auth-brand__logo.heartbeat svg { animation: heartbeat 2.2s var(--ease) infinite; }
+.shake { animation: shake .45s var(--ease); }
+.pop-in { animation: pop-in .35s var(--ease-spring); }
+.unlocking { animation: pop-in .4s var(--ease) reverse; }
+
+/* Hareketi azalt: sistem ayarı veya uygulama ayarı */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .hearts-bg { display: none; }
+}
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+.reduce-motion .hearts-bg { display: none; }
+.reduce-motion .mcard__inner { transition: none !important; }

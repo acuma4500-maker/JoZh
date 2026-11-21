@@ -1,0 +1,21 @@
+{
+  "name": "bizim-kutu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bizim Kutu — Cuma & İlayda için özel, gerçek zamanlı web uygulaması",
+  "type": "module",
+  "scripts": {
+    "build:vendor": "node tools/build-vendor.mjs",
+    "test": "TZ=Europe/Berlin node --test tests/unit/*.test.mjs",
+    "test:rules": "firebase emulators:exec --only firestore,database --project demo-bizimkutu \"node --test tests/rules/*.test.mjs\"",
+    "test:e2e": "firebase emulators:exec --only auth,firestore,database --project jozh-love \"node tests/e2e/e2e.mjs\"",
+    "zip": "bash tools/make-zip.sh",
+    "serve": "node tools/serve.mjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
+    "esbuild": "^0.25.0",
+    "firebase": "13.2.0",
+    "firebase-tools": "^15.0.0"
+  }
+}

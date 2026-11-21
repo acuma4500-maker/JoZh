@@ -1,0 +1,81 @@
+/* Bizim Kutu — tasarım belirteçleri */
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 200 1000; font-display: swap; src: url('../assets/fonts/nunito-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 200 1000; font-display: swap; src: url('../assets/fonts/nunito-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../assets/fonts/fraunces-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../assets/fonts/fraunces-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('../assets/fonts/fraunces-latin-wght-italic.woff2') format('woff2'); }
+
+:root {
+  --primary: #E88FA5;
+  --primary-dark: #B85C75;
+  --background: #FFF8F6;
+  --surface: #FFFFFF;
+  --cream: #FFF0E6;
+  --burgundy: #762F48;
+  --brown: #947467;
+  --text: #3D2932;
+  --muted: #927E86;
+  --border: #F3DDE4;
+  --success: #65B89A;
+  --danger: #E56B75;
+
+  /* türetilmiş */
+  --primary-soft: #FBE3EA;
+  --primary-ink: #9E4560;        /* metin üzerinde yeterli kontrast */
+  --on-primary: #FFFFFF;
+  --surface-2: #FFFBFA;
+  --glass: rgba(255, 252, 251, .72);
+  --glass-border: rgba(243, 221, 228, .9);
+  --overlay: rgba(61, 41, 50, .42);
+  --blush-1: rgba(232, 143, 165, .22);
+  --blush-2: rgba(255, 214, 186, .35);
+  --blush-3: rgba(118, 47, 72, .07);
+  --warn-bg: #FFF3E2; --warn-ink: #8A5A1C;
+  --ok-bg: #E7F5EF; --ok-ink: #2F7A5F;
+  --x-color: #B85C75; --o-color: #947467;
+  --tone-blue: #E4ECFB; --tone-pink: #FBE3EA;
+
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces', 'Georgia', 'Times New Roman', serif;
+
+  --r-xs: 8px; --r-sm: 12px; --r-md: 18px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(118, 47, 72, .06), 0 2px 8px rgba(118, 47, 72, .05);
+  --shadow-md: 0 4px 14px rgba(118, 47, 72, .08), 0 12px 32px rgba(118, 47, 72, .07);
+  --shadow-lg: 0 10px 30px rgba(118, 47, 72, .12), 0 30px 60px rgba(118, 47, 72, .10);
+  --ring: 0 0 0 3px rgba(232, 143, 165, .45);
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-7: 48px;
+  --topbar-h: 60px; --tabbar-h: 68px; --sidebar-w: 240px;
+  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ease: cubic-bezier(.2, .8, .2, 1); --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --dur: .28s;
+  color-scheme: light;
+}
+
+/* Koyu tema: sistem tercihi (kullanıcı açık tema seçmediyse) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #1D1116; --surface: #2A1820; --surface-2: #24151B; --cream: #33212A; --text: #F6E7EC; --muted: #B99DA8; --border: #43293A;
+    --primary: #EE9DB1; --primary-dark: #F4B5C5; --primary-soft: #45243A; --primary-ink: #F7B9C9; --burgundy: #F6C4D1; --brown: #D9B8AB;
+    --glass: rgba(42, 24, 32, .74); --glass-border: rgba(80, 48, 64, .9); --overlay: rgba(0, 0, 0, .55);
+    --blush-1: rgba(238, 157, 177, .12); --blush-2: rgba(180, 100, 80, .12); --blush-3: rgba(246, 196, 209, .05);
+    --warn-bg: #3B2A1A; --warn-ink: #F2C58E; --ok-bg: #1C3329; --ok-ink: #9BDCC2; --x-color: #F4A9BC; --o-color: #E0C2B6;
+    --tone-blue: #263049; --tone-pink: #45243A; --on-primary: #2A1218;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.3); --shadow-md: 0 6px 20px rgba(0,0,0,.35); --shadow-lg: 0 16px 40px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --background: #1D1116; --surface: #2A1820; --surface-2: #24151B; --cream: #33212A; --text: #F6E7EC; --muted: #B99DA8; --border: #43293A;
+  --primary: #EE9DB1; --primary-dark: #F4B5C5; --primary-soft: #45243A; --primary-ink: #F7B9C9; --burgundy: #F6C4D1; --brown: #D9B8AB;
+  --glass: rgba(42, 24, 32, .74); --glass-border: rgba(80, 48, 64, .9); --overlay: rgba(0, 0, 0, .55);
+  --blush-1: rgba(238, 157, 177, .12); --blush-2: rgba(180, 100, 80, .12); --blush-3: rgba(246, 196, 209, .05);
+  --warn-bg: #3B2A1A; --warn-ink: #F2C58E; --ok-bg: #1C3329; --ok-ink: #9BDCC2; --x-color: #F4A9BC; --o-color: #E0C2B6;
+  --tone-blue: #263049; --tone-pink: #45243A; --on-primary: #2A1218;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3); --shadow-md: 0 6px 20px rgba(0,0,0,.35); --shadow-lg: 0 16px 40px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
