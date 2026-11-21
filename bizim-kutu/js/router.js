@@ -2,19 +2,20 @@
 // sunucu tarafı yönlendirme kuralı gerekmez.
 import { createScope, clear, h, fill, add } from './utils/helpers.js';
 import { setState } from './state.js';
-import { errorState } from './utils/ui.js';
+import { errorState, emptyState } from './utils/ui.js';
+import { on } from './features.js';
 
 const routes = [
   { path: '/home', title: 'Bizim Kutu', load: () => import('./pages/home.js') },
-  { path: '/chat', title: 'Sohbet', load: () => import('./pages/chat.js'), fullHeight: true },
-  { path: '/memories', title: 'Anı Defteri', load: () => import('./pages/memories.js') },
-  { path: '/movies', title: 'Film & Dizi', load: () => import('./pages/movies.js') },
-  { path: '/tasks', title: 'Yapılacaklar', load: () => import('./pages/tasks.js') },
-  { path: '/vault', title: 'Özel Kasamız', load: () => import('./pages/vault.js') },
-  { path: '/games', title: 'Oyun Merkezi', load: () => import('./pages/games.js') },
-  { path: '/play/:id', title: 'Oyun', load: () => import('./pages/play.js'), back: '#/games' },
-  { path: '/stories', title: 'Hikâyelerimiz', load: () => import('./pages/stories.js'), back: '#/games' },
-  { path: '/notifications', title: 'Bildirimler', load: () => import('./pages/notifications.js') },
+  { path: '/chat', feature: 'chat', title: 'Sohbet', load: () => import('./pages/chat.js'), fullHeight: true },
+  { path: '/memories', feature: 'memories', title: 'Anı Defteri', load: () => import('./pages/memories.js') },
+  { path: '/movies', feature: 'movies', title: 'Film & Dizi', load: () => import('./pages/movies.js') },
+  { path: '/tasks', feature: 'tasks', title: 'Yapılacaklar', load: () => import('./pages/tasks.js') },
+  { path: '/vault', feature: 'vault', title: 'Özel Kasamız', load: () => import('./pages/vault.js') },
+  { path: '/games', feature: 'games', title: 'Oyun Merkezi', load: () => import('./pages/games.js') },
+  { path: '/play/:id', feature: 'games', title: 'Oyun', load: () => import('./pages/play.js'), back: '#/games' },
+  { path: '/stories', feature: 'games', title: 'Hikâyelerimiz', load: () => import('./pages/stories.js'), back: '#/games' },
+  { path: '/notifications', feature: 'notifications', title: 'Bildirimler', load: () => import('./pages/notifications.js') },
   { path: '/profile', title: 'Profil', load: () => import('./pages/profile.js') },
   { path: '/more', title: 'Kutumuz', load: () => import('./pages/more.js') },
 ];
@@ -57,6 +58,10 @@ async function render() {
   viewEl.className = `view${m.route.fullHeight ? ' view--full' : ''}`;
   add(viewEl, h('div', { class: 'page-loading', 'aria-hidden': 'true' }, h('span', { class: 'heart-loader' }, '❤')));
   try {
+    if (!on(m.route.feature)) {
+      fill(viewEl, h('section', { class: 'page page-enter' }, emptyState({ emoji: '🌱', title: 'Bu bölüm yakında açılacak', text: 'Kutumuzu adım adım kuruyoruz 💕', action: { label: 'Ana sayfaya dön', onClick: () => { location.hash = '#/home'; } } })));
+      return;
+    }
     const mod = await m.route.load();
     if (my !== token || scope.disposed) return;
     clear(viewEl);

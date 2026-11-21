@@ -43,6 +43,7 @@ export function renderLogin(root, { onLoggedIn }) {
   const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'PIN\'ini gir');
   const card = h('div', { class: 'auth-card glass' });
   let last = null;
+  let fails = 0;
   try { last = localStorage.getItem('bk.lastPerson'); } catch {}
   const pad = pinPad({ onComplete: async (v) => {
     msg.textContent = 'Kutumuz açılıyor…';
@@ -55,10 +56,10 @@ export function renderLogin(root, { onLoggedIn }) {
     } catch (e) {
       card.classList.remove('is-busy');
       pad.shake();
-      msg.textContent = e.code === 'app/bad-pin' ? 'PIN hatalı, tekrar dene 🙈'
-        : e.code === 'app/offline' ? 'İnternet bağlantısı yok.'
-        : /admin-restricted|operation-not-allowed/.test(e.code || '') ? 'Firebase\'de "Anonim" giriş kapalı (kurulum adımı eksik).'
-        : errorMessage(e);
+      fails = e.code === 'app/bad-pin' ? fails + 1 : 0;
+      msg.textContent = e.code === 'app/bad-pin' ? (fails >= 3 ? e.message : 'PIN hatalı, tekrar dene 🙈')
+        : e.code?.startsWith('app/') ? e.message
+        : `${errorMessage(e)} (${e.code || 'bilinmeyen hata'})`;
     }
   } });
   add(card, brand(),

@@ -8,6 +8,7 @@ import { col, listen, query, where, orderBy, limit } from '../services/firestore
 import { isInviteLive } from '../services/games.js';
 import { gameById } from '../games/registry.js';
 import { questionOfDay } from '../utils/questions-data.js';
+import { on } from '../features.js';
 
 const STATUS_TR = { watchlist: 'İzlemek istediklerimiz', watching: 'İzliyoruz', watched: 'İzlediklerimiz' };
 
@@ -68,7 +69,7 @@ export default async function home(page, { scope }) {
   const cTask = card('#/tasks', 'tasks', 'Yaklaşan görev');
   const cMovie = card('#/movies', 'film', 'İzlenecek');
   const cGame = card('#/games', 'game', 'Oyun davetleri');
-  const cQ = card('#/games', 'sparkles', 'Günün sorusu', 'home-card--wide home-card--accent');
+  const cQ = card(on('games') ? '#/games' : '#/home', 'sparkles', 'Günün sorusu', 'home-card--wide home-card--accent');
   const muted = (t) => h('p', { class: 'muted' }, t);
 
   const drawMsg = () => {
@@ -79,8 +80,7 @@ export default async function home(page, { scope }) {
       h('small', { class: 'muted' }, typeof m.ts === 'number' ? `${dayLabel(m.ts)} ${formatTime(m.ts)}` : 'gönderiliyor…'),
       s.unreadMessages ? h('span', { class: 'pill pill--primary' }, `${s.unreadMessages} okunmamış`) : null);
   };
-  drawMsg();
-  scope.add(subscribe(drawMsg, ['recentMessages', 'unreadMessages']));
+  if (on('chat')) { drawMsg(); scope.add(subscribe(drawMsg, ['recentMessages', 'unreadMessages'])); }
 
   const drawGames = () => {
     const live = getState().invites.filter((i) => isInviteLive(i));
@@ -90,30 +90,28 @@ export default async function home(page, { scope }) {
       `${gameById(i.game)?.emoji || '🎮'} ${i.to === uid ? `${userName(i.from)} seni ${gameById(i.game)?.name} oynamaya çağırıyor` : `${gameById(i.game)?.name} daveti bekliyor`}`)),
       incoming.length ? h('span', { class: 'pill pill--primary' }, 'Yanıtla') : null);
   };
-  drawGames();
-  scope.add(subscribe(drawGames, ['invites']));
-  scope.interval(drawGames, 10000);
+  if (on('games')) { drawGames(); scope.add(subscribe(drawGames, ['invites'])); scope.interval(drawGames, 10000); }
 
   const fail = (c) => () => c.set(muted('Yüklenemedi. Bağlantını kontrol et.'));
-  scope.add(listen(query(col('memories'), orderBy('createdAt', 'desc'), limit(1)), ([m]) => {
+  if (on('memories')) scope.add(listen(query(col('memories'), orderBy('createdAt', 'desc'), limit(1)), ([m]) => {
     if (!m) return cMem.set(muted('İlk anınızı deftere yazın 📖'));
     cMem.set(h('p', { class: 'home-card__text' }, `${m.emoji || '💗'} ${m.title}`), h('small', { class: 'muted' }, formatISODate(m.date)));
   }, fail(cMem)));
 
-  scope.add(listen(query(col('tasks'), where('done', '==', false), orderBy('dueDate', 'asc'), limit(10)), (items) => {
+  if (on('tasks')) scope.add(listen(query(col('tasks'), where('done', '==', false), orderBy('dueDate', 'asc'), limit(10)), (items) => {
     const t = items.find((x) => x.dueDate) || items[0];
     if (!t) return cTask.set(muted('Bekleyen görev yok ✨'));
     cTask.set(h('p', { class: 'home-card__text' }, t.title), t.dueDate ? h('small', { class: `muted${dueLabel(t.dueDate).includes('gecikti') ? ' text-danger' : ''}` }, dueLabel(t.dueDate)) : h('small', { class: 'muted' }, 'Son tarih yok'));
   }, fail(cTask)));
 
-  scope.add(listen(query(col('movies'), where('status', 'in', ['watching', 'watchlist']), orderBy('createdAt', 'desc'), limit(10)), (items) => {
+  if (on('movies')) scope.add(listen(query(col('movies'), where('status', 'in', ['watching', 'watchlist']), orderBy('createdAt', 'desc'), limit(10)), (items) => {
     const m = items.find((x) => x.status === 'watching') || items[0];
     if (!m) return cMovie.set(muted('Listeye bir film ekleyin 🍿'));
     cMovie.set(h('p', { class: 'home-card__text' }, `${m.kind === 'dizi' ? '📺' : '🎬'} ${m.title}`), h('small', { class: 'muted' }, STATUS_TR[m.status]));
   }, fail(cMovie)));
 
-  questionOfDay().then((q) => cQ.set(h('p', { class: 'home-card__text home-card__quote' }, `“${q.text}”`), h('small', { class: 'muted' }, `${q.emoji} ${q.categoryName} · Soru Cevap oyununda birlikte cevaplayın`)))
+  questionOfDay().then((q) => cQ.set(h('p', { class: 'home-card__text home-card__quote' }, `“${q.text}”`), h('small', { class: 'muted' }, `${q.emoji} ${q.categoryName} · ${on('games') ? 'Soru Cevap oyununda birlikte cevaplayın' : 'Bugün birbirinize sorun 💬'}`)))
     .catch(() => cQ.set(muted('Soru yüklenemedi.')));
 
-  add(page, hero, presenceRow, h('div', { class: 'home-grid' }, cMsg.el, cGame.el, cMem.el, cTask.el, cMovie.el, cQ.el));
+  add(page, hero, presenceRow, h('div', { class: 'home-grid' }, on('chat') && cMsg.el, on('games') && cGame.el, on('memories') && cMem.el, on('tasks') && cTask.el, on('movies') && cMovie.el, cQ.el));
 }

@@ -27,9 +27,17 @@ export function watchAuth(cb) {
   return onAuthStateChanged(auth, (user) => cb(user));
 }
 
+const fail = (code, message) => Object.assign(new Error(message), { code });
+
 async function ensureDeviceId(forceNew = false) {
   if (forceNew && auth.currentUser) await signOut(auth);
-  if (!auth.currentUser) await signInAnonymously(auth);
+  if (!auth.currentUser) {
+    try { await signInAnonymously(auth); }
+    catch (e) {
+      if (/admin-restricted|operation-not-allowed/.test(e.code || '')) throw fail('app/anon-off', 'Firebase\'de Anonim giriş kapalı (Kurulum 1. adım).');
+      throw e;
+    }
+  }
   return auth.currentUser.uid;
 }
 
@@ -59,7 +67,8 @@ export async function loginWithPin(pin) {
     }
     const n = (current?.n || 0) + 1;
     const attempt = { pin, person, n };
-    await set(tryRef(), attempt); // her deneme sayılır; kurallar sayaç atlamaya izin vermez
+    try { await set(tryRef(), attempt); } // her deneme sayılır; kurallar sayaç atlamaya izin vermez
+    catch (e) { throw fail('app/rtdb-rules', 'Realtime Database kuralları yüklenmemiş (Kurulum 3. adım).'); }
     current = attempt;
     if (await canRead()) {
       // Firestore için de aynı doğrulama kaydı (iki veritabanının kuralları birbirini okuyamaz)
@@ -71,12 +80,13 @@ export async function loginWithPin(pin) {
         await ensureDeviceId(true);
         return loginWithPin(pin);
       }
-      await setDoc(fsRef, { pin, person, n: fn });
+      try { await setDoc(fsRef, { pin, person, n: fn }); }
+      catch (e) { throw fail('app/firestore-rules', 'Firestore kuralları yüklenmemiş (Kurulum 4. adım).'); }
       rememberPerson(person);
       return person;
     }
   }
-  throw Object.assign(new Error('PIN hatalı.'), { code: 'app/bad-pin' });
+  throw fail('app/bad-pin', 'PIN hatalı. (Doğru PIN\'i girdiğine eminsen: secrets/pins kaydını kontrol et — Kurulum 2. adım.)');
 }
 
 /** Çıkış: cihazın doğrulamasını bozar ve anonim oturumu kapatır. */

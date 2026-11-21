@@ -13,6 +13,7 @@ import { startNotifications, announce, systemNotify, allowed } from './services/
 import { subscribeInvites, isInviteLive, acceptInvite, cleanupOldGames } from './services/games.js';
 import { col, listen } from './services/firestore.js';
 import { renderLogin } from './pages/login.js';
+import { on } from './features.js';
 import { gameById } from './games/registry.js';
 import { lastSeenText } from './utils/dates.js';
 
@@ -92,17 +93,19 @@ function teardown() {
 }
 
 // ---------- Uygulama kabuğu ----------
-const NAV = [
+const NAV_ALL = [
   { path: '/home', label: 'Ana Sayfa', icon: 'home' },
-  { path: '/chat', label: 'Sohbet', icon: 'chat', badge: 'chat' },
-  { path: '/games', label: 'Oyunlar', icon: 'game', badge: 'games' },
-  { path: '/memories', label: 'Anılar', icon: 'book' },
-  { path: '/movies', label: 'Filmler', icon: 'film', extra: true },
-  { path: '/tasks', label: 'Görevler', icon: 'tasks', extra: true },
-  { path: '/vault', label: 'Kasa', icon: 'lock', extra: true },
-  { path: '/profile', label: 'Profil', icon: 'user', extra: true },
+  { path: '/chat', label: 'Sohbet', icon: 'chat', badge: 'chat', feature: 'chat' },
+  { path: '/games', label: 'Oyunlar', icon: 'game', badge: 'games', feature: 'games' },
+  { path: '/memories', label: 'Anılar', icon: 'book', feature: 'memories' },
+  { path: '/movies', label: 'Filmler', icon: 'film', extra: true, feature: 'movies' },
+  { path: '/tasks', label: 'Görevler', icon: 'tasks', extra: true, feature: 'tasks' },
+  { path: '/vault', label: 'Kasa', icon: 'lock', extra: true, feature: 'vault' },
+  { path: '/profile', label: 'Profil', icon: 'user' },
   { path: '/more', label: 'Daha', icon: 'menu', mobileOnly: true },
 ];
+// Kapalı bölümler menüde görünmez. Az bölüm açıkken "Daha" menüsüne gerek yok.
+const NAV = NAV_ALL.filter((n) => on(n.feature) && !(n.mobileOnly && !['movies', 'tasks', 'vault', 'notifications'].some(on)));
 
 function startApp() {
   teardown();
@@ -118,7 +121,7 @@ function startApp() {
     h('span', { class: 'partner-chip__avatar', 'aria-hidden': 'true' }, userEmoji(partnerUid), partnerDot),
     h('span', { class: 'partner-chip__text' }, h('span', { class: 'partner-chip__name' }, userName(partnerUid)), partnerSub));
   const bellBadge = h('span', { class: 'badge', hidden: true });
-  const bell = h('a', { class: 'icon-btn bell', href: '#/notifications', 'aria-label': 'Bildirimler', svg: icons.bell }, bellBadge);
+  const bell = on('notifications') ? h('a', { class: 'icon-btn bell', href: '#/notifications', 'aria-label': 'Bildirimler', svg: icons.bell }, bellBadge) : null;
   const offline = h('div', { class: 'offline-banner', role: 'status', hidden: true }, h('span', { svg: icons.wifiOff }), h('span', {}, 'Bağlantı yok — yeniden bağlanılıyor…'));
 
   const navBadges = {};
@@ -188,8 +191,8 @@ function startApp() {
   // Sohbet: okundu bilgileri + son mesajlar
   let firstMessages = true;
   let lastNotifiedTs = 0;
-  scope.add(subscribeReceipts((receipts) => { primeReceipts(receipts[uid]); setState({ receipts }); recountUnread(); }));
-  scope.add(subscribeRecent((list) => {
+  if (on('chat')) scope.add(subscribeReceipts((receipts) => { primeReceipts(receipts[uid]); setState({ receipts }); recountUnread(); }));
+  if (on('chat')) scope.add(subscribeRecent((list) => {
     setState({ recentMessages: list });
     const fromPartner = list.filter((m) => m.uid === partnerUid && typeof m.ts === 'number');
     const latest = fromPartner.at(-1);
@@ -208,12 +211,12 @@ function startApp() {
   }
 
   // Bildirimler
-  scope.add(startNotifications(uid, (n) => { if (n.type !== 'game_invite') announce(n); }));
+  if (on('notifications')) scope.add(startNotifications(uid, (n) => { if (n.type !== 'game_invite') announce(n); }));
 
   // Oyun davetleri
   const announced = new Set();
   let firstInvites = true;
-  scope.add(subscribeInvites((list) => {
+  if (on('games')) scope.add(subscribeInvites((list) => {
     setState({ invites: list });
     for (const inv of list) {
       const key = `${inv.id}:${inv.status}`;
@@ -255,7 +258,7 @@ function startApp() {
   // Otomatik kilit
   scope.add(watchAutoLock(() => Number(getState().prefs.lockAfter ?? 2), () => lockScreen()));
 
-  scope.timeout(() => cleanupOldGames(), 8000);
+  if (on('games')) scope.timeout(() => cleanupOldGames(), 8000);
 }
 
 // ---------- Service worker ----------

@@ -1,0 +1,13 @@
+// Adım adım yayın: hangi bölümlerin açık olduğu burada belirlenir.
+// Bir bölümü açmadan önce ona ait Firebase kuralları yüklenmiş olmalı (firebase/adimlar/ klasörü).
+// Giriş (PIN), Ana sayfa ve Profil her zaman açıktır.
+export const FEATURES = Object.freeze({
+  chat: false,          // Sohbet
+  memories: false,      // Anı defteri
+  movies: false,        // Film & dizi
+  tasks: false,         // Yapılacaklar
+  vault: false,         // Özel kasa
+  games: false,         // Oyun merkezi (7 oyun)
+  notifications: false, // Bildirimler
+});
+export const on = (name) => !name || FEATURES[name] === true;
