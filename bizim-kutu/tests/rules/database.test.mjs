@@ -114,18 +114,18 @@ test('skorlar yalnızca birer artar', async () => {
 
 test('PIN denemeleri: sayaç her denemede 1 artar, en fazla 10, silinemez; secrets okunamaz', async () => {
   const d = t.authenticatedContext('yeni').database();
-  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n: 3 }));
-  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n: 1 }));
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: Number('0000'), pinText: '0000', person: A, n: 3 }));
+  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: Number('0000'), pinText: '0000', person: A, n: 1 }));
   await assertFails(get(ref(d, 'chat/messages')));
-  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 1 }), 'sıfırlanamaz');
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 1 }), 'sıfırlanamaz');
   await assertFails(remove(ref(d, 'pinTry/yeni')), 'silinemez');
-  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 2 }));
+  await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 2 }));
   await assertSucceeds(get(ref(d, 'chat/messages')));
-  await assertFails(set(ref(d, 'pinTry/cihazCuma'), { pin: '0000', person: A, n: 2 }), 'başka cihaz');
+  await assertFails(set(ref(d, 'pinTry/cihazCuma'), { pin: Number('0000'), pinText: '0000', person: A, n: 2 }), 'başka cihaz');
   await assertFails(get(ref(d, 'secrets/pins')));
   await assertFails(get(ref(d, 'pinTry/cihazCuma')));
-  for (let n = 3; n <= 10; n++) await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: '0000', person: A, n }));
-  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: PINS[A], person: A, n: 11 }), '10 deneme sınırı');
+  for (let n = 3; n <= 10; n++) await assertSucceeds(set(ref(d, 'pinTry/yeni'), { pin: 0, pinText: '0000', person: A, n }));
+  await assertFails(set(ref(d, 'pinTry/yeni'), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 11 }), '10 deneme sınırı');
 });
 
 test('yanlış PIN\'li cihaz Cuma adına mesaj yazamaz', async () => {

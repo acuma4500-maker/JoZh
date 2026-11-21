@@ -116,15 +116,15 @@ test('couples/main dışındaki yollar kapalı', async () => {
 
 test('PIN kayıtları: herkes yalnızca kendi cihaz kaydını yazar, sayaç atlanamaz ve 10\'u geçemez', async () => {
   const yeni = t.authenticatedContext('yeniCihaz').firestore();
-  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '1111', person: A, n: 5 }), 'ilk deneme n=1 olmalı');
-  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '0000', person: A, n: 1 }));
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: Number('1111'), pinText: '1111', person: A, n: 5 }), 'ilk deneme n=1 olmalı');
+  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: Number('0000'), pinText: '0000', person: A, n: 1 }));
   await assertFails(getDoc(doc(yeni, p('memories', 'x'))), 'yanlış PIN → erişim yok');
-  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '1111', person: A, n: 1 }), 'sayaç sıfırlanamaz');
-  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: PINS[A], person: A, n: 2 }));
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: Number('1111'), pinText: '1111', person: A, n: 1 }), 'sayaç sıfırlanamaz');
+  await assertSucceeds(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 2 }));
   await assertSucceeds(getDoc(doc(yeni, p('memories', 'x'))), 'doğru PIN → erişim var');
-  await assertFails(setDoc(doc(yeni, 'pinTry/cihazCuma'), { pin: '0000', person: A, n: 2 }), 'başka cihazın kaydı');
+  await assertFails(setDoc(doc(yeni, 'pinTry/cihazCuma'), { pin: Number('0000'), pinText: '0000', person: A, n: 2 }), 'başka cihazın kaydı');
   await assertFails(deleteDoc(doc(yeni, 'pinTry/yeniCihaz')), 'silinip sayaç sıfırlanamaz');
-  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: '0000', person: A, n: 11 }));
+  await assertFails(setDoc(doc(yeni, 'pinTry/yeniCihaz'), { pin: Number('0000'), pinText: '0000', person: A, n: 11 }));
 });
 
 test('PIN\'ler (secrets) okunamaz ve yazılamaz', async () => {
@@ -134,6 +134,6 @@ test('PIN\'ler (secrets) okunamaz ve yazılamaz', async () => {
 
 test('Cuma\'nın PIN\'iyle İlayda olunamaz', async () => {
   const c = t.authenticatedContext('sahte').firestore();
-  await assertSucceeds(setDoc(doc(c, 'pinTry/sahte'), { pin: PINS[A], person: B, n: 1 }));
+  await assertSucceeds(setDoc(doc(c, 'pinTry/sahte'), { pin: Number(PINS[A]), pinText: PINS[A], person: B, n: 1 }));
   await assertFails(getDoc(doc(c, p('memories', 'x'))));
 });

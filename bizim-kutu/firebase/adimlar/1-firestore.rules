@@ -15,7 +15,8 @@ service cloud.firestore {
     function isCouple() {
       return signedIn() && exists(tryPath())
         && tryDoc().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
-        && tryDoc().pin == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person];
+        && (tryDoc().pin == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]
+            || tryDoc().pinText == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]);
     }
     function me() { return tryDoc().person; }
     function partner() {
@@ -38,8 +39,10 @@ service cloud.firestore {
     // ---- PIN denemeleri: her deneme sayılır, sayaç atlanamaz/sıfırlanamaz, cihaz başına en fazla 10 ----
     match /pinTry/{deviceId} {
       function validTry() {
-        return d().keys().hasOnly(['pin', 'person', 'n']) && d().keys().hasAll(['pin', 'person', 'n'])
-          && d().pin is string && d().pin.matches('^[0-9]{4}$')
+        // PIN hem sayı (0822 → 822) hem metin ("0822") olarak gönderilir; secrets/pins hangisiyle kaydedildiyse eşleşir.
+        return d().keys().hasOnly(['pin', 'pinText', 'person', 'n']) && d().keys().hasAll(['pin', 'pinText', 'person', 'n'])
+          && d().pin is int && d().pin >= 0 && d().pin <= 9999
+          && d().pinText is string && d().pinText.matches('^[0-9]{4}$')
           && d().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
           && d().n is int && d().n <= 10;
       }

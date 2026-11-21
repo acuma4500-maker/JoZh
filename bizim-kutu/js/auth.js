@@ -2,7 +2,8 @@
 //
 // Nasıl çalışır (kullanıcı hiçbir e-posta/parola görmez):
 //  1. Cihaz Firebase'e sessizce ANONİM olarak bağlanır (her cihazın kendi gizli kimliği olur).
-//  2. Girilen PIN, "pinTry/{cihazKimliği}" kaydına { pin, person, n } olarak yazılır.
+//  2. Girilen PIN, "pinTry/{cihazKimliği}" kaydına { pin (sayı), pinText (metin), person, n } olarak yazılır.
+//     Böylece secrets/pins'te PIN sayı (822) ya da metin ("0822") olarak kayıtlı olsa da eşleşir.
 //  3. Firebase güvenlik kuralları bu PIN'i, yalnızca sunucunun okuyabildiği "secrets/pins"
 //     kaydıyla karşılaştırır. Eşleşirse o cihaz Cuma'nın / İlayda'nın verilerine erişir,
 //     eşleşmezse hiçbir veriye erişemez.
@@ -66,7 +67,7 @@ export async function loginWithPin(pin) {
       current = null;
     }
     const n = (current?.n || 0) + 1;
-    const attempt = { pin, person, n };
+    const attempt = { pin: Number(pin), pinText: pin, person, n };
     try { await set(tryRef(), attempt); } // her deneme sayılır; kurallar sayaç atlamaya izin vermez
     catch (e) { throw fail('app/rtdb-rules', 'Realtime Database kuralları yüklenmemiş (Kurulum 3. adım).'); }
     current = attempt;
@@ -80,7 +81,7 @@ export async function loginWithPin(pin) {
         await ensureDeviceId(true);
         return loginWithPin(pin);
       }
-      try { await setDoc(fsRef, { pin, person, n: fn }); }
+      try { await setDoc(fsRef, { pin: Number(pin), pinText: pin, person, n: fn }); }
       catch (e) { throw fail('app/firestore-rules', 'Firestore kuralları yüklenmemiş (Kurulum 4. adım).'); }
       rememberPerson(person);
       return person;

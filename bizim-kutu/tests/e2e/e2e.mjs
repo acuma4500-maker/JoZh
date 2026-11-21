@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 
 const A = 'pt0Kmbc9rqdJekFyvA1wLItUnxw1', B = 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1';
-const PINS = { cuma: '1111', ilayda: '2222' }; // test PIN'leri (gerçekleri değil)
+const PINS = { cuma: '0111', ilayda: '2222' }; // test PIN'leri (gerçekleri değil)
 const PORT = 5174;
 const BASE = `http://127.0.0.1:${PORT}/?emulator`;
 const SHOTS = process.env.SHOTS_DIR || '';
@@ -29,11 +29,11 @@ async function seed() {
   // Temiz başlangıç + emülatöre test PIN'lerini (secrets/pins) yerleştir
   await fetch('http://127.0.0.1:9099/emulator/v1/projects/jozh-love/accounts', { method: 'DELETE' });
   await fetch('http://127.0.0.1:8080/emulator/v1/projects/jozh-love/databases/(default)/documents', { method: 'DELETE' });
-  const pins = { [A]: PINS.cuma, [B]: PINS.ilayda };
+  const pins = { [A]: Number(PINS.cuma), [B]: Number(PINS.ilayda) }; // konsoldaki gibi sayı
   await fetch('http://127.0.0.1:9000/.json?ns=jozh-love-default-rtdb', { method: 'PUT', headers: { Authorization: 'Bearer owner' }, body: JSON.stringify({ secrets: { pins } }) });
   const r = await fetch('http://127.0.0.1:8080/v1/projects/jozh-love/databases/(default)/documents/secrets/pins', {
     method: 'PATCH', headers: { Authorization: 'Bearer owner', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: { [A]: { stringValue: PINS.cuma }, [B]: { stringValue: PINS.ilayda } } }),
+    body: JSON.stringify({ fields: { [A]: { integerValue: String(Number(PINS.cuma)) }, [B]: { stringValue: PINS.ilayda } } }),
   });
   if (!r.ok) throw new Error('secrets yazılamadı: ' + await r.text());
 }
