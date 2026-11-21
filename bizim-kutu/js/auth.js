@@ -90,6 +90,9 @@ export async function loginWithPin(pin) {
       }
       try { await setDoc(fsRef, { pin: Number(pin), pinText: pin, person, n: fn }); }
       catch (e) { throw fail('app/firestore-rules', 'Firestore kuralları yüklenmemiş (Kurulum 4. adım).'); }
+      // Firestore tarafında da PIN eşleşiyor mu? (Firestore'daki secrets/pins ayrı bir kayıttır)
+      try { await getDoc(doc(db, 'couples', 'main')); }
+      catch (e) { throw fail('app/firestore-secrets', 'Firestore\'daki secrets/pins PIN\'i eşleşmiyor. Firestore → Data → secrets → pins değerlerini kontrol et (tırnak işareti olmamalı).'); }
       rememberPerson(person);
       return person;
     }
