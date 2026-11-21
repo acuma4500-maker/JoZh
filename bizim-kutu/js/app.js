@@ -1,3 +1,4 @@
+import './viewport.js';
 // Bizim Kutu — uygulama giriş noktası.
 import { partnerOf, userName, userEmoji } from './constants.js';
 import { watchAuth, logoutDevice } from './auth.js';

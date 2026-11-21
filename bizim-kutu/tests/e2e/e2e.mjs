@@ -93,7 +93,9 @@ try {
   });
 
   await step('Ana sayfa: birliktelik sayacı (22.08.2026\'dan beri gün) ve canlı saniye', async () => {
-    const expected = Math.round((Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - Date.UTC(2026, 7, 22)) / 86400000);
+    // Tarayıcı Europe/Istanbul saat diliminde çalışıyor; beklenen değeri de aynı dilimde hesapla
+    const [y, m, d] = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Istanbul' }).format(new Date()).split('-').map(Number);
+    const expected = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2026, 7, 22)) / 86400000);
     const days = await cuma.page.locator('.counter-days__num').innerText();
     assert.equal(Number(days.replace(/\D/g, '')), expected);
     const s1 = await cuma.page.locator('.tile b').nth(2).innerText();

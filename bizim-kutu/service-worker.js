@@ -9,7 +9,7 @@ const CACHE = `bizim-kutu-${VERSION}`;
 const SHELL = [
   './', './index.html', './manifest.json',
   './css/variables.css', './css/global.css', './css/components.css', './css/animations.css', './css/responsive.css',
-  './js/app.js', './js/features.js', './js/auth.js', './js/router.js', './js/state.js', './js/constants.js', './js/firebase-config.js', './js/vendor/firebase.js',
+  './js/app.js', './js/features.js', './js/viewport.js', './js/auth.js', './js/router.js', './js/state.js', './js/constants.js', './js/firebase-config.js', './js/vendor/firebase.js',
   './js/services/firestore.js', './js/services/realtime.js', './js/services/presence.js', './js/services/notifications.js',
   './js/services/games.js', './js/services/crypto.js', './js/services/keystore.js',
   './js/pages/login.js', './js/pages/home.js', './js/pages/chat.js', './js/pages/memories.js', './js/pages/movies.js', './js/pages/tasks.js',

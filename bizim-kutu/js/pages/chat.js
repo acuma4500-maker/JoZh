@@ -123,6 +123,14 @@ export default async function chat(page, { scope }) {
     if (scroller.scrollTop < 40 && hasMore && !loadingOlder && msgs.size >= PAGE) loadOlder();
   }, { passive: true });
   scope.on(document, 'visibilitychange', markReadSoon);
+  // Klavye açılıp kapanınca (alan küçülüp büyüyünce) en alttaysa en alta yapışık kal.
+  let stuck = true;
+  scope.on(scroller, 'scroll', () => { stuck = nearBottom(); }, { passive: true });
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(() => { if (stuck) scroller.scrollTop = scroller.scrollHeight; });
+    ro.observe(scroller);
+    scope.add(() => ro.disconnect());
+  }
 
   async function loadOlder() {
     if (!oldestKey || loadingOlder) return;

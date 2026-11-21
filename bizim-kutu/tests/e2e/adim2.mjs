@@ -132,6 +132,34 @@ try {
     assert.equal(await cuma.page.locator('.composer__send').isDisabled(), true);
   });
 
+  await step('Klavye düzeni: üst bar sabit, klavye açıkken alt menü gizli, yazı kutusu görünür', async () => {
+    await go(cuma.page, '#/chat');
+    await cuma.page.locator('.composer__input').waitFor();
+    const top0 = (await cuma.page.locator('.topbar').boundingBox()).y;
+    // Klavyeyi taklit: görünen alan 400px'e düşer
+    await cuma.page.evaluate(() => { window.__vvTest = { height: 400 }; });
+    await cuma.page.locator('.composer__input').focus();
+    await cuma.page.waitForTimeout(500);
+    const top1 = (await cuma.page.locator('.topbar').boundingBox()).y;
+    assert.equal(top1, top0, 'üst bar yerinde kalmalı');
+    assert.equal(await cuma.page.locator('.tabbar').isVisible(), false, 'alt menü gizlenmeli');
+    const comp = await cuma.page.locator('.composer').boundingBox();
+    assert.ok(comp.y + comp.height <= 400 + 1, `yazı kutusu görünen alanda olmalı (${comp.y + comp.height})`);
+    await shot(cuma.page, 'kb-open-chat');
+    await cuma.page.evaluate(() => { delete window.__vvTest; document.activeElement.blur(); });
+    await cuma.page.waitForTimeout(600);
+    assert.equal(await cuma.page.locator('.tabbar').isVisible(), true);
+    await shot(cuma.page, 'kb-closed-chat');
+    // sayfa (belge) hiç kaymamalı; yalnızca orta alan kayar
+    assert.equal(await cuma.page.evaluate(() => document.scrollingElement.scrollHeight <= innerHeight + 1), true, 'belge kaymamalı');
+    await go(cuma.page, '#/home');
+    await cuma.page.locator('.hero').waitFor();
+    await cuma.page.waitForTimeout(300);
+    const active = await cuma.page.locator('.tab.is-active .tab__label').allInnerTexts();
+    assert.deepEqual(active, ['Ana Sayfa'], 'yalnızca Ana Sayfa seçili olmalı');
+    await shot(cuma.page, 'home-layout');
+  });
+
   await step('Adım 2: profil kaydı (takma ad) ve çıkış', async () => {
     await go(cuma.page, '#/profile');
     await cuma.page.locator('.settings input.input').first().fill('Ayıcık');

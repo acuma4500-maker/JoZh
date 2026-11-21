@@ -1,8 +1,8 @@
 /* Temel stiller, tipografi ve uygulama kabuğu */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; overflow: hidden; overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 body {
-  margin: 0; min-height: 100vh; min-height: 100dvh;
+  margin: 0; height: 100%; overflow: hidden; position: fixed; inset: 0; width: 100%;
   font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--text);
   background-color: var(--background);
   background-image:
@@ -36,15 +36,20 @@ p { margin: 0; }
 [hidden] { display: none !important; }
 
 /* ---------- Splash ---------- */
-.splash { min-height: 100dvh; display: grid; place-content: center; justify-items: center; gap: 16px; }
+.splash { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 16px; }
 .splash__logo svg { width: 84px; height: 84px; animation: heartbeat 1.6s var(--ease) infinite; }
 .splash__text { color: var(--muted); font-weight: 600; }
 
 /* ---------- Kabuk ---------- */
-.shell { min-height: 100dvh; padding-top: calc(var(--topbar-h) + var(--safe-top)); padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom)); }
+/* Uygulama kutusu, ekranın o an GÖRÜNEN alanına (klavye hariç) sabitlenir.
+   --app-h ve --vv-top, js/viewport.js tarafından visualViewport'a göre güncellenir. */
+.shell {
+  position: fixed; left: 0; right: 0; top: var(--vv-top, 0px); height: var(--app-h, 100dvh);
+  display: flex; flex-direction: column; overflow: hidden;
+}
 .glass { background: var(--glass); -webkit-backdrop-filter: saturate(160%) blur(18px); backdrop-filter: saturate(160%) blur(18px); border-color: var(--glass-border); }
 .topbar {
-  position: fixed; inset: 0 0 auto 0; z-index: 30; height: calc(var(--topbar-h) + var(--safe-top)); padding: var(--safe-top) 12px 0;
+  position: relative; flex: none; order: 1; z-index: 30; height: calc(var(--topbar-h) + var(--safe-top)); padding: var(--safe-top) 12px 0;
   display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--glass-border);
 }
 .topbar__brand svg { width: 36px; height: 36px; }
@@ -62,11 +67,11 @@ p { margin: 0; }
 .bell { position: relative; }
 .badge { position: absolute; top: -4px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--danger); color: #fff; font-size: .68rem; font-weight: 800; display: grid; place-items: center; border: 2px solid var(--surface); line-height: 1; }
 
-.offline-banner { position: fixed; z-index: 29; left: 50%; transform: translateX(-50%); top: calc(var(--topbar-h) + var(--safe-top) + 8px); display: flex; gap: 8px; align-items: center; padding: 8px 14px; border-radius: var(--r-pill); background: var(--warn-bg); color: var(--warn-ink); font-weight: 700; font-size: .85rem; box-shadow: var(--shadow-md); }
+.offline-banner { position: absolute; z-index: 29; left: 50%; transform: translateX(-50%); top: calc(var(--topbar-h) + var(--safe-top) + 8px); display: flex; gap: 8px; align-items: center; padding: 8px 14px; border-radius: var(--r-pill); background: var(--warn-bg); color: var(--warn-ink); font-weight: 700; font-size: .85rem; box-shadow: var(--shadow-md); }
 .offline-banner svg { width: 18px; height: 18px; }
 
 .tabbar {
-  position: fixed; inset: auto 0 0 0; z-index: 30; height: calc(var(--tabbar-h) + var(--safe-bottom)); padding: 6px 6px var(--safe-bottom);
+  position: relative; flex: none; order: 3; z-index: 30; height: calc(var(--tabbar-h) + var(--safe-bottom)); padding: 6px 6px var(--safe-bottom);
   display: flex; justify-content: space-around; align-items: stretch; border-top: 1px solid var(--glass-border);
 }
 .tabbar__brand { display: none; }
@@ -78,12 +83,20 @@ p { margin: 0; }
 .tab.is-active .tab__icon { background: var(--primary-soft); transform: translateY(-1px); }
 .tab--extra { display: none; }
 
-.view { max-width: 980px; margin: 0 auto; padding: 16px 16px 32px; outline: none; }
+/* Yalnızca orta alan kayar; üst bar ve alt menü yerinde kalır. */
+.view { order: 2; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 16px 16px 32px; outline: none; }
+.view > .page, .view > .page-loading, .view > .empty { max-width: 980px; margin-left: auto; margin-right: auto; }
+/* Klavye açıkken alt menü gizlenir; içerik klavyenin hemen üstüne kadar uzanır. */
+@media (max-width: 899px) {
+  .kb-open .tabbar { display: none; }
+  .kb-open .view { padding-bottom: 8px; }
+}
 .page { display: grid; gap: 16px; outline: none; }
 .page-loading { min-height: 40vh; display: grid; place-items: center; }
 .heart-loader { display: inline-block; color: var(--primary); font-size: 34px; animation: heartbeat 1.2s var(--ease) infinite; }
 .heart-loader.small { font-size: 18px; }
 
 /* Sohbet gibi tam yükseklikli sayfalar */
-.shell--full .view { padding-bottom: 0; height: calc(100dvh - var(--topbar-h) - var(--tabbar-h) - var(--safe-top) - var(--safe-bottom)); }
+.shell--full .view { padding-bottom: 0; overflow: hidden; display: flex; flex-direction: column; }
+.shell--full .view > .page { flex: 1; min-height: 0; width: 100%; }
 .shell--full .page { height: 100%; }
