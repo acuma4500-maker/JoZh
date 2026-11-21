@@ -2,7 +2,7 @@
 // Bir bölümü açmadan önce ona ait Firebase kuralları yüklenmiş olmalı (firebase/adimlar/ klasörü).
 // Giriş (PIN), Ana sayfa ve Profil her zaman açıktır.
 export const FEATURES = Object.freeze({
-  chat: false,          // Sohbet
+  chat: true,           // Sohbet (2. adım)
   memories: false,      // Anı defteri
   movies: false,        // Film & dizi
   tasks: false,         // Yapılacaklar
