@@ -1,7 +1,7 @@
 import test, { before, after, beforeEach } from 'node:test';
 import { assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
 import { doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { env, A, B, X, DEV, PINS, seedFirestore } from './setup.mjs';
+import { env, A, B, X, DEV, PINS, VAULT_PIN, seedFirestore } from './setup.mjs';
 
 let t;
 before(async () => { t = await env(); });
@@ -65,17 +65,37 @@ test('görev: tamamlayan kişi ben olmalıyım', async () => {
   await assertFails(setDoc(doc(fs(A), p('tasks', 't2')), { ...task, done: true }));
 });
 
-test('kasa: yalnızca şifreli alanlar kabul edilir', async () => {
-  const note = { v: 1, iv: 'AAAAAAAAAAAAAAAA', ct: 'c2lmcmVsaQ==', createdBy: A, createdAt: serverTimestamp(), updatedBy: A, updatedAt: serverTimestamp() };
-  await assertSucceeds(setDoc(doc(fs(A), p('vaultNotes', 'n1')), note));
-  await assertFails(setDoc(doc(fs(A), p('vaultNotes', 'n2')), { ...note, title: 'düz metin başlık' }));
-  await assertFails(setDoc(doc(fs(A), p('vaultNotes', 'n3')), { ...note, body: 'düz metin' }));
+test('kasa: yalnızca kasa PIN\'i doğrulanmış cihaz okur/yazar ve yalnızca şifreli alanlar kabul edilir', async () => {
+  const note = (u) => ({ v: 1, iv: 'AAAAAAAAAAAAAAAA', ct: 'c2lmcmVsaQ==', createdBy: u, createdAt: serverTimestamp(), updatedBy: u, updatedAt: serverTimestamp() });
+  await assertSucceeds(setDoc(doc(fs(A), p('vaultNotes', 'n1')), note(A)));
+  await assertSucceeds(getDoc(doc(fs(A), p('vaultNotes', 'n1'))));
+  await assertFails(getDoc(doc(fs(B), p('vaultNotes', 'n1'))), 'kasa PIN\'i doğrulanmamış cihaz okuyamaz');
+  await assertFails(setDoc(doc(fs(B), p('vaultNotes', 'n2')), note(B)));
+  await assertFails(getDocs(collection(fs(B), p('vaultNotes'))));
   await assertFails(getDoc(doc(fs(X), p('vaultNotes', 'n1'))));
+  await assertFails(setDoc(doc(fs(A), p('vaultNotes', 'n3')), { ...note(A), title: 'düz metin başlık' }));
   const cfg = { v: 1, salt: 'MDEyMzQ1Njc4OWFiY2RlZg==', iterations: 600000, check: { iv: 'AAAA', ct: 'BBBB' }, createdBy: A, createdAt: serverTimestamp(), updatedBy: A, updatedAt: serverTimestamp() };
   await assertSucceeds(setDoc(doc(fs(A), p('vault', 'config')), cfg));
+  await assertFails(getDoc(doc(fs(B), p('vault', 'config'))));
   await assertFails(setDoc(doc(fs(A), p('vault', 'other')), cfg));
-  await assertFails(setDoc(doc(fs(A), p('vault', 'config')), { ...cfg, pin: '1234' }, { merge: true }));
-  await assertFails(deleteDoc(doc(fs(B), p('vault', 'config'))));
+  await assertFails(deleteDoc(doc(fs(A), p('vault', 'config'))));
+});
+
+test('kasa PIN denemeleri: doğru PIN açar, yanlışı açmaz, sayaç atlanamaz, 10\'u geçemez, silinemez', async () => {
+  const b = fs(B);
+  const t = (pin, n) => ({ pin: Number(pin), pinText: pin, n, at: serverTimestamp() });
+  await assertFails(setDoc(doc(b, `vaultTry/${DEV[B]}`), t('0000', 3)), 'ilk deneme n=1 olmalı');
+  await assertSucceeds(setDoc(doc(b, `vaultTry/${DEV[B]}`), t('0000', 1)));
+  await assertFails(getDoc(doc(b, p('vaultNotes', 'x'))), 'yanlış kasa PIN\'i');
+  await assertFails(setDoc(doc(b, `vaultTry/${DEV[B]}`), t(VAULT_PIN, 1)), '10 dk dolmadan sayaç sıfırlanamaz');
+  await assertSucceeds(setDoc(doc(b, `vaultTry/${DEV[B]}`), t(VAULT_PIN, 2)));
+  await assertSucceeds(getDocs(collection(b, p('vaultNotes'))), 'doğru kasa PIN\'i');
+  await assertFails(setDoc(doc(b, `vaultTry/${DEV[A]}`), t(VAULT_PIN, 2)), 'başka cihazın kaydı');
+  await assertFails(deleteDoc(doc(b, `vaultTry/${DEV[B]}`)));
+  for (let n = 3; n <= 10; n++) await assertSucceeds(setDoc(doc(b, `vaultTry/${DEV[B]}`), t('0000', n)));
+  await assertFails(setDoc(doc(b, `vaultTry/${DEV[B]}`), t(VAULT_PIN, 11)), '10 deneme sınırı');
+  await assertFails(setDoc(doc(b, `vaultTry/${DEV[B]}`), { pin: 1, pinText: '0001', n: 11, at: Timestamp.fromDate(new Date(2020, 0, 1)) }), 'istemci saati kullanılamaz');
+  await assertFails(setDoc(doc(fs(X), `vaultTry/${DEV[X]}`), t(VAULT_PIN, 1)), 'giriş PIN\'i yanlış cihaz kasa denemesi yapamaz');
 });
 
 test('bildirimler: yalnızca partnere gönderilir, yalnızca alıcı okur ve okundu yapar', async () => {

@@ -1,13 +1,13 @@
-// Özel Kasamız 🔐 — uçtan uca şifreli ortak notlar.
-// Güvenlik modeli (README'de ayrıntılı):
-//  * Notlar, ikinizin ortak bildiği güçlü KASA PAROLASINDAN türetilen anahtarla bu cihazda şifrelenir.
-//    Firestore'da yalnızca şifreli veri bulunur; Firebase yöneticisi, veritabanı sızıntısı veya
-//    çalınan bir Firebase oturumu bile notları okuyamaz.
-//  * 4 haneli kasa PIN'i tek başına şifreleme sırrı OLAMAZ (10.000 olasılık saniyeler içinde denenir).
-//    Bu yüzden PIN yalnızca "bu cihazda hızlı açma" içindir: parola ile bir kez açtıktan sonra
-//    dışa aktarılamaz anahtar bu cihazın IndexedDB'sinde saklanır ve PIN ile kilidi açılır.
-//    3 hatalı PIN denemesinde cihazdaki anahtar silinir.
-import { getState } from '../state.js';
+// Özel Kasamız 🔐 — sabit 4 haneli kasa PIN'i ile açılan, şifreli ortak notlar.
+// Güvenlik modeli:
+//  * Kasa PIN'i kodda YOKTUR; Firestore'daki secrets/pins belgesinin "vault" alanındadır (istemci okuyamaz).
+//  * Girilen PIN vaultTry/{cihaz} kaydına yazılır; güvenlik kuralları onu secrets ile karşılaştırır.
+//    Eşleşmezse kasa yapılandırması ve notlar OKUNAMAZ (telefon girişli olsa bile).
+//  * Deneme sınırı: cihaz başına 10 dakikada en fazla 10 deneme (kurallar zorlar).
+//  * Doğru PIN'den sonra sunucu erişimi 15 dakika geçerlidir; ekranda kasa 3 dk hareketsizlikte kilitlenir.
+//  * Notlar ayrıca PIN'den türetilen anahtarla (PBKDF2 600.000 tur + AES-GCM) şifrelenir; Firebase
+//    Console'da düz metin görünmez. 4 haneli PIN'den türetilen anahtar, güçlü bir parolaya göre zayıftır.
+import { getState, serverNow } from '../state.js';
 import { userName } from '../constants.js';
 import { h, clear, vibrate, sleep, fill, add } from '../utils/helpers.js';
 import { icons } from '../utils/icons.js';
@@ -15,23 +15,47 @@ import { toast, confirmDialog, emptyState, openModal, field, counted, errorMessa
 import { relativeTime } from '../utils/dates.js';
 import { LIMITS, validateText, isPin } from '../utils/validation.js';
 import { col, docRef, listen, query, orderBy, limit } from '../services/firestore.js';
-import { doc, getDoc, setDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch } from '../vendor/firebase.js';
-import { db } from '../firebase-config.js';
-import { createVaultConfig, unlockVault, encryptJSON, decryptJSON, passphraseStrength, pbkdf2Hex, toB64, randomBytes, safeEqual, VAULT_CHECK } from '../services/crypto.js';
-import { keyGet, keySet, keyDel } from '../services/keystore.js';
+import { doc, getDoc, getDocs, setDoc, deleteDoc, serverTimestamp, writeBatch } from '../vendor/firebase.js';
+import { db, auth } from '../firebase-config.js';
+import { createVaultConfig, unlockVault, encryptJSON, decryptJSON } from '../services/crypto.js';
 
 const AUTO_LOCK_MS = 3 * 60 * 1000;
-const QUICK_MAX_FAILS = 3;
+export const VAULT_MAX_TRIES = 10;
+export const VAULT_WINDOW_MS = 10 * 60 * 1000;
 const configRef = () => docRef('vault', 'config');
+
+/** Kasa PIN'ini sunucuda doğrular. Döner: { ok, config } | { ok:false, remaining } | { locked, waitMin } */
+async function verifyVaultPin(pin) {
+  const dev = auth.currentUser?.uid;
+  if (!dev) throw new Error('Oturum bulunamadı.');
+  const ref = doc(db, 'vaultTry', dev);
+  const prevSnap = await getDoc(ref).catch(() => null);
+  const prev = prevSnap?.exists() ? prevSnap.data() : null;
+  const prevAt = prev?.at?.toMillis?.() || 0;
+  const windowOver = serverNow() - prevAt > VAULT_WINDOW_MS + 15000; // küçük saat farkı payı
+  let n = !prev ? 1 : windowOver ? 1 : (prev.n || 0) + 1;
+  if (n > VAULT_MAX_TRIES) return { locked: true, waitMin: Math.max(1, Math.ceil((prevAt + VAULT_WINDOW_MS - serverNow()) / 60000)) };
+  const write = (k) => setDoc(ref, { pin: Number(pin), pinText: pin, n: k, at: serverTimestamp() });
+  try { await write(n); }
+  catch {
+    // Sayaç sıfırlama zamanı henüz gelmemiş olabilir: normal artışla dene
+    n = (prev?.n || 0) + 1;
+    if (n > VAULT_MAX_TRIES) return { locked: true, waitMin: 10 };
+    await write(n);
+  }
+  try {
+    const c = await getDoc(configRef());
+    return { ok: true, config: c.exists() ? c.data() : null };
+  } catch { return { ok: false, remaining: VAULT_MAX_TRIES - n }; }
+}
 
 export default async function vault(page, { scope }) {
   const { uid } = getState();
   let key = null;           // bellekteki anahtar (yalnızca kasa açıkken)
-  let config = null;
   let notesUnsub = null;
   let idleTimer = null;
   const body = h('div', { class: 'vault' });
-  add(page, 
+  add(page,
     h('div', { class: 'page-head' }, h('div', {}, h('h2', { class: 'page-title' }, 'Özel Kasamız 🔐'), h('p', { class: 'page-sub' }, 'Sadece ikimizin okuyabileceği notlar.'))),
     body);
 
@@ -43,147 +67,71 @@ export default async function vault(page, { scope }) {
   };
   scope.add(() => { key = null; notesUnsub?.(); clearTimeout(idleTimer); });
 
-  // Kasa yapılandırması değişirse (ör. parola değişti) kilitle.
-  fill(body, skeletonList(1));
-  scope.add(onSnapshot(configRef(), (snap) => {
-    const next = snap.exists() ? snap.data() : null;
-    const changed = config && next && next.salt !== config.salt;
-    config = next;
-    if (!config) { key = null; renderSetup(); return; }
-    if (changed) { lock('Kasa parolası değiştirildi; yeni parolayla aç.'); return; }
-    if (!key) renderLocked();
-  }, (e) => { fill(body, emptyState({ emoji: '🔒', title: 'Kasa yüklenemedi', text: errorMessage(e) })); }));
-
   // Hareketsizlikte otomatik kilit
   const resetIdle = () => { if (!key) return; clearTimeout(idleTimer); idleTimer = setTimeout(() => lock('Kasa hareketsizlik nedeniyle kilitlendi 🔒'), AUTO_LOCK_MS); };
   ['pointerdown', 'keydown', 'scroll'].forEach((ev) => scope.on(document, ev, resetIdle, { passive: true }));
   scope.on(document, 'visibilitychange', () => { if (document.visibilityState === 'hidden' && key) lock(); });
 
-  // ---------------- Kurulum ----------------
-  function renderSetup() {
-    const p1 = h('input', { class: 'input', type: 'password', autocomplete: 'new-password', placeholder: 'En az 10 karakter' });
-    const p2 = h('input', { class: 'input', type: 'password', autocomplete: 'new-password', placeholder: 'Tekrar yaz' });
-    const meter = h('div', { class: 'meter' }, h('span', {}));
-    const meterLabel = h('small', { class: 'muted' }, 'Parola gücü');
-    p1.addEventListener('input', () => {
-      const s = passphraseStrength(p1.value);
-      meter.firstChild.style.width = `${Math.min(100, s.bits)}%`;
-      meter.dataset.level = s.ok ? (s.bits >= 70 ? 'high' : 'ok') : 'low';
-      meterLabel.textContent = p1.value ? `${s.label} (~${s.bits} bit)` : 'Parola gücü';
-    });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const btn = h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, 'Kasayı oluştur');
-    fill(body, h('form', { class: 'card vault-setup', onsubmit: async (e) => {
-      e.preventDefault();
-      err.textContent = '';
-      const s = passphraseStrength(p1.value);
-      if (!s.ok) { err.textContent = 'Daha güçlü bir parola seçin: en az 10 karakter; harf, rakam ve sembol karışımı. Örn. bir cümle: "İlkKahvemiz@Moda2026"'; return; }
-      if (p1.value !== p2.value) { err.textContent = 'Parolalar eşleşmiyor.'; return; }
-      setLoading(btn, true, 'Anahtar oluşturuluyor…');
-      try {
-        const existing = await getDoc(configRef());
-        if (existing.exists()) { toast('Kasa az önce oluşturulmuş; ortak parolayla açın.'); return; }
-        const res = await createVaultConfig(p1.value);
-        await setDoc(configRef(), { ...res.config, createdBy: uid, createdAt: serverTimestamp(), updatedBy: uid, updatedAt: serverTimestamp() });
-        p1.value = p2.value = '';
-        await openWith(res.key, true);
-      } catch (e2) { err.textContent = errorMessage(e2); setLoading(btn, false); }
-    } },
-      h('div', { class: 'vault-illu', 'aria-hidden': 'true' }, '🔐'),
-      h('h3', {}, 'Kasanızı kuralım'),
-      h('p', {}, 'İkinizin birlikte belirleyeceği güçlü bir KASA PAROLASI seçin. Notlar bu parolayla cihazınızda şifrelenir; sunucuya yalnızca şifreli veri gider.'),
-      h('div', { class: 'notice notice--warn' }, h('strong', {}, 'Önemli: '), 'Parolayı unutursanız notlar kurtarılamaz. Kimse — biz dahil — sıfırlayamaz. Parolayı sevgilinle yüz yüze paylaş, mesajla gönderme.'),
-      field('Kasa parolası', p1), meter, meterLabel, field('Parolayı onayla', p2), err, btn));
-  }
-
-  // ---------------- Kilitli ----------------
-  async function renderLocked() {
-    const quick = await keyGet(`vault:${uid}`).catch(() => null);
-    const usable = quick && quick.salt === config?.salt && quick.key;
-    if (key || scope.disposed) return;
-    clear(body);
+  // ---------------- Kilitli: kasa PIN'i ----------------
+  function renderLocked() {
     const lockIcon = h('div', { class: 'vault-lock', 'aria-hidden': 'true', svg: icons.lock });
-    if (usable) {
-      const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'Kasa PIN\'ini gir');
-      const pad = pinEntry(async (pin) => {
-        const ok = safeEqual(await pbkdf2Hex(pin, quick.pinSalt, quick.iter), quick.pinHash);
-        if (!ok) {
-          quick.fails = (quick.fails || 0) + 1;
-          vibrate([30, 40, 30]);
-          if (quick.fails >= QUICK_MAX_FAILS) {
-            await keyDel(`vault:${uid}`);
-            toast('PIN 3 kez hatalı girildi; bu cihazdaki hızlı açma kaldırıldı. Kasa parolasıyla aç.', { type: 'error', duration: 6000 });
-            renderLocked(); return false;
-          }
-          await keySet(`vault:${uid}`, quick);
-          msg.textContent = `Hatalı PIN. ${QUICK_MAX_FAILS - quick.fails} hakkın kaldı.`;
-          return false;
+    const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'Kasa PIN\'ini gir');
+    const pad = pinEntry(async (pin) => {
+      msg.textContent = 'Kontrol ediliyor…';
+      try {
+        const r = await verifyVaultPin(pin);
+        if (r.locked) { msg.textContent = `Çok fazla deneme. ${r.waitMin} dakika sonra tekrar dene.`; vibrate([30, 40, 30]); return false; }
+        if (!r.ok) { msg.textContent = r.remaining > 0 ? `PIN hatalı. ${r.remaining} deneme hakkın kaldı.` : 'PIN hatalı. Deneme hakkın bitti, 10 dakika sonra tekrar dene.'; vibrate([30, 40, 30]); return false; }
+        msg.textContent = 'Kasa açılıyor…';
+        let k;
+        if (!r.config) {
+          // İlk açılış: kasa bu PIN ile oluşturulur
+          const res = await createVaultConfig(pin);
+          await setDoc(configRef(), { ...res.config, createdBy: uid, createdAt: serverTimestamp(), updatedBy: uid, updatedAt: serverTimestamp() });
+          k = res.key;
+        } else {
+          k = await unlockVault(pin, r.config);
+          if (!k) { renderMismatch(pin); return true; }
         }
-        try {
-          const chk = await decryptJSON(quick.key, config.check, 'check');
-          if (chk?.check !== VAULT_CHECK) throw new Error('check');
-        } catch { await keyDel(`vault:${uid}`); toast('Cihazdaki anahtar geçersiz; parolayla aç.', { type: 'error' }); renderLocked(); return false; }
-        quick.fails = 0; await keySet(`vault:${uid}`, quick);
-        await openWith(quick.key, false, lockIcon);
+        lockIcon.innerHTML = icons.unlock; lockIcon.classList.add('is-opening');
+        await sleep(450);
+        openWith(k);
         return true;
-      });
-      add(body, h('div', { class: 'card vault-locked' }, lockIcon, h('h3', {}, 'Kasa kilitli'), msg, pad,
-        h('button', { class: 'link-btn', type: 'button', onclick: () => renderPassphrase(lockIcon) }, 'Kasa parolasıyla aç')));
-      return;
-    }
-    renderPassphrase(lockIcon);
+      } catch (e) { msg.textContent = errorMessage(e); return false; }
+    });
+    fill(body, h('div', { class: 'card vault-locked' }, lockIcon, h('h3', {}, 'Kasa kilitli'), msg, pad,
+      h('p', { class: 'muted small' }, 'Kasa 3 dakika işlem yapılmazsa ve uygulamadan çıkınca kilitlenir.')));
   }
 
-  function renderPassphrase(lockIcon) {
-    const pass = h('input', { class: 'input', type: 'password', autocomplete: 'current-password', placeholder: 'Ortak kasa parolası', 'aria-label': 'Kasa parolası' });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const btn = h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, 'Kilidi aç');
-    fill(body, h('form', { class: 'card vault-locked', onsubmit: async (e) => {
-      e.preventDefault();
-      if (!pass.value) { err.textContent = 'Parolayı yaz.'; return; }
-      setLoading(btn, true, 'Açılıyor…');
-      await sleep(30);
-      const k = await unlockVault(pass.value, config);
-      pass.value = '';
-      if (!k) { err.textContent = 'Parola hatalı.'; setLoading(btn, false); vibrate([30, 40, 30]); return; }
-      await openWith(k, true, lockIcon);
-    } }, lockIcon, h('h3', {}, 'Kasa kilitli'), h('p', { class: 'muted' }, 'Notları görmek için ortak kasa parolasını gir.'), pass, err, btn));
-    requestAnimationFrame(() => pass.focus());
+  /** Kasa daha önce farklı bir şifreyle kurulmuşsa: sıfırlama seçeneği. */
+  function renderMismatch(pin) {
+    fill(body, h('div', { class: 'card vault-locked' },
+      h('div', { class: 'vault-illu', 'aria-hidden': 'true' }, '🔁'),
+      h('h3', {}, 'Kasa farklı bir şifreyle kurulmuş'),
+      h('p', { class: 'muted' }, 'Kasa daha önce başka bir parolayla oluşturulmuş; mevcut notlar bu PIN ile açılamıyor. Kasayı bu PIN ile yeniden kurabilirsiniz — eski (açılamayan) notlar silinir.'),
+      h('button', { class: 'btn btn--danger btn--block', type: 'button', onclick: async (e) => {
+        if (!(await confirmDialog({ title: 'Kasa sıfırlansın mı?', message: 'Eski notlar kalıcı olarak silinecek.', confirmText: 'Sıfırla', danger: true }))) return;
+        setLoading(e.currentTarget, true, 'Sıfırlanıyor…');
+        try {
+          const snap = await getDocs(query(col('vaultNotes'), limit(450)));
+          const batch = writeBatch(db);
+          snap.docs.forEach((d) => batch.delete(d.ref));
+          const res = await createVaultConfig(pin);
+          batch.set(configRef(), { ...res.config, updatedBy: uid, updatedAt: serverTimestamp() }, { merge: true });
+          await batch.commit();
+          toast('Kasa yeni PIN ile kuruldu 🔐');
+          openWith(res.key);
+        } catch (e2) { toast(errorMessage(e2), { type: 'error' }); renderLocked(); }
+      } }, 'Kasayı bu PIN ile yeniden kur'),
+      h('button', { class: 'btn btn--ghost btn--block', type: 'button', onclick: () => renderLocked() }, 'Vazgeç')));
   }
 
-  async function openWith(k, offerQuick, lockIcon) {
-    if (lockIcon) { lockIcon.innerHTML = icons.unlock; lockIcon.classList.add('is-opening'); await sleep(550); }
+  function openWith(k) {
     key = k;
     resetIdle();
     renderOpen();
-    if (offerQuick) {
-      const q = await keyGet(`vault:${uid}`).catch(() => null);
-      if (!q || q.salt !== config.salt) offerQuickSetup();
-    }
   }
 
-  function offerQuickSetup() {
-    const capturedKey = key;
-    let first = null;
-    const msg = h('p', {}, 'Bu cihazda kasayı 4 haneli PIN ile hızlıca açmak ister misin? Parola her seferinde gerekmez.');
-    const m = openModal({
-      title: 'PIN ile hızlı açma', content: h('div', { class: 'form' }, msg,
-        h('div', { class: 'notice' }, 'Nasıl çalışır: Şifreleme anahtarı bu cihazda dışa aktarılamaz biçimde saklanır; PIN yalnızca bu cihazdaki kilidi açar. Sunucudaki veriler yine parolayla korunur. Cihazını kaybedersen buradan "hızlı açmayı kaldır" diyemezsin — bu yüzden telefon ekran kilidini mutlaka kullan.'),
-        pinEntry(async (pin) => {
-          if (!first) { first = pin; msg.textContent = 'PIN\'i tekrar gir.'; return false; }
-          if (first !== pin) { first = null; msg.textContent = 'Eşleşmedi, baştan gir.'; vibrate([30, 40, 30]); return false; }
-          const pinSalt = toB64(randomBytes(16));
-          const iter = 150000;
-          await keySet(`vault:${uid}`, { key: capturedKey, salt: config.salt, pinSalt, iter, pinHash: await pbkdf2Hex(pin, pinSalt, iter), fails: 0 });
-          toast('Bu cihazda PIN ile hızlı açma etkin 🔐');
-          m.close();
-          return true;
-        }),
-        h('button', { class: 'btn btn--ghost btn--block', type: 'button', onclick: () => m.close() }, 'Hayır, her seferinde parola'))
-    });
-  }
-
-  // ---------------- Açık kasa ----------------
   function renderOpen() {
     const list = h('div', { class: 'card-list' }, skeletonList(2));
     fill(body, 
@@ -191,9 +139,8 @@ export default async function vault(page, { scope }) {
         h('span', { class: 'vault-open-bar__icon', svg: icons.unlock, 'aria-hidden': 'true' }),
         h('div', {}, h('strong', {}, 'Kasa açık'), h('small', { class: 'muted' }, '3 dakika işlem yapılmazsa kendiliğinden kilitlenir.')),
         h('button', { class: 'btn btn--ghost btn--sm', type: 'button', onclick: () => lock('Kasa kilitlendi 🔒') }, h('span', { svg: icons.lock }), 'Kilitle')),
-      h('div', { class: 'row row--between' },
-        h('button', { class: 'btn btn--primary', type: 'button', onclick: () => editor() }, h('span', { svg: icons.plus }), 'Gizli not'),
-        h('button', { class: 'btn btn--ghost btn--sm', type: 'button', onclick: () => settings() }, 'Kasa ayarları')),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn btn--primary', type: 'button', onclick: () => editor() }, h('span', { svg: icons.plus }), 'Gizli not')),
       list);
     notesUnsub?.();
     notesUnsub = listen(query(col('vaultNotes'), orderBy('updatedAt', 'desc'), limit(200)), async (items) => {
@@ -208,7 +155,7 @@ export default async function vault(page, { scope }) {
       for (const n of dec) {
         add(list, h('article', { class: 'card vault-note' },
           n.plain ? h('h4', { class: 'card__title' }, n.plain.title || 'Başlıksız') : h('h4', { class: 'card__title text-danger' }, 'Bu not çözülemedi'),
-          n.plain ? h('p', { class: 'card__text' }, n.plain.body) : h('p', { class: 'muted' }, 'Farklı bir parolayla şifrelenmiş ya da bozulmuş olabilir.'),
+          n.plain ? h('p', { class: 'card__text' }, n.plain.body) : h('p', { class: 'muted' }, 'Farklı bir şifreyle şifrelenmiş ya da bozulmuş olabilir.'),
           h('div', { class: 'card__footer' },
             h('small', { class: 'card__meta' }, `${userName(n.updatedBy)} · ${relativeTime(n.updatedAt)}`),
             n.plain ? h('button', { class: 'icon-btn icon-btn--sm', type: 'button', 'aria-label': 'Düzenle', svg: icons.edit, onclick: () => editor(n) }) : null,
@@ -249,45 +196,7 @@ export default async function vault(page, { scope }) {
     const m = openModal({ title: n ? 'Notu düzenle' : 'Yeni gizli not', content: form });
   }
 
-  function settings() {
-    const m = openModal({
-      title: 'Kasa ayarları', content: h('div', { class: 'action-list' },
-        h('button', { class: 'action', type: 'button', onclick: () => { m.close(); changePassphrase(); } }, h('span', { svg: icons.refresh }), 'Kasa parolasını değiştir'),
-        h('button', { class: 'action', type: 'button', onclick: () => { m.close(); offerQuickSetup(); } }, h('span', { svg: icons.lock }), 'Bu cihazda PIN ile hızlı açmayı ayarla'),
-        h('button', { class: 'action action--danger', type: 'button', onclick: async () => { await keyDel(`vault:${uid}`); m.close(); toast('Bu cihazdaki hızlı açma kaldırıldı'); } }, h('span', { svg: icons.trash }), 'Bu cihazdaki hızlı açmayı kaldır'),
-        h('p', { class: 'muted small' }, 'Şifreleme: AES-GCM-256 · Anahtar türetme: PBKDF2-SHA256, 600.000 tur · Her not için rastgele IV.'))
-    });
-  }
-
-  function changePassphrase() {
-    const p1 = h('input', { class: 'input', type: 'password', autocomplete: 'new-password' });
-    const p2 = h('input', { class: 'input', type: 'password', autocomplete: 'new-password' });
-    const err = h('p', { class: 'form-error', role: 'alert' });
-    const btn = h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, 'Parolayı değiştir');
-    const m = openModal({ title: 'Yeni kasa parolası', content: h('form', { class: 'form', onsubmit: async (e) => {
-      e.preventDefault();
-      if (!passphraseStrength(p1.value).ok) { err.textContent = 'Daha güçlü bir parola seçin (en az 10 karakter, karışık).'; return; }
-      if (p1.value !== p2.value) { err.textContent = 'Parolalar eşleşmiyor.'; return; }
-      if (!key) { err.textContent = 'Kasa kilitlendi.'; return; }
-      setLoading(btn, true, 'Notlar yeniden şifreleniyor…');
-      try {
-        const { getDocs } = await import('../vendor/firebase.js');
-        const snap = await getDocs(query(col('vaultNotes'), limit(450)));
-        const plain = [];
-        for (const d of snap.docs) plain.push({ id: d.id, data: await decryptJSON(key, d.data(), d.id) });
-        const res = await createVaultConfig(p1.value);
-        const batch = writeBatch(db);
-        batch.set(configRef(), { ...res.config, updatedBy: uid, updatedAt: serverTimestamp() }, { merge: true });
-        for (const p of plain) batch.set(docRef('vaultNotes', p.id), { v: 1, ...(await encryptJSON(res.key, p.data, p.id)), updatedBy: uid, updatedAt: serverTimestamp() }, { merge: true });
-        await batch.commit();
-        await keyDel(`vault:${uid}`);
-        p1.value = p2.value = '';
-        m.close();
-        toast('Kasa parolası değişti. Sevgiline yeni parolayı yüz yüze söyle 💌', { duration: 6000 });
-      } catch (e2) { err.textContent = e2?.name === 'OperationError' ? 'Bazı notlar çözülemedi; işlem iptal edildi.' : errorMessage(e2); setLoading(btn, false); }
-    } }, h('p', { class: 'muted' }, 'Tüm notlar yeni parolayla yeniden şifrelenir. Bu cihazdaki ve diğer cihazlardaki hızlı açma geçersiz olur.'),
-      field('Yeni parola', p1), field('Tekrar', p2), err, btn) });
-  }
+  renderLocked();
 }
 
 /** Kasa için kompakt PIN girişi. onComplete(pin) true dönerse temizlenir. */

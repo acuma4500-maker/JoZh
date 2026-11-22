@@ -1,6 +1,6 @@
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { readFileSync } from 'node:fs';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, set } from 'firebase/database';
 
 export const A = 'pt0Kmbc9rqdJekFyvA1wLItUnxw1'; // Cuma (kişi kimliği)
@@ -10,6 +10,7 @@ export const X = 'ucuncuKisi';                    // yanlış PIN girmiş üçü
 export const PINS = { [A]: '0111', [B]: '2222' }; // 0111: baştaki sıfır durumu da test edilir
 // Kişi → anonim cihaz kimliği
 export const DEV = { [A]: 'cihazCuma', [B]: 'cihazIlayda', [X]: 'cihazYabanci' };
+export const VAULT_PIN = '3333'; // test kasa PIN'i
 
 export async function env() {
   return initializeTestEnvironment({
@@ -23,7 +24,9 @@ export async function env() {
 export async function seedFirestore(t) {
   await t.withSecurityRulesDisabled(async (ctx) => {
     const db = ctx.firestore();
-    await setDoc(doc(db, 'secrets/pins'), PINS);
+    await setDoc(doc(db, 'secrets/pins'), { ...PINS, vault: VAULT_PIN });
+    // Cuma'nın cihazı kasa PIN'ini doğrulamış; İlayda'nınki doğrulamamış
+    await setDoc(doc(db, `vaultTry/${DEV[A]}`), { pin: Number(VAULT_PIN), pinText: VAULT_PIN, n: 1, at: serverTimestamp() });
     await setDoc(doc(db, `pinTry/${DEV[A]}`), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 1 });
     await setDoc(doc(db, `pinTry/${DEV[B]}`), { pin: Number(PINS[B]), pinText: PINS[B], person: B, n: 1 });
     await setDoc(doc(db, `pinTry/${DEV[X]}`), { pin: 9999, pinText: '9999', person: A, n: 1 });

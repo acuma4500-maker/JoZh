@@ -33,7 +33,7 @@ async function seed() {
   await fetch('http://127.0.0.1:9000/.json?ns=jozh-love-default-rtdb', { method: 'PUT', headers: { Authorization: 'Bearer owner' }, body: JSON.stringify({ secrets: { pins } }) });
   const r = await fetch('http://127.0.0.1:8080/v1/projects/jozh-love/databases/(default)/documents/secrets/pins', {
     method: 'PATCH', headers: { Authorization: 'Bearer owner', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: { [A]: { integerValue: String(Number(PINS.cuma)) }, [B]: { stringValue: PINS.ilayda } } }),
+    body: JSON.stringify({ fields: { [A]: { integerValue: String(Number(PINS.cuma)) }, [B]: { stringValue: PINS.ilayda }, vault: { stringValue: '4444' } } }),
   });
   if (!r.ok) throw new Error('secrets yazılamadı: ' + await r.text());
 }
@@ -342,17 +342,15 @@ try {
     await cuma.page.locator('.movie .card__title', { hasText: 'Gilmore Girls' }).waitFor({ state: 'detached', timeout: 10000 });
   });
 
-  await step('12. Özel kasa: istemci tarafı şifreleme, sunucuda düz metin yok', async () => {
+  const VAULT = '4444'; // test kasa PIN'i (gerçeği değil)
+  const vaultPin = async (page, pin) => { for (const d of pin) await page.locator('.vault-locked .pin-key', { hasText: d }).first().click(); };
+  await step('12. Özel kasa: PIN ile açılır, notlar şifreli saklanır', async () => {
     await go(cuma.page, '#/vault');
-    await cuma.page.locator('.vault-setup').waitFor({ timeout: 10000 });
-    await cuma.page.locator('.vault-setup input[type=password]').nth(0).fill('2208');
-    await cuma.page.locator('.vault-setup input[type=password]').nth(1).fill('2208');
-    await cuma.page.click('.vault-setup button[type=submit]');
-    await cuma.page.locator('.vault-setup .form-error', { hasText: 'güçlü' }).waitFor();
-    await cuma.page.locator('.vault-setup input[type=password]').nth(0).fill(PASS);
-    await cuma.page.locator('.vault-setup input[type=password]').nth(1).fill(PASS);
-    await cuma.page.click('.vault-setup button[type=submit]');
-    await cuma.page.getByRole('button', { name: 'Hayır, her seferinde parola' }).click({ timeout: 20000 });
+    await cuma.page.locator('.vault-locked .pin-pad').waitFor({ timeout: 10000 });
+    await vaultPin(cuma.page, '1234');
+    await cuma.page.locator('.vault-locked .auth-hint', { hasText: 'PIN hatalı' }).waitFor({ timeout: 15000 });
+    await vaultPin(cuma.page, VAULT);
+    await cuma.page.getByRole('button', { name: 'Gizli not' }).waitFor({ timeout: 20000 });
     await cuma.page.getByRole('button', { name: 'Gizli not' }).click();
     await cuma.page.fill('.modal input.input', 'Sürpriz planı');
     await cuma.page.fill('.modal textarea', 'Yıldönümünde Kapadokya balonu 🎈');
@@ -361,26 +359,22 @@ try {
     const raw = JSON.stringify(await firestoreDocs('couples/main/vaultNotes'));
     assert.ok(raw.includes('"ct"'), 'şifreli belge var');
     assert.ok(!/Sürpriz|Kapadokya|balonu/.test(raw), 'sunucuda düz metin olmamalı');
-    const cfg = JSON.stringify(await firestoreDocs('couples/main/vault/config'));
-    assert.ok(!cfg.includes(PASS) && !cfg.includes('2208'), 'yapılandırmada parola yok');
     await shot(cuma.page, '04-vault-open');
   });
 
-  await step('12b. Kasa: İlayda yanlış parolayla açamaz, doğru parolayla notu okur; manuel kilit', async () => {
+  await step('12b. Kasa: İlayda yanlış PIN ile açamaz, doğru PIN ile notu okur; kilitle → yeniden PIN', async () => {
     await go(ilayda.page, '#/vault');
-    await ilayda.page.locator('.vault-locked input[type=password]').fill('yanlis-parola-123');
-    await ilayda.page.click('.vault-locked button[type=submit]');
-    await ilayda.page.locator('.vault-locked .form-error', { hasText: 'Parola hatalı' }).waitFor({ timeout: 20000 });
-    await ilayda.page.locator('.vault-locked input[type=password]').fill(PASS);
-    await ilayda.page.click('.vault-locked button[type=submit]');
-    await ilayda.page.locator('.modal').getByText('PIN ile hızlı açma').waitFor({ timeout: 20000 });
-    for (const pass of [0, 1]) for (const d of '2208') await ilayda.page.locator('.modal .pin-key', { hasText: d }).first().click();
-    await ilayda.page.locator('.vault-note .card__text', { hasText: 'Kapadokya balonu' }).waitFor({ timeout: 10000 });
+    await ilayda.page.locator('.vault-locked .pin-pad').waitFor({ timeout: 10000 });
+    await vaultPin(ilayda.page, '9876');
+    await ilayda.page.locator('.vault-locked .auth-hint', { hasText: /PIN hatalı\. 9 deneme/ }).waitFor({ timeout: 15000 });
+    assert.equal(await ilayda.page.locator('.vault-note').count(), 0);
+    await vaultPin(ilayda.page, VAULT);
+    await ilayda.page.locator('.vault-note .card__text', { hasText: 'Kapadokya balonu' }).waitFor({ timeout: 20000 });
     await ilayda.page.getByRole('button', { name: 'Kilitle' }).click();
     await ilayda.page.locator('.vault-locked').waitFor();
     assert.equal(await ilayda.page.locator('.vault-note').count(), 0, 'kilitliyken notlar DOM\'da olmamalı');
-    for (const d of '2208') await ilayda.page.locator('.vault-locked .pin-key', { hasText: d }).first().click();
-    await ilayda.page.locator('.vault-note .card__text', { hasText: 'Kapadokya balonu' }).waitFor({ timeout: 10000 });
+    await vaultPin(ilayda.page, VAULT);
+    await ilayda.page.locator('.vault-note .card__text', { hasText: 'Kapadokya balonu' }).waitFor({ timeout: 20000 });
   });
 
   await step('13. Oyun daveti karşı tarafa ulaşıyor ve kabul ediliyor', async () => {

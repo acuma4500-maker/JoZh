@@ -23,6 +23,15 @@ service cloud.firestore {
       return me() == 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' ? 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1' : 'pt0Kmbc9rqdJekFyvA1wLItUnxw1';
     }
     function isCoupleUid(u) { return u in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']; }
+    // ---- Kasa: sabit kasa PIN'i (secrets/pins.vault) ile doğrulanmış cihaz, 15 dakika geçerli ----
+    function vaultPath() { return /databases/$(database)/documents/vaultTry/$(request.auth.uid); }
+    function vaultDoc() { return get(vaultPath()).data; }
+    function vaultOk() {
+      return signedIn() && exists(vaultPath())
+        && (vaultDoc().pin == get(/databases/$(database)/documents/secrets/pins).data.vault
+            || vaultDoc().pinText == get(/databases/$(database)/documents/secrets/pins).data.vault)
+        && request.time < vaultDoc().at + duration.value(15, 'm');
+    }
     function d() { return request.resource.data; }
     function str(f, min, max) { return d()[f] is string && d()[f].size() >= min && d()[f].size() <= max; }
     function isoDate(f) { return d()[f] is string && d()[f].matches('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$'); }
@@ -52,6 +61,20 @@ service cloud.firestore {
       allow delete: if false;
     }
     // PIN'ler: istemciler asla okuyamaz/yazamaz (Firebase Console'dan girilir).
+    // ---- Kasa PIN denemeleri: cihaz başına 10 dakikada en fazla 10 deneme ----
+    match /vaultTry/{deviceId} {
+      function validVaultTry() {
+        return d().keys().hasOnly(['pin', 'pinText', 'n', 'at']) && d().keys().hasAll(['pin', 'pinText', 'n', 'at'])
+          && d().pin is int && d().pin >= 0 && d().pin <= 9999
+          && d().pinText is string && d().pinText.matches('^[0-9]{4}$')
+          && d().n is int && d().n >= 1 && d().n <= 10 && d().at == request.time;
+      }
+      allow read: if signedIn() && request.auth.uid == deviceId && isCouple();
+      allow create: if signedIn() && request.auth.uid == deviceId && isCouple() && validVaultTry() && d().n == 1;
+      allow update: if signedIn() && request.auth.uid == deviceId && isCouple() && validVaultTry()
+        && (d().n == resource.data.n + 1 || (d().n == 1 && request.time > resource.data.at + duration.value(10, 'm')));
+      allow delete: if false;
+    }
     match /secrets/{doc} {
       allow read, write: if false;
     }
@@ -151,7 +174,7 @@ service cloud.firestore {
       }
 
       // ---------------- Özel kasa ----------------
-      // Sunucuda YALNIZCA şifreli veri bulunur. Düz metin alanlar şema gereği reddedilir.
+      // Sunucuda YALNIZCA şifreli veri bulunur; okuma/yazma için kasa PIN'i doğrulanmış olmalı (vaultOk).
       match /vault/{docId} {
         function validConfig() {
           return d().keys().hasOnly(['v', 'salt', 'iterations', 'check', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
@@ -159,9 +182,9 @@ service cloud.firestore {
             && d().check is map && d().check.keys().hasOnly(['iv', 'ct']) && d().check.iv is string && d().check.ct is string
             && d().check.ct.size() <= 512;
         }
-        allow read: if isCouple() && docId == 'config';
-        allow create: if isCouple() && docId == 'config' && validConfig() && created();
-        allow update: if isCouple() && docId == 'config' && validConfig() && updated();
+        allow read: if isCouple() && vaultOk() && docId == 'config';
+        allow create: if isCouple() && vaultOk() && docId == 'config' && validConfig() && created();
+        allow update: if isCouple() && vaultOk() && docId == 'config' && validConfig() && updated();
         allow delete: if false;
       }
       match /vaultNotes/{id} {
@@ -169,10 +192,10 @@ service cloud.firestore {
           return exactKeys(['v', 'iv', 'ct', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
             && d().v == 1 && str('iv', 8, 64) && str('ct', 1, 30000);
         }
-        allow read: if isCouple();
-        allow create: if isCouple() && valid() && created();
-        allow update: if isCouple() && valid() && updated();
-        allow delete: if isCouple();
+        allow read: if isCouple() && vaultOk();
+        allow create: if isCouple() && vaultOk() && valid() && created();
+        allow update: if isCouple() && vaultOk() && valid() && updated();
+        allow delete: if isCouple() && vaultOk();
       }
 
       // ---------------- Bildirimler ----------------
