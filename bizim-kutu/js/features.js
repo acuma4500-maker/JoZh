@@ -9,5 +9,6 @@ export const FEATURES = Object.freeze({
   vault: true,          // Özel kasa (8. adım)
   games: true,          // Oyun merkezi (7 oyun) (7. adım)
   notifications: true,  // Bildirimler (6. adım)
+  watch: true,          // Birlikte izle (9. adım)
 });
 export const on = (name) => !name || FEATURES[name] === true;

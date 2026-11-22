@@ -15,6 +15,7 @@ const routes = [
   { path: '/games', feature: 'games', title: 'Oyun Merkezi', load: () => import('./pages/games.js') },
   { path: '/play/:id', feature: 'games', title: 'Oyun', load: () => import('./pages/play.js'), back: '#/games' },
   { path: '/stories', feature: 'games', title: 'Hikâyelerimiz', load: () => import('./pages/stories.js'), back: '#/games' },
+  { path: '/watch', feature: 'watch', title: 'Birlikte İzle', load: () => import('./pages/watch.js') },
   { path: '/notifications', feature: 'notifications', title: 'Bildirimler', load: () => import('./pages/notifications.js') },
   { path: '/profile', title: 'Profil', load: () => import('./pages/profile.js') },
   { path: '/more', title: 'Kutumuz', load: () => import('./pages/more.js') },

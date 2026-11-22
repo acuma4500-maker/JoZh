@@ -132,3 +132,29 @@ test('yanlış PIN\'li cihaz Cuma adına mesaj yazamaz', async () => {
   await assertFails(set(ref(db(X), 'chat/messages/m9'), { uid: A, text: 'sahte', ts: serverTimestamp() }));
   await assertFails(set(ref(db(X), `presence/${A}/connections/c1`), true));
 });
+
+test('birlikte izle: oda, varlık, geçmiş ve tepkiler', async () => {
+  const room = (by, extra = {}) => ({ videoId: 'dQw4w9WgXcQ', state: 'paused', pos: 0, at: serverTimestamp(), by, cid: 'abc', ...extra });
+  await assertSucceeds(set(ref(db(A), 'watch/room'), room(A)));
+  await assertSucceeds(get(ref(db(B), 'watch/room')));
+  await assertFails(get(ref(db(X), 'watch/room')), 'yanlış PIN\'li cihaz okuyamaz');
+  await assertFails(set(ref(db(X), 'watch/room'), room(A)));
+  await assertFails(set(ref(db(A), 'watch/room'), room(B)), 'başkası adına yazılamaz');
+  await assertFails(set(ref(db(A), 'watch/room'), room(A, { videoId: '<script>' })), 'geçersiz video kimliği');
+  await assertFails(set(ref(db(A), 'watch/room'), room(A, { state: 'dance' })));
+  await assertFails(set(ref(db(A), 'watch/room'), room(A, { pos: -5 })));
+  await assertFails(set(ref(db(A), 'watch/room'), room(A, { url: 'http://evil' })), 'fazla alan');
+  await assertSucceeds(update(ref(db(B), 'watch/room'), { state: 'playing', pos: 12.5, at: serverTimestamp(), by: B, cid: 'xyz' }));
+  // varlık: yalnızca kendi
+  await assertSucceeds(set(ref(db(A), `watch/here/${A}`), true));
+  await assertFails(set(ref(db(A), `watch/here/${B}`), true));
+  // geçmiş
+  await assertSucceeds(update(ref(db(A), 'watch/history/dQw4w9WgXcQ'), { videoId: 'dQw4w9WgXcQ', by: A, at: serverTimestamp() }));
+  await assertSucceeds(update(ref(db(B), 'watch/history/dQw4w9WgXcQ'), { title: 'Şarkı' }));
+  await assertFails(update(ref(db(A), 'watch/history/kotu'), { videoId: 'kotu', by: A, at: serverTimestamp() }));
+  // tepkiler: yalnızca kendi adına, yalnızca kendini silebilir
+  await assertSucceeds(set(ref(db(A), 'watch/reactions/r1'), { by: A, emoji: '❤️', at: serverTimestamp() }));
+  await assertFails(set(ref(db(A), 'watch/reactions/r2'), { by: B, emoji: '❤️', at: serverTimestamp() }));
+  await assertFails(remove(ref(db(B), 'watch/reactions/r1')), 'başkasının tepkisini silemez');
+  await assertSucceeds(remove(ref(db(A), 'watch/reactions/r1')));
+});

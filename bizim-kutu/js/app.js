@@ -2,7 +2,8 @@ import './viewport.js';
 // Bizim Kutu — uygulama giriş noktası.
 import { partnerOf, userName, userEmoji } from './constants.js';
 import { watchAuth, logoutDevice } from './auth.js';
-import { auth } from './firebase-config.js';
+import { auth, rtdb } from './firebase-config.js';
+import { ref as dbRef, onValue as onDbValue } from './vendor/firebase.js';
 import { getState, setState, subscribe } from './state.js';
 import { startRouter } from './router.js';
 import { h, clear, createScope, debounce, fill } from './utils/helpers.js';
@@ -99,6 +100,7 @@ const NAV_ALL = [
   { path: '/chat', label: 'Sohbet', icon: 'chat', badge: 'chat', feature: 'chat' },
   { path: '/games', label: 'Oyunlar', icon: 'game', badge: 'games', feature: 'games' },
   { path: '/memories', label: 'Anılar', icon: 'book', feature: 'memories' },
+  { path: '/watch', label: 'Birlikte İzle', icon: 'tv', extra: true, feature: 'watch' },
   { path: '/movies', label: 'Filmler', icon: 'film', extra: true, feature: 'movies' },
   { path: '/tasks', label: 'Görevler', icon: 'tasks', extra: true, feature: 'tasks' },
   { path: '/vault', label: 'Kasa', icon: 'lock', extra: true, feature: 'vault' },
@@ -107,7 +109,7 @@ const NAV_ALL = [
   { path: '/more', label: 'Daha', icon: 'menu', mobileOnly: true },
 ];
 // Kapalı bölümler menüde görünmez. Az bölüm açıkken "Daha" menüsüne gerek yok.
-const NAV = NAV_ALL.filter((n) => on(n.feature) && !(n.mobileOnly && !['movies', 'tasks', 'vault', 'notifications', 'games'].some(on)));
+const NAV = NAV_ALL.filter((n) => on(n.feature) && !(n.mobileOnly && !['movies', 'tasks', 'vault', 'notifications', 'games', 'watch'].some(on)));
 
 function startApp() {
   teardown();
@@ -153,7 +155,7 @@ function startApp() {
     shell.classList.toggle('shell--full', !!route.fullHeight);
     navLinks.forEach((a) => {
       const active = path === a.dataset.path || (a.dataset.path === '/games' && (path.startsWith('/play') || path === '/stories'))
-        || (a.dataset.path === '/more' && ['/movies', '/tasks', '/vault', '/profile', '/notifications', '/more'].includes(path));
+        || (a.dataset.path === '/more' && ['/movies', '/tasks', '/vault', '/profile', '/notifications', '/more', '/watch'].includes(path));
       a.classList.toggle('is-active', active);
       if (active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
@@ -242,6 +244,23 @@ function startApp() {
     firstInvites = false;
     updateBadges();
   }));
+
+  // Birlikte izle: partner video açınca/başlatınca, başka sayfadaysam haber ver
+  if (on('watch')) {
+    let lastSeen = null;
+    scope.add(onDbValue(dbRef(rtdb, 'watch/room'), (s) => {
+      const r = s.val();
+      const key = r ? `${r.videoId}|${r.state}` : '';
+      const prev = lastSeen;
+      lastSeen = key;
+      if (prev === null || key === prev || !r?.videoId || r.by !== partnerUid || getState().route === '/watch') return;
+      const newVideo = !prev.startsWith(`${r.videoId}|`);
+      if (r.state === 'playing' || newVideo) {
+        toast(`🎬 ${userName(partnerUid)} birlikte izlemek istiyor`, { duration: 9000, action: { label: 'Aç', onClick: () => { location.hash = '#/watch'; } } });
+        systemNotify('Birlikte izleyelim 🎬', `${userName(partnerUid)} bir video açtı`, '#/watch');
+      }
+    }, () => {}));
+  }
 
   // Rozetler
   function updateBadges() {

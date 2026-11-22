@@ -214,6 +214,82 @@
     "secrets": {
       ".read": false,
       ".write": false
+    },
+    "watch": {
+      ".read": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+      "room": {
+        ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+        ".validate": "newData.hasChildren(['videoId', 'state', 'pos', 'at', 'by', 'cid'])",
+        "videoId": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{11}$/)"
+        },
+        "state": {
+          ".validate": "newData.isString() && newData.val().matches(/^(playing|paused)$/)"
+        },
+        "pos": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 86400"
+        },
+        "at": {
+          ".validate": "newData.isNumber() && (newData.val() === now || newData.val() === data.val())"
+        },
+        "by": {
+          ".validate": "newData.val() === root.child('pinTry').child(auth.uid).child('person').val() || newData.val() === data.val()"
+        },
+        "cid": {
+          ".validate": "newData.isString() && newData.val().length <= 32"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      "here": {
+        "$p": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && root.child('pinTry').child(auth.uid).child('person').val() === $p",
+          ".validate": "newData.isBoolean()"
+        }
+      },
+      "history": {
+        ".indexOn": [
+          "at"
+        ],
+        "$vid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+          ".validate": "$vid.matches(/^[A-Za-z0-9_-]{11}$/) && newData.hasChildren(['videoId', 'by', 'at'])",
+          "videoId": {
+            ".validate": "newData.val() === $vid"
+          },
+          "title": {
+            ".validate": "newData.isString() && newData.val().length <= 200"
+          },
+          "by": {
+            ".validate": "newData.val() === root.child('pinTry').child(auth.uid).child('person').val() || newData.val() === data.val()"
+          },
+          "at": {
+            ".validate": "newData.isNumber() && (newData.val() === now || newData.val() === data.val())"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "reactions": {
+        "$rid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && ((!data.exists() && newData.child('by').val() === root.child('pinTry').child(auth.uid).child('person').val()) || (data.exists() && !newData.exists() && data.child('by').val() === root.child('pinTry').child(auth.uid).child('person').val()))",
+          ".validate": "newData.hasChildren(['by', 'emoji', 'at'])",
+          "by": {
+            ".validate": "newData.val() === root.child('pinTry').child(auth.uid).child('person').val()"
+          },
+          "emoji": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 8"
+          },
+          "at": {
+            ".validate": "newData.isNumber() && newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
     }
   }
 }

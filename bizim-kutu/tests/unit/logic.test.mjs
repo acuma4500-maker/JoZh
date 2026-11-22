@@ -44,3 +44,19 @@ test('metin temizleme ve doğrulama', () => {
   assert.ok(isISODate('2026-08-22')); assert.ok(!isISODate('2026-02-30')); assert.ok(!isISODate('22.08.2026'));
   assert.ok(isPin('0000')); assert.ok(!isPin('12345')); assert.ok(!isPin('12a4'));
 });
+
+import { parseYouTubeId, parseStartSeconds } from '../../js/utils/youtube.js';
+test('YouTube linkinden video kimliği', () => {
+  const id = 'dQw4w9WgXcQ';
+  for (const link of [
+    `https://www.youtube.com/watch?v=${id}`, `https://youtube.com/watch?v=${id}&list=PL1&index=2`, `https://m.youtube.com/watch?v=${id}`,
+    `https://youtu.be/${id}`, `https://youtu.be/${id}?si=abc&t=42`, `https://www.youtube.com/shorts/${id}`,
+    `https://www.youtube.com/embed/${id}`, `https://www.youtube.com/live/${id}?feature=share`, `youtube.com/watch?v=${id}`,
+    `https://music.youtube.com/watch?v=${id}`, `  https://youtu.be/${id}  `, id,
+  ]) assert.equal(parseYouTubeId(link), id, link);
+  for (const bad of ['', 'merhaba', 'https://vimeo.com/123', 'https://www.youtube.com/watch?v=kisa', 'https://evil.com/watch?v=dQw4w9WgXcQ', 'javascript:alert(1)'])
+    assert.equal(parseYouTubeId(bad), null, bad);
+  assert.equal(parseStartSeconds(`https://youtu.be/${id}?t=42`), 42);
+  assert.equal(parseStartSeconds(`https://www.youtube.com/watch?v=${id}&t=1m30s`), 90);
+  assert.equal(parseStartSeconds(`https://youtu.be/${id}`), 0);
+});
