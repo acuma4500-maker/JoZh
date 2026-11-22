@@ -389,25 +389,52 @@ try {
     await ilayda.page.locator('.fake-yt', { hasText: 'dQw4w9WgXcQ' }).waitFor({ timeout: 10000 });
     await ilayda.page.locator('.watch-history__item', { hasText: 'Test videosu dQw4w9WgXcQ' }).waitFor({ timeout: 15000 });
   });
-  await step('İzle 2: biri oynatınca diğerinde de oynuyor; durdurunca duruyor; konumlar aynı', async () => {
+  const ctl = async (page, name) => {
+    if (!(await page.locator('.watch-player.show-controls').count())) await page.locator('.wctl').click({ position: { x: 12, y: 12 } });
+    await page.locator('.wctl__row').getByRole('button', { name }).click();
+  };
+  await step('İzle 2: kendi oynatıcımız — biri oynatınca diğerinde de oynuyor; durdurunca duruyor; konumlar aynı', async () => {
     await cuma.page.waitForTimeout(800);
-    await yt(cuma.page, () => window.__yt.playVideo());
+    assert.equal(await cuma.page.locator('.watch-player__frame').evaluate((e) => getComputedStyle(e).pointerEvents), 'none', 'YouTube düğmeleri kapalı');
+    await cuma.page.locator('.wctl__big').click();
     await ilayda.page.waitForFunction(() => window.__yt?.getPlayerState() === 1, null, { timeout: 8000 });
     await ilayda.page.waitForTimeout(2500);
-    await yt(ilayda.page, () => window.__yt.pauseVideo());
+    await ctl(ilayda.page, 'Durdur');
     await cuma.page.waitForFunction(() => window.__yt?.getPlayerState() === 2, null, { timeout: 8000 });
     await cuma.page.waitForTimeout(800);
     const [a, b] = [await ytTime(cuma.page), await ytTime(ilayda.page)];
     assert.ok(a > 1.5 && Math.abs(a - b) < 1.5, `konumlar yakın olmalı (${a.toFixed(2)} / ${b.toFixed(2)})`);
+    await cuma.page.locator('.wctl__time', { hasText: '/ 10:00' }).waitFor();
   });
-  await step('İzle 3: ileri sarma diğer tarafa yansıyor', async () => {
-    await yt(cuma.page, () => window.__yt.seekTo(120, true));
+  await step('İzle 3: sarma çubuğu ve 10 sn ileri diğer tarafa yansıyor', async () => {
+    await cuma.page.locator('.wctl__seek').fill('120');
     await ilayda.page.waitForFunction(() => Math.abs(window.__yt.getCurrentTime() - 120) < 1.5, null, { timeout: 8000 });
+    await ctl(ilayda.page, '10 saniye ileri');
+    await cuma.page.waitForFunction(() => Math.abs(window.__yt.getCurrentTime() - 130) < 1.5, null, { timeout: 8000 });
+    await ctl(cuma.page, 'Sesi kapat');
+    assert.equal(await cuma.page.evaluate(() => window.__yt.isMuted()), true);
+    assert.equal(await ilayda.page.evaluate(() => window.__yt.isMuted()), false, 'ses her cihazda ayrı');
   });
-  await step('İzle 4: emoji tepkisi iki ekranda uçuşuyor', async () => {
+  await step('İzle 4: emoji ve mesaj sohbete düşüyor, iki ekranda da uçuşuyor; tam ekranda da görünüyor', async () => {
     await ilayda.page.locator('.watch-react', { hasText: '❤️' }).click();
     await cuma.page.locator('.reaction-float', { hasText: '❤️' }).waitFor({ timeout: 8000 });
     await ilayda.page.locator('.reaction-float', { hasText: '❤️' }).waitFor({ timeout: 8000 });
+    await cuma.page.locator('.wchat__msg.is-emoji', { hasText: '❤️' }).waitFor({ timeout: 8000 });
+    await cuma.page.locator('.wchat__form input').fill('Bu kısım çok güzel 😍');
+    await cuma.page.locator('.wchat__form button').click();
+    await ilayda.page.locator('.wchat__msg', { hasText: 'Bu kısım çok güzel' }).waitFor({ timeout: 8000 });
+    await cuma.page.locator('.wchat__msg.is-mine', { hasText: 'Bu kısım çok güzel' }).waitFor();
+    // tam ekran: emoji çubuğu ve gelen mesajlar videonun üstünde
+    await ctl(cuma.page, 'Tam ekran');
+    await cuma.page.locator('.watch-player.is-fs').waitFor();
+    await ilayda.page.locator('.wchat__form input').fill('Tam ekranda görüyor musun?');
+    await ilayda.page.locator('.wchat__form button').click();
+    await cuma.page.locator('.watch-msg-float', { hasText: 'Tam ekranda görüyor musun' }).waitFor({ timeout: 8000 });
+    await cuma.page.locator('.watch-fs-react__btn', { hasText: '🔥' }).click();
+    await ilayda.page.locator('.reaction-float', { hasText: '🔥' }).waitFor({ timeout: 8000 });
+    await shot(cuma.page, '10b-watch-fs');
+    await ctl(cuma.page, 'Tam ekrandan çık');
+    await cuma.page.locator('.watch-player.is-fs').waitFor({ state: 'detached' });
   });
   await step('İzle 5: biri sayfadan çıkınca video iki tarafta da duruyor ve tek başına oynatılamıyor', async () => {
     await yt(cuma.page, () => window.__yt.playVideo());
@@ -427,6 +454,30 @@ try {
     await ilayda.page.locator('.fake-yt', { hasText: '9bZkp7q19f0' }).waitFor({ timeout: 10000 });
     await cuma.page.locator('.watch-overlay').waitFor({ state: 'hidden', timeout: 8000 });
     await shot(cuma.page, '10-watch');
+  });
+  await step('İzle 7: "şu an izleniyor" satırı sağa kaydırılınca "Videoyu kapat" çıkıyor; video iki tarafta da kapanıyor', async () => {
+    const row = cuma.page.locator('.watch-history__item.is-current');
+    await row.waitFor({ timeout: 10000 });
+    await cuma.page.waitForFunction(() => !document.querySelector('.toast'), null, { timeout: 12000 }); // bildirim balonları kapansın
+    await row.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await cuma.page.waitForTimeout(700);
+    const box = await row.boundingBox();
+    // Gerçek parmak hareketi (dokunmatik olaylar)
+    const cdp = await cuma.ctx.newCDPSession(cuma.page);
+    const y = box.y + box.height / 2;
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: box.x + 20, y }] });
+    for (let i = 1; i <= 10; i++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: box.x + 20 + i * 18, y: y + 1 }] }); await cuma.page.waitForTimeout(16); }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await cuma.page.waitForTimeout(300);
+    await cuma.page.locator('.swipe.is-open .swipe__action', { hasText: 'Videoyu kapat' }).click();
+    await ilayda.page.locator('.watch-player').waitFor({ state: 'hidden', timeout: 8000 });
+    await cuma.page.locator('.watch-player').waitFor({ state: 'hidden', timeout: 8000 });
+    assert.equal(await ilayda.page.locator('.fake-yt').count(), 0, 'oynatıcı kaldırıldı');
+    await ilayda.page.locator('.watch-history__item', { hasText: '9bZkp7q19f0' }).waitFor({ state: 'detached', timeout: 8000 });
+    await ilayda.page.locator('.watch-history__item', { hasText: 'dQw4w9WgXcQ' }).waitFor();
+    // eski bir videoyu listeden dokunarak yeniden aç
+    await ilayda.page.locator('.watch-history__item', { hasText: 'dQw4w9WgXcQ' }).click();
+    await cuma.page.locator('.fake-yt', { hasText: 'dQw4w9WgXcQ' }).waitFor({ timeout: 10000 });
   });
 
   await step('13. Oyun daveti karşı tarafa ulaşıyor ve kabul ediliyor', async () => {

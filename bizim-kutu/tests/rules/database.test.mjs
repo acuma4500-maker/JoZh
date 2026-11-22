@@ -152,9 +152,19 @@ test('birlikte izle: oda, varlık, geçmiş ve tepkiler', async () => {
   await assertSucceeds(update(ref(db(A), 'watch/history/dQw4w9WgXcQ'), { videoId: 'dQw4w9WgXcQ', by: A, at: serverTimestamp() }));
   await assertSucceeds(update(ref(db(B), 'watch/history/dQw4w9WgXcQ'), { title: 'Şarkı' }));
   await assertFails(update(ref(db(A), 'watch/history/kotu'), { videoId: 'kotu', by: A, at: serverTimestamp() }));
-  // tepkiler: yalnızca kendi adına, yalnızca kendini silebilir
-  await assertSucceeds(set(ref(db(A), 'watch/reactions/r1'), { by: A, emoji: '❤️', at: serverTimestamp() }));
-  await assertFails(set(ref(db(A), 'watch/reactions/r2'), { by: B, emoji: '❤️', at: serverTimestamp() }));
-  await assertFails(remove(ref(db(B), 'watch/reactions/r1')), 'başkasının tepkisini silemez');
-  await assertSucceeds(remove(ref(db(A), 'watch/reactions/r1')));
+  // izlerken sohbet + emoji: yalnızca kendi adına; ikisi de silebilir (temizle)
+  await assertSucceeds(set(ref(db(A), 'watch/chat/m1'), { by: A, emoji: '❤️', at: serverTimestamp() }));
+  await assertSucceeds(set(ref(db(B), 'watch/chat/m2'), { by: B, text: 'Bu sahne çok güzel 😍', at: serverTimestamp() }));
+  await assertFails(set(ref(db(A), 'watch/chat/m3'), { by: B, text: 'sahte', at: serverTimestamp() }), 'başkası adına yazılamaz');
+  await assertFails(set(ref(db(A), 'watch/chat/m4'), { by: A, at: serverTimestamp() }), 'boş mesaj');
+  await assertFails(set(ref(db(A), 'watch/chat/m5'), { by: A, text: 'x'.repeat(501), at: serverTimestamp() }), 'çok uzun');
+  await assertFails(set(ref(db(B), 'watch/chat/m1'), { by: B, text: 'değiştir', at: serverTimestamp() }), 'var olan mesaj değiştirilemez');
+  await assertFails(set(ref(db(X), 'watch/chat/m6'), { by: A, text: 'x', at: serverTimestamp() }));
+  await assertFails(remove(ref(db(X), 'watch/chat')), 'yanlış PIN\'li cihaz silemez');
+  await assertSucceeds(remove(ref(db(B), 'watch/chat/m1')));
+  await assertSucceeds(remove(ref(db(A), 'watch/chat')));
+  // video kapatma: oda ve geçmiş kaydı silinebilir
+  await assertSucceeds(set(ref(db(A), 'watch/room'), null));
+  await assertSucceeds(remove(ref(db(B), 'watch/history/dQw4w9WgXcQ')));
+  await assertFails(set(ref(db(X), 'watch/room'), null));
 });

@@ -18,6 +18,10 @@ window.YT = {
     seekTo(t) { this.base = t; if (this.state === 1) this.t0 = performance.now(); }
     getCurrentTime() { return this.state === 1 ? this.base + (performance.now() - this.t0) / 1000 : this.base; }
     getPlayerState() { return this.state; }
+    getDuration() { return 600; }
+    mute() { this.muted = true; }
+    unMute() { this.muted = false; }
+    isMuted() { return !!this.muted; }
     getVideoData() { return { video_id: this.vid, title: `Test videosu ${this.vid}` }; }
     destroy() { this.el?.remove(); if (window.__yt === this) window.__yt = null; }
   },
