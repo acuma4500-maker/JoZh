@@ -98,8 +98,10 @@ export default async function home(page, { scope }) {
     cMem.set(h('p', { class: 'home-card__text' }, `${m.emoji || '💗'} ${m.title}`), h('small', { class: 'muted' }, formatISODate(m.date)));
   }, fail(cMem)));
 
-  if (on('tasks')) scope.add(listen(query(col('tasks'), where('done', '==', false), orderBy('dueDate', 'asc'), limit(10)), (items) => {
-    const t = items.find((x) => x.dueDate) || items[0];
+  if (on('tasks')) scope.add(listen(query(col('tasks'), orderBy('createdAt', 'desc'), limit(100)), (all) => {
+    const open = all.filter((x) => !x.done);
+    const dated = open.filter((x) => x.dueDate).sort((a, b) => (a.dueDate < b.dueDate ? -1 : 1));
+    const t = dated[0] || open[0];
     if (!t) return cTask.set(muted('Bekleyen görev yok ✨'));
     cTask.set(h('p', { class: 'home-card__text' }, t.title), t.dueDate ? h('small', { class: `muted${dueLabel(t.dueDate).includes('gecikti') ? ' text-danger' : ''}` }, dueLabel(t.dueDate)) : h('small', { class: 'muted' }, 'Son tarih yok'));
   }, fail(cTask)));

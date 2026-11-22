@@ -36,10 +36,12 @@ export default async function tasks(page, { scope }) {
   function sub() {
     unsub?.();
     fill(listEl, skeletonList(3));
-    const q = tab === 'open'
-      ? query(col('tasks'), where('done', '==', false), orderBy('dueDate', 'asc'), limit(200))
-      : query(col('tasks'), where('done', '==', true), orderBy('doneAt', 'desc'), limit(100));
-    unsub = listen(q, (items) => draw(tab === 'open' ? sortTasks(items) : items), (e) => fill(listEl, errorState(errorMessage(e), sub)));
+    // Tek alana göre sıralı tek sorgu; bekleyen/tamamlanan ayrımı cihazda yapılır (Firestore'da ek dizin gerekmez).
+    const q = query(col('tasks'), orderBy('createdAt', 'desc'), limit(300));
+    unsub = listen(q, (all) => {
+      const ms = (x) => x?.toMillis?.() || 0;
+      draw(tab === 'open' ? sortTasks(all.filter((t) => !t.done)) : all.filter((t) => t.done).sort((a, b) => ms(b.doneAt) - ms(a.doneAt)));
+    }, (e) => fill(listEl, errorState(errorMessage(e), sub)));
   }
   scope.add(() => unsub?.());
 
