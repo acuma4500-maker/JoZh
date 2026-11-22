@@ -1,0 +1,219 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "secrets": {
+      ".read": false,
+      ".write": false
+    },
+    "pinTry": {
+      "$dev": {
+        ".read": "auth != null && auth.uid === $dev",
+        ".write": "auth != null && auth.uid === $dev && newData.exists()",
+        ".validate": "newData.hasChildren(['pin', 'pinText', 'person', 'n']) && ((!data.exists() && newData.child('n').val() === 1) || (data.exists() && newData.child('n').val() === data.child('n').val() + 1)) && newData.child('n').val() <= 10",
+        "pin": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9999"
+        },
+        "pinText": {
+          ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}$/)"
+        },
+        "person": {
+          ".validate": "newData.val() === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || newData.val() === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'"
+        },
+        "n": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "presence": {
+      ".read": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+      "$uid": {
+        ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && (auth != null && root.child('pinTry').child(auth.uid).child('person').val() === $uid && ($uid === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || $uid === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'))",
+        "connections": {
+          "$cid": {
+            ".validate": "newData.isBoolean()"
+          }
+        },
+        "lastSeen": {
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "typing": {
+      ".read": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+      "$uid": {
+        ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && (auth != null && root.child('pinTry').child(auth.uid).child('person').val() === $uid && ($uid === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || $uid === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'))",
+        ".validate": "newData.hasChildren(['typing', 'ts'])",
+        "typing": {
+          ".validate": "newData.isBoolean()"
+        },
+        "ts": {
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "chat": {
+      ".read": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+      "messages": {
+        ".indexOn": [
+          "ts"
+        ],
+        "$mid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && ((!data.exists() && newData.child('uid').val() === root.child('pinTry').child(auth.uid).child('person').val()) || (data.exists() && newData.exists() && data.child('uid').val() === root.child('pinTry').child(auth.uid).child('person').val()))",
+          ".validate": "newData.hasChildren(['uid', 'text', 'ts'])",
+          "uid": {
+            ".validate": "newData.val() === root.child('pinTry').child(auth.uid).child('person').val() && (!data.exists() || data.val() === newData.val())"
+          },
+          "text": {
+            ".validate": "newData.isString() && newData.val().length <= 2000 && (newData.val().length > 0 || newData.parent().child('deleted').val() === true)"
+          },
+          "ts": {
+            ".validate": "(!data.exists() && newData.val() === now) || (data.exists() && newData.val() === data.val())"
+          },
+          "deleted": {
+            ".validate": "newData.val() === true"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "readReceipts": {
+        "$uid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && (auth != null && root.child('pinTry').child(auth.uid).child('person').val() === $uid && ($uid === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || $uid === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'))",
+          "readAt": {
+            ".validate": "newData.isNumber() && newData.val() <= now + 60000 && (!data.exists() || newData.val() >= data.val())"
+          },
+          "deliveredAt": {
+            ".validate": "newData.isNumber() && newData.val() <= now + 60000 && (!data.exists() || newData.val() >= data.val())"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "games": {
+      ".read": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+      "invitations": {
+        ".indexOn": [
+          "createdAt"
+        ],
+        "$iid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && ((!data.exists() && newData.child('from').val() === root.child('pinTry').child(auth.uid).child('person').val()) || (data.exists() && !newData.exists() && data.child('from').val() === root.child('pinTry').child(auth.uid).child('person').val()) || (data.exists() && newData.exists() && (data.child('to').val() === root.child('pinTry').child(auth.uid).child('person').val() || data.child('from').val() === root.child('pinTry').child(auth.uid).child('person').val())))",
+          ".validate": "newData.hasChildren(['from', 'to', 'game', 'status', 'createdAt'])",
+          "from": {
+            ".validate": "(!data.exists() && newData.val() === root.child('pinTry').child(auth.uid).child('person').val()) || data.val() === newData.val()"
+          },
+          "to": {
+            ".validate": "(newData.val() === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || newData.val() === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1') && newData.val() !== newData.parent().child('from').val() && (!data.exists() || data.val() === newData.val())"
+          },
+          "game": {
+            ".validate": "newData.isString() && newData.val().matches(/^(xox|know-me|truth-dare|emoji|memory|story|questions)$/) && (!data.exists() || data.val() === newData.val())"
+          },
+          "status": {
+            ".validate": "(!data.exists() && newData.val() === 'pending') || (data.exists() && newData.val() === data.val()) || (data.val() === 'pending' && (((newData.val() === 'accepted' || newData.val() === 'declined') && newData.parent().child('to').val() === root.child('pinTry').child(auth.uid).child('person').val()) || (newData.val() === 'cancelled' && newData.parent().child('from').val() === root.child('pinTry').child(auth.uid).child('person').val())))"
+          },
+          "createdAt": {
+            ".validate": "(!data.exists() && newData.val() === now) || (data.exists() && data.val() === newData.val())"
+          },
+          "respondedAt": {
+            ".validate": "newData.isNumber() && (newData.val() === now || newData.val() === data.val())"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "sessions": {
+        ".indexOn": [
+          "createdAt"
+        ],
+        "$sid": {
+          ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val()) && ((data.exists() && data.child('players').child(root.child('pinTry').child(auth.uid).child('person').val()).val() === true) || (!data.exists() && newData.child('players').child(root.child('pinTry').child(auth.uid).child('person').val()).val() === true)) && (newData.exists() || data.child('status').val() !== 'active')",
+          ".validate": "newData.hasChildren(['game', 'players', 'host', 'status', 'state', 'createdAt'])",
+          "game": {
+            ".validate": "newData.isString() && newData.val().matches(/^(xox|know-me|truth-dare|emoji|memory|story|questions)$/) && (!data.exists() || data.val() === newData.val())"
+          },
+          "players": {
+            ".validate": "newData.hasChildren(['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1'])",
+            "$p": {
+              ".validate": "($p === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || $p === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1') && newData.val() === true"
+            }
+          },
+          "host": {
+            ".validate": "(newData.val() === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || newData.val() === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1') && (!data.exists() || data.val() === newData.val())"
+          },
+          "status": {
+            ".validate": "newData.isString() && newData.val().matches(/^(active|finished|ended)$/)"
+          },
+          "round": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10000"
+          },
+          "createdAt": {
+            ".validate": "(!data.exists() && newData.val() === now) || (data.exists() && data.val() === newData.val())"
+          },
+          "updatedAt": {
+            ".validate": "newData.isNumber() && (newData.val() === now || newData.val() === data.val())"
+          },
+          "endedBy": {
+            ".validate": "newData.val() === root.child('pinTry').child(auth.uid).child('person').val() || newData.val() === data.val()"
+          },
+          "result": {
+            "$k": {
+              ".validate": "(newData.isString() && newData.val().length <= 200) || newData.isNumber()"
+            }
+          },
+          "rematch": {
+            "$p": {
+              ".validate": "($p === root.child('pinTry').child(auth.uid).child('person').val() && newData.val() === true) || newData.val() === data.val()"
+            }
+          },
+          "here": {
+            "$p": {
+              ".validate": "newData.isBoolean() && ($p === root.child('pinTry').child(auth.uid).child('person').val() || newData.val() === data.val())"
+            }
+          },
+          "state": {
+            "board": {
+              "$cell": {
+                ".validate": "newData.parent().parent().parent().child('game').val() !== 'xox' || ($cell.matches(/^c[0-8]$/) && newData.isString() && (newData.val() === data.val() || (newData.val() === '-' && newData.parent().parent().child('moves').val() === 0) || ((!data.exists() || data.val() === '-') && data.parent().parent().child('turn').val() === root.child('pinTry').child(auth.uid).child('person').val() && newData.val() === data.parent().parent().child('marks').child(root.child('pinTry').child(auth.uid).child('person').val()).val() && newData.parent().parent().child('moves').val() === data.parent().parent().child('moves').val() + 1)))"
+              }
+            },
+            "turn": {
+              ".validate": "newData.parent().parent().child('players').child(newData.val()).val() === true && (newData.parent().parent().child('game').val() !== 'xox' || !data.exists() || newData.val() === data.val() || data.val() === root.child('pinTry').child(auth.uid).child('person').val() || newData.parent().child('moves').val() === 0)"
+            },
+            "moves": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && (newData.parent().parent().child('game').val() !== 'xox' || !data.exists() || newData.val() === 0 || newData.val() === data.val() || newData.val() === data.val() + 1)"
+            },
+            "marks": {
+              "$p": {
+                ".validate": "(newData.val() === 'X' || newData.val() === 'O') && (!data.exists() || data.val() === newData.val())"
+              }
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "scores": {
+        "$game": {
+          "$key": {
+            ".write": "auth != null && (root.child('pinTry').child(auth.uid).child('pin').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val() || root.child('pinTry').child(auth.uid).child('pinText').val() === root.child('secrets').child('pins').child(root.child('pinTry').child(auth.uid).child('person').val()).val())",
+            ".validate": "$game.matches(/^(xox|know-me|truth-dare|emoji|memory|story|questions)$/) && (($key === 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' || $key === 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1') || $key === 'draw') && newData.isNumber() && ((!data.exists() && newData.val() === 1) || (data.exists() && newData.val() === data.val() + 1))"
+          }
+        }
+      }
+    }
+  }
+}

@@ -102,11 +102,12 @@ const NAV_ALL = [
   { path: '/movies', label: 'Filmler', icon: 'film', extra: true, feature: 'movies' },
   { path: '/tasks', label: 'Görevler', icon: 'tasks', extra: true, feature: 'tasks' },
   { path: '/vault', label: 'Kasa', icon: 'lock', extra: true, feature: 'vault' },
-  { path: '/profile', label: 'Profil', icon: 'user' },
+  // Oyunlar açıkken mobil menüye sığması için Profil 'Daha' menüsüne geçer
+  { path: '/profile', label: 'Profil', icon: 'user', extra: on('games') },
   { path: '/more', label: 'Daha', icon: 'menu', mobileOnly: true },
 ];
 // Kapalı bölümler menüde görünmez. Az bölüm açıkken "Daha" menüsüne gerek yok.
-const NAV = NAV_ALL.filter((n) => on(n.feature) && !(n.mobileOnly && !['movies', 'tasks', 'vault', 'notifications'].some(on)));
+const NAV = NAV_ALL.filter((n) => on(n.feature) && !(n.mobileOnly && !['movies', 'tasks', 'vault', 'notifications', 'games'].some(on)));
 
 function startApp() {
   teardown();

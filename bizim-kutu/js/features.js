@@ -7,7 +7,7 @@ export const FEATURES = Object.freeze({
   movies: true,         // Film & dizi (5. adım)
   tasks: true,          // Yapılacaklar (4. adım)
   vault: false,         // Özel kasa
-  games: false,         // Oyun merkezi (7 oyun)
+  games: true,          // Oyun merkezi (7 oyun) (7. adım)
   notifications: true,  // Bildirimler (6. adım)
 });
 export const on = (name) => !name || FEATURES[name] === true;
