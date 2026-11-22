@@ -480,13 +480,3 @@ button.star:hover { transform: scale(1.15); }
 .user-cards--mini .user-card__avatar { width: 48px; height: 48px; font-size: 26px; }
 .auth-card.is-busy .pin-pad { opacity: .5; pointer-events: none; }
 .auth-version { color: var(--muted); font-size: .7rem; opacity: .7; }
-/* Kasa medyası */
-.vault-actions { flex-wrap: wrap; }
-.vault-media { margin-top: 10px; }
-.vault-photo { width: 100%; max-height: 360px; object-fit: cover; border-radius: var(--r-md); cursor: zoom-in; background: var(--cream); }
-.vault-photo--full { max-height: none; object-fit: contain; cursor: default; }
-.vault-audio { width: 100%; }
-.rec { display: grid; justify-items: center; gap: 8px; padding: 8px 0; }
-.rec-btn { width: 84px; height: 84px; border-radius: 50%; font-size: 34px; background: var(--primary-soft); border: 3px solid var(--primary); transition: transform .15s; }
-.rec-btn.is-recording { background: var(--danger); border-color: var(--danger); color: #fff; animation: soft-pulse 1s infinite; }
-.rec-time { font-size: 1.6rem; font-variant-numeric: tabular-nums; font-weight: 800; }

@@ -60,13 +60,13 @@ test('PIN değerleri ve parolalar kaynak kodda yok', () => {
   assert.deepEqual(offenders, []);
 });
 
-test('Firebase Storage kullanılmıyor; dosya seçimi yalnızca Özel Kasa\'da (şifreli)', () => {
+test('Firebase Storage kullanılmıyor ve dosya yükleme alanı yok', () => {
   const entry = readFileSync(join(ROOT, 'tools/firebase-entry.js'), 'utf8');
   assert.ok(!/firebase\/storage/.test(entry));
   for (const f of appJs) {
     const src = readFileSync(join(ROOT, f), 'utf8');
     assert.ok(!/firebase\/storage|getStorage|uploadBytes/.test(src), f);
-    if (!f.endsWith('pages/vault.js')) assert.ok(!/type:\s*['"]file['"]/.test(src), `${f}: dosya girişi yalnızca kasada olabilir`);
+    assert.ok(!/type:\s*['"]file['"]/.test(src), `${f}: dosya girişi`);
   }
 });
 

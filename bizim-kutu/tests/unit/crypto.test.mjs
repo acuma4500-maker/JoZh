@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createVaultConfig, unlockVault, encryptJSON, decryptJSON, encryptBytes, decryptBytes, passphraseStrength, safeEqual, VAULT_ITERATIONS } from '../../js/services/crypto.js';
+import { createVaultConfig, unlockVault, encryptJSON, decryptJSON, passphraseStrength, safeEqual, VAULT_ITERATIONS } from '../../js/services/crypto.js';
 
 const PASS = 'İlkKahvemiz@Moda2026';
 
@@ -48,15 +48,4 @@ test('sabit zamanlı karşılaştırma', () => {
   assert.ok(safeEqual('abc', 'abc'));
   assert.ok(!safeEqual('abc', 'abd'));
   assert.ok(!safeEqual('abc', 'ab'));
-});
-
-test('kasa medyası: ikili veri şifrelenir, parça yeri değiştirilemez', async () => {
-  const { key } = await createVaultConfig(PASS);
-  const bytes = new Uint8Array(700 * 1024).map((_, i) => i % 251);
-  const enc = await encryptBytes(key, bytes, 'not1/0');
-  assert.ok(!enc.ct.startsWith('AAEC'), 'şifreli');
-  const out = await decryptBytes(key, enc, 'not1/0');
-  assert.deepEqual(out, bytes);
-  await assert.rejects(decryptBytes(key, enc, 'not1/1'), 'başka sıraya taşınamaz');
-  await assert.rejects(decryptBytes(key, enc, 'not2/0'), 'başka nota taşınamaz');
 });

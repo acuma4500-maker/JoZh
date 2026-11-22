@@ -45,10 +45,10 @@ async function firestoreDocs(path) {
 
 const server = spawn(process.execPath, [fileURLToPath(new URL('../../tools/serve.mjs', import.meta.url)), String(PORT)], { stdio: 'ignore' });
 await new Promise((r) => setTimeout(r, 600));
-const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] });
+const browser = await chromium.launch();
 const errors = [];
 async function newUser(device) {
-  const ctx = await browser.newContext({ ...device, locale: 'tr-TR', timezoneId: 'Europe/Istanbul', permissions: ['microphone'] });
+  const ctx = await browser.newContext({ ...device, locale: 'tr-TR', timezoneId: 'Europe/Istanbul' });
   const page = await ctx.newPage();
   page.setDefaultTimeout(12000);
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
@@ -229,40 +229,6 @@ try {
     assert.equal(await ilayda.page.locator('.vault-note').count(), 0, 'kilitliyken notlar DOM\'da olmamalı');
     await vaultPin(ilayda.page, VAULT);
     await ilayda.page.locator('.vault-note .card__text', { hasText: 'Kapadokya balonu' }).waitFor({ timeout: 20000 });
-  });
-
-  await step('12c. Kasa: şifreli fotoğraf ekleniyor, diğer cihazda görünüyor, sunucuda açık hâli yok', async () => {
-    await cuma.page.setInputFiles('.vault input[type=file]', fileURLToPath(new URL('../../assets/icons/icon-512.png', import.meta.url)));
-    await cuma.page.locator('.modal .vault-photo').waitFor({ timeout: 10000 });
-    await cuma.page.fill('.modal input.input', 'Kapadokya fotoğrafı');
-    await cuma.page.locator('.modal button[type=submit]').click();
-    await cuma.page.locator('.vault-note', { hasText: 'Kapadokya fotoğrafı' }).locator('img.vault-photo').waitFor({ timeout: 20000 });
-    await ilayda.page.locator('.vault-note', { hasText: 'Kapadokya fotoğrafı' }).locator('img.vault-photo').waitFor({ timeout: 20000 });
-    const ok = await ilayda.page.locator('.vault-note', { hasText: 'Kapadokya fotoğrafı' }).locator('img.vault-photo').evaluate((img) => img.complete && img.naturalWidth > 0);
-    assert.ok(ok, 'fotoğraf çözülüp gösterilmeli');
-    const raw = JSON.stringify(await firestoreDocs('couples/main/vaultMedia'));
-    assert.ok(raw.includes('"ct"'), 'şifreli parça var');
-    assert.ok(!/"\/9j\/|iVBORw0KGgo/.test(raw), 'sunucuda JPEG/PNG açık hâli olmamalı');
-    await shot(ilayda.page, '09-vault-photo');
-  });
-
-  await step('12d. Kasa: ses kaydı (mikrofon) şifrelenip diğer cihazda çalınabiliyor', async () => {
-    await cuma.page.getByRole('button', { name: /Ses kaydı/ }).click();
-    await cuma.page.locator('.modal .rec-btn').click();
-    await cuma.page.waitForTimeout(2500);
-    await cuma.page.locator('.modal .rec-btn.is-recording').click({ force: true }); // kayıt sırasında düğme nabız gibi atıyor
-    await cuma.page.locator('.modal .rec-preview audio').waitFor({ timeout: 10000 });
-    await cuma.page.fill('.modal input.input', 'Günaydın sesi');
-    await cuma.page.locator('.modal button[type=submit]').click();
-    await ilayda.page.locator('.vault-note', { hasText: 'Günaydın sesi' }).locator('audio.vault-audio').waitFor({ timeout: 20000 });
-    const src = await ilayda.page.locator('.vault-note', { hasText: 'Günaydın sesi' }).locator('audio.vault-audio').getAttribute('src');
-    assert.ok(src?.startsWith('blob:'), 'ses bellekte çözülmüş olmalı');
-    // silme: not + parçaları
-    await cuma.page.locator('.vault-note', { hasText: 'Günaydın sesi' }).getByRole('button', { name: 'Sil' }).click();
-    await cuma.page.getByRole('button', { name: 'Sil', exact: true }).last().click();
-    await ilayda.page.locator('.vault-note', { hasText: 'Günaydın sesi' }).waitFor({ state: 'detached', timeout: 10000 });
-    const left = JSON.stringify(await firestoreDocs('couples/main/vaultMedia'));
-    assert.equal((left.match(/"name"/g) || []).length, 1, 'yalnızca fotoğrafın tek parçası kalmalı');
   });
 
   await step('13. Oyun daveti karşı tarafa ulaşıyor ve kabul ediliyor', async () => {
