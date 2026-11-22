@@ -8,6 +8,6 @@ export const FEATURES = Object.freeze({
   tasks: true,          // Yapılacaklar (4. adım)
   vault: false,         // Özel kasa
   games: false,         // Oyun merkezi (7 oyun)
-  notifications: false, // Bildirimler
+  notifications: true,  // Bildirimler (6. adım)
 });
 export const on = (name) => !name || FEATURES[name] === true;

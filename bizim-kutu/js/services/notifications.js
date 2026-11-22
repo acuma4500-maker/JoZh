@@ -33,8 +33,14 @@ export async function notify(type, { title, body = '', link = '' }) {
 let seen = null;
 export function startNotifications(uid, onNew) {
   seen = null;
-  const q = query(col('notifications'), where('to', '==', uid), orderBy('createdAt', 'desc'), limit(40));
-  return listen(q, (items) => {
+  // Tek alanlı sorgu (Firestore'da ek dizin gerekmez); sıralama cihazda yapılır.
+  const q = query(col('notifications'), where('to', '==', uid), limit(300));
+  let cleaned = false;
+  return listen(q, (all) => {
+    const ms = (n) => n.createdAt?.toMillis?.() || Date.now();
+    const sorted = all.sort((a, b) => ms(b) - ms(a));
+    if (!cleaned) { cleaned = true; cleanupOld(sorted); }
+    const items = sorted.slice(0, 60);
     const first = seen === null;
     seen ||= new Set();
     for (const n of items) {
@@ -45,6 +51,14 @@ export function startNotifications(uid, onNew) {
     }
     setState({ notifications: items });
   }, () => {});
+}
+
+/** Okunmuş ve 14 günden eski bildirimleri temizler (birikmesin). */
+async function cleanupOld(items) {
+  const cutoff = Date.now() - 14 * 86400000;
+  const old = items.filter((n) => n.read && (n.createdAt?.toMillis?.() || Date.now()) < cutoff).slice(0, 400);
+  if (!old.length) return;
+  try { const batch = writeBatch(db); old.forEach((n) => batch.delete(docRef('notifications', n.id))); await batch.commit(); } catch (e) { console.warn('bildirim temizliği', e); }
 }
 
 export const markNotificationRead = (id) => updateDoc(docRef('notifications', id), { read: true });
