@@ -166,3 +166,16 @@ test('secrets/pins sayı olarak (baştaki sıfır düşmüş) kaydedilse de eşl
   await assertSucceeds(getDocs(collection(fs(A), p('vaultNotes'))), 'kasa PIN\'i sayı');
   await assertFails(getDocs(collection(fs(B), p('vaultNotes'))), 'doğrulanmamış cihaz yine okuyamaz');
 });
+
+test('kasa medyası: yalnızca kasa PIN\'i doğrulanmış cihaz; doğru kimlik, boyut sınırı, değiştirilemez', async () => {
+  const part = (u, i = 0, n = 1, ct = 'c2lmcmVsaQ==') => ({ v: 1, noteId: 'not1', i, n, iv: 'AAAAAAAAAAAAAAAA', ct, createdBy: u, createdAt: serverTimestamp() });
+  await assertSucceeds(setDoc(doc(fs(A), p('vaultMedia', 'not1_0')), part(A)));
+  await assertSucceeds(getDoc(doc(fs(A), p('vaultMedia', 'not1_0'))));
+  await assertFails(getDoc(doc(fs(B), p('vaultMedia', 'not1_0'))), 'kasa PIN\'i doğrulanmamış');
+  await assertFails(setDoc(doc(fs(A), p('vaultMedia', 'baska_0')), part(A)), 'belge kimliği not+sıra olmalı');
+  await assertFails(setDoc(doc(fs(A), p('vaultMedia', 'not1_1')), part(A, 1, 1)), 'sıra < parça sayısı');
+  await assertFails(setDoc(doc(fs(A), p('vaultMedia', 'not1_2')), part(A, 2, 3, 'x'.repeat(900001))), 'boyut sınırı');
+  await assertFails(setDoc(doc(fs(A), p('vaultMedia', 'not1_0')), part(A)), 'değiştirilemez');
+  await assertFails(setDoc(doc(fs(A), p('vaultMedia', 'not1_3')), { ...part(A, 3, 5), url: 'http://x' }), 'fazla alan');
+  await assertSucceeds(deleteDoc(doc(fs(A), p('vaultMedia', 'not1_0'))));
+});

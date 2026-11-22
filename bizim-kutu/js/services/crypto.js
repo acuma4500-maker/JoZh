@@ -82,3 +82,15 @@ export function safeEqual(a, b) {
   for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return r === 0;
 }
+
+/** İkili veriyi (fotoğraf/ses parçası) şifreler; bindTo ile parçanın yerine bağlanır. */
+export async function encryptBytes(key, bytes, bindTo = '') {
+  const iv = randomBytes(12);
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: enc.encode(`${AAD_PREFIX}media/${bindTo}`) }, key, bytes);
+  return { iv: toB64(iv), ct: toB64(ct) };
+}
+
+export async function decryptBytes(key, { iv, ct }, bindTo = '') {
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(iv), additionalData: enc.encode(`${AAD_PREFIX}media/${bindTo}`) }, key, fromB64(ct));
+  return new Uint8Array(pt);
+}

@@ -203,6 +203,20 @@ service cloud.firestore {
         allow delete: if isCouple() && vaultOk();
       }
 
+      // Kasa medyası (fotoğraf/ses): şifreli parçalar, belge başına en fazla ~900 KB
+      match /vaultMedia/{id} {
+        allow read: if isCouple() && vaultOk();
+        allow create: if isCouple() && vaultOk()
+          && exactKeys(['v', 'noteId', 'i', 'n', 'iv', 'ct', 'createdBy', 'createdAt'])
+          && d().v == 1 && str('noteId', 1, 64)
+          && d().i is int && d().n is int && d().i >= 0 && d().n >= 1 && d().n <= 20 && d().i < d().n
+          && id == d().noteId + '_' + string(d().i)
+          && str('iv', 8, 64) && str('ct', 1, 900000)
+          && d().createdBy == me() && d().createdAt == request.time;
+        allow update: if false;
+        allow delete: if isCouple() && vaultOk();
+      }
+
       // ---------------- Bildirimler ----------------
       match /notifications/{id} {
         allow read: if isCouple() && resource.data.to == me();
