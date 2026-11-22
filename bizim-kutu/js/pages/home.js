@@ -106,7 +106,8 @@ export default async function home(page, { scope }) {
     cTask.set(h('p', { class: 'home-card__text' }, t.title), t.dueDate ? h('small', { class: `muted${dueLabel(t.dueDate).includes('gecikti') ? ' text-danger' : ''}` }, dueLabel(t.dueDate)) : h('small', { class: 'muted' }, 'Son tarih yok'));
   }, fail(cTask)));
 
-  if (on('movies')) scope.add(listen(query(col('movies'), where('status', 'in', ['watching', 'watchlist']), orderBy('createdAt', 'desc'), limit(10)), (items) => {
+  if (on('movies')) scope.add(listen(query(col('movies'), orderBy('createdAt', 'desc'), limit(100)), (all) => {
+    const items = all.filter((x) => x.status === 'watching' || x.status === 'watchlist');
     const m = items.find((x) => x.status === 'watching') || items[0];
     if (!m) return cMovie.set(muted('Listeye bir film ekleyin 🍿'));
     cMovie.set(h('p', { class: 'home-card__text' }, `${m.kind === 'dizi' ? '📺' : '🎬'} ${m.title}`), h('small', { class: 'muted' }, STATUS_TR[m.status]));

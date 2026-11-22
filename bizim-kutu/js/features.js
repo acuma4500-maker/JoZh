@@ -4,7 +4,7 @@
 export const FEATURES = Object.freeze({
   chat: true,           // Sohbet (2. adım)
   memories: true,       // Anı defteri (3. adım)
-  movies: false,        // Film & dizi
+  movies: true,         // Film & dizi (5. adım)
   tasks: true,          // Yapılacaklar (4. adım)
   vault: false,         // Özel kasa
   games: false,         // Oyun merkezi (7 oyun)

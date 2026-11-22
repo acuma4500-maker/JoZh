@@ -40,10 +40,12 @@ export default async function movies(page, { scope }) {
   function sub() {
     unsub?.();
     fill(listEl, skeletonList(3));
-    const q = tab === 'favorites'
-      ? query(col('movies'), where('favorite', '==', true), orderBy('updatedAt', 'desc'), limit(100))
-      : query(col('movies'), where('status', '==', tab), orderBy('createdAt', 'desc'), limit(100));
-    unsub = listen(q, draw, (e) => fill(listEl, errorState(errorMessage(e), sub)));
+    // Tek alana göre sıralı tek sorgu; kategori/favori ayrımı cihazda yapılır (Firestore'da ek dizin gerekmez).
+    const q = query(col('movies'), orderBy('createdAt', 'desc'), limit(300));
+    unsub = listen(q, (all) => {
+      const ms = (x) => x?.toMillis?.() || 0;
+      draw(tab === 'favorites' ? all.filter((m) => m.favorite).sort((a, b) => ms(b.updatedAt) - ms(a.updatedAt)) : all.filter((m) => m.status === tab));
+    }, (e) => fill(listEl, errorState(errorMessage(e), sub)));
   }
   scope.add(() => unsub?.());
 
