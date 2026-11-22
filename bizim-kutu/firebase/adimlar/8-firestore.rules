@@ -1,0 +1,193 @@
+rules_version = '2';
+// Bizim Kutu — Cloud Firestore güvenlik kuralları — ADIM 8 (tümü: … + Oyunlar + Özel kasa)
+// Varsayılan: her şey kapalı. Yalnızca iki UID, yalnızca couples/main altında, yalnızca şema-uyumlu veri.
+// Genel joker (/{document=**}) izin kuralı YOKTUR; böylece özel kurallar etkisiz kalmaz.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Kimlik: PIN ile doğrulanmış cihaz ----
+    // Her cihaz anonim Firebase oturumu açar ve pinTry/{cihaz} kaydına {pin, person, n} yazar.
+    // Kayıttaki PIN, yalnızca kuralların okuyabildiği secrets/pins belgesiyle eşleşiyorsa
+    // cihaz "person" (Cuma veya İlayda) kimliğiyle işlem yapabilir. PIN'ler sitenin kodunda yoktur.
+    function signedIn() { return request.auth != null; }
+    function tryPath() { return /databases/$(database)/documents/pinTry/$(request.auth.uid); }
+    function tryDoc() { return get(tryPath()).data; }
+    function isCouple() {
+      return signedIn() && exists(tryPath())
+        && tryDoc().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
+        && (tryDoc().pin == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]
+            || tryDoc().pinText == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]);
+    }
+    function me() { return tryDoc().person; }
+    function partner() {
+      return me() == 'pt0Kmbc9rqdJekFyvA1wLItUnxw1' ? 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1' : 'pt0Kmbc9rqdJekFyvA1wLItUnxw1';
+    }
+    function isCoupleUid(u) { return u in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']; }
+    function d() { return request.resource.data; }
+    function str(f, min, max) { return d()[f] is string && d()[f].size() >= min && d()[f].size() <= max; }
+    function isoDate(f) { return d()[f] is string && d()[f].matches('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$'); }
+    function exactKeys(keys) { return d().keys().hasOnly(keys) && d().keys().hasAll(keys); }
+    // Oluşturan ve zaman damgaları: başka kullanıcı adına veri yazılamaz, istemci saati kullanılamaz.
+    function created() {
+      return d().createdBy == me() && d().createdAt == request.time && d().updatedBy == me() && d().updatedAt == request.time;
+    }
+    function updated() {
+      return d().createdBy == resource.data.createdBy && d().createdAt == resource.data.createdAt
+        && d().updatedBy == me() && d().updatedAt == request.time;
+    }
+
+    // ---- PIN denemeleri: her deneme sayılır, sayaç atlanamaz/sıfırlanamaz, cihaz başına en fazla 10 ----
+    match /pinTry/{deviceId} {
+      function validTry() {
+        // PIN hem sayı (0822 → 822) hem metin ("0822") olarak gönderilir; secrets/pins hangisiyle kaydedildiyse eşleşir.
+        return d().keys().hasOnly(['pin', 'pinText', 'person', 'n']) && d().keys().hasAll(['pin', 'pinText', 'person', 'n'])
+          && d().pin is int && d().pin >= 0 && d().pin <= 9999
+          && d().pinText is string && d().pinText.matches('^[0-9]{4}$')
+          && d().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
+          && d().n is int && d().n <= 10;
+      }
+      allow read: if signedIn() && request.auth.uid == deviceId;
+      allow create: if signedIn() && request.auth.uid == deviceId && validTry() && d().n == 1;
+      allow update: if signedIn() && request.auth.uid == deviceId && validTry() && d().n == resource.data.n + 1;
+      allow delete: if false;
+    }
+    // PIN'ler: istemciler asla okuyamaz/yazamaz (Firebase Console'dan girilir).
+    match /secrets/{doc} {
+      allow read, write: if false;
+    }
+
+    match /couples/main {
+      allow read: if isCouple();
+      allow write: if false;
+
+      // ---------------- Anılar ----------------
+      match /memories/{id} {
+        function valid() {
+          return exactKeys(['title', 'date', 'description', 'emoji', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            && str('title', 1, 80) && isoDate('date') && str('description', 0, 2000) && str('emoji', 1, 16);
+        }
+        allow read: if isCouple();
+        allow create: if isCouple() && valid() && created();
+        allow update: if isCouple() && valid() && updated();
+        allow delete: if isCouple();
+      }
+
+      // ---------------- Film & dizi ----------------
+      match /movies/{id} {
+        function valid() {
+          return exactKeys(['title', 'kind', 'genre', 'description', 'status', 'favorite', 'rating', 'comment', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            && str('title', 1, 120) && d().kind in ['film', 'dizi'] && str('genre', 0, 40) && str('description', 0, 1000)
+            && d().status in ['watchlist', 'watching', 'watched'] && d().favorite is bool
+            && d().rating is int && d().rating >= 0 && d().rating <= 5 && str('comment', 0, 1000);
+        }
+        allow read: if isCouple();
+        allow create: if isCouple() && valid() && created();
+        allow update: if isCouple() && valid() && updated();
+        allow delete: if isCouple();
+      }
+
+      // ---------------- Görevler ----------------
+      match /tasks/{id} {
+        function valid() {
+          return exactKeys(['title', 'description', 'dueDate', 'priority', 'done', 'doneBy', 'doneAt', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            && str('title', 1, 120) && str('description', 0, 1000)
+            && (d().dueDate == '' || isoDate('dueDate'))
+            && d().priority in ['low', 'medium', 'high'] && d().done is bool
+            && (d().doneBy == '' || isCoupleUid(d().doneBy))
+            && (d().doneAt == null || d().doneAt is timestamp);
+        }
+        // Tamamlandı işaretlenirken: işaretleyen ben olmalıyım ve zaman sunucu saati olmalı.
+        function doneOk() {
+          return (d().done == false && d().doneBy == '' && d().doneAt == null)
+            || (d().done == true && resource != null && resource.data.done == true
+                && d().doneBy == resource.data.doneBy && d().doneAt == resource.data.doneAt)
+            || (d().done == true && d().doneBy == me() && d().doneAt == request.time);
+        }
+        allow read: if isCouple();
+        allow create: if isCouple() && valid() && created() && d().done == false && d().doneBy == '' && d().doneAt == null;
+        allow update: if isCouple() && valid() && updated() && doneOk();
+        allow delete: if isCouple();
+      }
+
+      // ---------------- Hikâyeler (oyun 6) ----------------
+      match /stories/{id} {
+        allow read: if isCouple();
+        allow create: if isCouple()
+          && exactKeys(['title', 'opening', 'text', 'lines', 'authors', 'sessionId', 'createdBy', 'createdAt'])
+          && str('title', 1, 80) && str('opening', 1, 300) && str('text', 1, 20000)
+          && d().lines is list && d().lines.size() <= 31 && d().authors is map
+          && str('sessionId', 1, 64) && d().createdBy == me() && d().createdAt == request.time;
+        allow update: if false;
+        allow delete: if isCouple();
+      }
+
+      // ---------------- Soru-cevap geçmişi (oyun 7) ----------------
+      // Her kullanıcı yalnızca KENDİ cevabını yazabilir.
+      match /qaAnswers/{id} {
+        allow read: if isCouple();
+        allow create: if isCouple()
+          && exactKeys(['qid', 'category', 'question', 'answers', 'sessionId', 'createdBy', 'createdAt'])
+          && d().qid is int && d().qid >= 1 && d().qid <= 400
+          && str('category', 1, 40) && str('question', 1, 300) && str('sessionId', 1, 64)
+          && d().answers is map && d().answers.keys().hasOnly([me()])
+          && d().answers[me()] is string && d().answers[me()].size() <= 1000
+          && d().createdBy == me() && d().createdAt == request.time;
+        allow update: if isCouple()
+          && d().diff(resource.data).affectedKeys().hasOnly(['answers'])
+          && d().answers.diff(resource.data.answers).affectedKeys().hasOnly([me()])
+          && d().answers[me()] is string && d().answers[me()].size() <= 1000;
+        allow delete: if false;
+      }
+
+      // ---------------- Özel kasa ----------------
+      // Sunucuda YALNIZCA şifreli veri bulunur. Düz metin alanlar şema gereği reddedilir.
+      match /vault/{docId} {
+        function validConfig() {
+          return d().keys().hasOnly(['v', 'salt', 'iterations', 'check', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            && d().v == 1 && str('salt', 16, 64) && d().iterations is int && d().iterations >= 100000 && d().iterations <= 10000000
+            && d().check is map && d().check.keys().hasOnly(['iv', 'ct']) && d().check.iv is string && d().check.ct is string
+            && d().check.ct.size() <= 512;
+        }
+        allow read: if isCouple() && docId == 'config';
+        allow create: if isCouple() && docId == 'config' && validConfig() && created();
+        allow update: if isCouple() && docId == 'config' && validConfig() && updated();
+        allow delete: if false;
+      }
+      match /vaultNotes/{id} {
+        function valid() {
+          return exactKeys(['v', 'iv', 'ct', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            && d().v == 1 && str('iv', 8, 64) && str('ct', 1, 30000);
+        }
+        allow read: if isCouple();
+        allow create: if isCouple() && valid() && created();
+        allow update: if isCouple() && valid() && updated();
+        allow delete: if isCouple();
+      }
+
+      // ---------------- Bildirimler ----------------
+      match /notifications/{id} {
+        allow read: if isCouple() && resource.data.to == me();
+        allow create: if isCouple()
+          && exactKeys(['type', 'to', 'from', 'title', 'body', 'link', 'read', 'createdAt'])
+          && d().from == me() && d().to == partner()
+          && d().type in ['message', 'game_invite', 'game_accept', 'memory', 'task', 'task_done']
+          && str('title', 1, 80) && str('body', 0, 200) && str('link', 0, 100)
+          && d().read == false && d().createdAt == request.time;
+        allow update: if isCouple() && resource.data.to == me()
+          && d().diff(resource.data).affectedKeys().hasOnly(['read']) && d().read is bool;
+        allow delete: if isCouple() && resource.data.to == me();
+      }
+      // ---------------- Profiller ----------------
+      match /profiles/{uid} {
+        allow read: if isCouple();
+        allow create, update: if isCouple() && uid == me()
+          && d().keys().hasOnly(['nickname', 'prefs', 'updatedAt'])
+          && (!('nickname' in d()) || (d().nickname is string && d().nickname.size() <= 24))
+          && (!('prefs' in d()) || (d().prefs is map && d().prefs.keys().hasOnly(['theme', 'reduceMotion', 'notif', 'system', 'lockAfter'])))
+          && d().updatedAt == request.time;
+        allow delete: if false;
+      }
+
+    }
+  }
+}

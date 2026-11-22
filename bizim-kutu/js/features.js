@@ -6,7 +6,7 @@ export const FEATURES = Object.freeze({
   memories: true,       // Anı defteri (3. adım)
   movies: true,         // Film & dizi (5. adım)
   tasks: true,          // Yapılacaklar (4. adım)
-  vault: false,         // Özel kasa
+  vault: true,          // Özel kasa (8. adım)
   games: true,          // Oyun merkezi (7 oyun) (7. adım)
   notifications: true,  // Bildirimler (6. adım)
 });
