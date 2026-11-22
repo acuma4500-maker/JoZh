@@ -33,7 +33,7 @@ async function seed() {
   await fetch('http://127.0.0.1:9000/.json?ns=jozh-love-default-rtdb', { method: 'PUT', headers: { Authorization: 'Bearer owner' }, body: JSON.stringify({ secrets: { pins } }) });
   const r = await fetch('http://127.0.0.1:8080/v1/projects/jozh-love/databases/(default)/documents/secrets/pins', {
     method: 'PATCH', headers: { Authorization: 'Bearer owner', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: { [A]: { integerValue: String(Number(PINS.cuma)) }, [B]: { stringValue: PINS.ilayda }, vault: { stringValue: '4444' } } }),
+    body: JSON.stringify({ fields: { [A]: { integerValue: String(Number(PINS.cuma)) }, [B]: { stringValue: PINS.ilayda }, vault: { stringValue: '“4444”' } } }), // konsoldaki gibi eğik tırnaklı
   });
   if (!r.ok) throw new Error('secrets yazılamadı: ' + await r.text());
 }

@@ -24,7 +24,8 @@ export async function env() {
 export async function seedFirestore(t) {
   await t.withSecurityRulesDisabled(async (ctx) => {
     const db = ctx.firestore();
-    await setDoc(doc(db, 'secrets/pins'), { ...PINS, vault: VAULT_PIN });
+    // Konsoldaki yazım hatalarını taklit: Cuma'nınki eğik tırnaklı, kasa PIN'i sayı + boşluklu değil eğik tırnak
+    await setDoc(doc(db, 'secrets/pins'), { [A]: `“${PINS[A]}”`, [B]: PINS[B], vault: ` “${VAULT_PIN}” ` });
     // Cuma'nın cihazı kasa PIN'ini doğrulamış; İlayda'nınki doğrulamamış
     await setDoc(doc(db, `vaultTry/${DEV[A]}`), { pin: Number(VAULT_PIN), pinText: VAULT_PIN, n: 1, at: serverTimestamp() });
     await setDoc(doc(db, `pinTry/${DEV[A]}`), { pin: Number(PINS[A]), pinText: PINS[A], person: A, n: 1 });

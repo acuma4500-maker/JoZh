@@ -10,13 +10,19 @@ service cloud.firestore {
     // Kayıttaki PIN, yalnızca kuralların okuyabildiği secrets/pins belgesiyle eşleşiyorsa
     // cihaz "person" (Cuma veya İlayda) kimliğiyle işlem yapabilir. PIN'ler sitenin kodunda yoktur.
     function signedIn() { return request.auth != null; }
+    // secrets/pins: istemciler okuyamaz. Konsolda yazım farkları (tırnak, boşluk, sayı/metin,
+    // baştaki sıfırın düşmesi) sorun olmasın diye yalnızca rakamlar karşılaştırılır.
+    function pins() { return get(/databases/$(database)/documents/secrets/pins).data; }
+    function digits(v) { return string(v).replace('[^0-9]', ''); }
+    function pinMatches(t, secret) {
+      return t.pinText == digits(secret) || string(t.pin) == digits(secret);
+    }
     function tryPath() { return /databases/$(database)/documents/pinTry/$(request.auth.uid); }
     function tryDoc() { return get(tryPath()).data; }
     function isCouple() {
       return signedIn() && exists(tryPath())
         && tryDoc().person in ['pt0Kmbc9rqdJekFyvA1wLItUnxw1', 'cf6RqCRF6dPEWtSR1L9Dm2Uv4Ap1']
-        && (tryDoc().pin == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]
-            || tryDoc().pinText == get(/databases/$(database)/documents/secrets/pins).data[tryDoc().person]);
+        && pinMatches(tryDoc(), pins()[tryDoc().person]);
     }
     function me() { return tryDoc().person; }
     function partner() {
@@ -28,8 +34,7 @@ service cloud.firestore {
     function vaultDoc() { return get(vaultPath()).data; }
     function vaultOk() {
       return signedIn() && exists(vaultPath())
-        && (vaultDoc().pin == get(/databases/$(database)/documents/secrets/pins).data.vault
-            || vaultDoc().pinText == get(/databases/$(database)/documents/secrets/pins).data.vault)
+        && pinMatches(vaultDoc(), pins().vault)
         && request.time < vaultDoc().at + duration.value(15, 'm');
     }
     function d() { return request.resource.data; }

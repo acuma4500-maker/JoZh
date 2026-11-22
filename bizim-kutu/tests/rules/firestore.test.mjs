@@ -157,3 +157,12 @@ test('Cuma\'nın PIN\'iyle İlayda olunamaz', async () => {
   await assertSucceeds(setDoc(doc(c, 'pinTry/sahte'), { pin: Number(PINS[A]), pinText: PINS[A], person: B, n: 1 }));
   await assertFails(getDoc(doc(c, p('memories', 'x'))));
 });
+
+test('secrets/pins sayı olarak (baştaki sıfır düşmüş) kaydedilse de eşleşir', async () => {
+  await t.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'secrets/pins'), { [A]: Number(PINS[A]), [B]: PINS[B], vault: Number(VAULT_PIN) });
+  });
+  await assertSucceeds(getDoc(doc(fs(A), p('memories', 'x'))), 'giriş PIN\'i sayı (0111 → 111)');
+  await assertSucceeds(getDocs(collection(fs(A), p('vaultNotes'))), 'kasa PIN\'i sayı');
+  await assertFails(getDocs(collection(fs(B), p('vaultNotes'))), 'doğrulanmamış cihaz yine okuyamaz');
+});
