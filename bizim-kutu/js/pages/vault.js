@@ -17,19 +17,26 @@ import { LIMITS, validateText, isPin } from '../utils/validation.js';
 import { col, docRef, listen, query, orderBy, limit } from '../services/firestore.js';
 import { doc, getDoc, getDocs, setDoc, deleteDoc, serverTimestamp, writeBatch } from '../vendor/firebase.js';
 import { db, auth } from '../firebase-config.js';
-import { createVaultConfig, unlockVault, encryptJSON, decryptJSON } from '../services/crypto.js';
+import { createVaultConfig, unlockVault, keyMatches, deriveVaultKey, encryptJSON, decryptJSON } from '../services/crypto.js';
 
 const AUTO_LOCK_MS = 3 * 60 * 1000;
 export const VAULT_MAX_TRIES = 10;
 export const VAULT_WINDOW_MS = 10 * 60 * 1000;
 const configRef = () => docRef('vault', 'config');
 
+// Hız için: kasanın tuzu (gizli değildir) cihazda tutulur; böylece PIN'den anahtar türetme,
+// sunucu doğrulamasıyla AYNI ANDA başlayabilir. Anahtarın kendisi ya da PIN hiçbir yere kaydedilmez.
+const SALT_KEY = 'bk.vaultSalt';
+const readSalt = () => { try { const v = JSON.parse(localStorage.getItem(SALT_KEY) || 'null'); return v?.salt && v?.iterations ? v : null; } catch { return null; } };
+const saveSalt = (c) => { try { localStorage.setItem(SALT_KEY, JSON.stringify({ salt: c.salt, iterations: c.iterations })); } catch {} };
+const tryRef = () => doc(db, 'vaultTry', auth.currentUser?.uid || '-');
+
 /** Kasa PIN'ini sunucuda doğrular. Döner: { ok, config } | { ok:false, remaining } | { locked, waitMin } */
-async function verifyVaultPin(pin) {
+async function verifyVaultPin(pin, prefetched) {
   const dev = auth.currentUser?.uid;
   if (!dev) throw new Error('Oturum bulunamadı.');
   const ref = doc(db, 'vaultTry', dev);
-  const prevSnap = await getDoc(ref).catch(() => null);
+  const prevSnap = await (prefetched || getDoc(ref)).catch(() => null); // kilit ekranı açılınca önceden okunur
   const prev = prevSnap?.exists() ? prevSnap.data() : null;
   const prevAt = prev?.at?.toMillis?.() || 0;
   const windowOver = serverNow() - prevAt > VAULT_WINDOW_MS + 15000; // küçük saat farkı payı
@@ -76,10 +83,15 @@ export default async function vault(page, { scope }) {
   function renderLocked() {
     const lockIcon = h('div', { class: 'vault-lock', 'aria-hidden': 'true', svg: icons.lock });
     const msg = h('p', { class: 'auth-hint', 'aria-live': 'polite' }, 'Kasa PIN\'ini gir');
+    let prevTry = getDoc(tryRef()).catch(() => null); // PIN yazılırken deneme sayacını önceden oku
     const pad = pinEntry(async (pin) => {
       msg.textContent = 'Kontrol ediliyor…';
+      // Anahtar türetme (yavaş kısım) sunucu kontrolüyle paralel başlar
+      const cached = readSalt();
+      const early = cached ? deriveVaultKey(pin, cached.salt, cached.iterations).catch(() => null) : null;
       try {
-        const r = await verifyVaultPin(pin);
+        const r = await verifyVaultPin(pin, prevTry);
+        prevTry = getDoc(tryRef()).catch(() => null);
         if (r.locked) { msg.textContent = `Çok fazla deneme. ${r.waitMin} dakika sonra tekrar dene.`; vibrate([30, 40, 30]); return false; }
         if (!r.ok) { msg.textContent = r.remaining > 0 ? `PIN hatalı. ${r.remaining} deneme hakkın kaldı.` : 'PIN hatalı. Deneme hakkın bitti, 10 dakika sonra tekrar dene.'; vibrate([30, 40, 30]); return false; }
         msg.textContent = 'Kasa açılıyor…';
@@ -89,12 +101,16 @@ export default async function vault(page, { scope }) {
           const res = await createVaultConfig(pin);
           await setDoc(configRef(), { ...res.config, createdBy: uid, createdAt: serverTimestamp(), updatedBy: uid, updatedAt: serverTimestamp() });
           k = res.key;
+          saveSalt(res.config);
         } else {
-          k = await unlockVault(pin, r.config);
+          const same = cached && cached.salt === r.config.salt && cached.iterations === r.config.iterations;
+          const pre = same ? await early : null;
+          k = (pre && await keyMatches(pre, r.config)) || await unlockVault(pin, r.config);
           if (!k) { renderMismatch(pin); return true; }
+          saveSalt(r.config);
         }
         lockIcon.innerHTML = icons.unlock; lockIcon.classList.add('is-opening');
-        await sleep(450);
+        await sleep(200);
         openWith(k);
         return true;
       } catch (e) { msg.textContent = errorMessage(e); return false; }
@@ -119,6 +135,7 @@ export default async function vault(page, { scope }) {
           const res = await createVaultConfig(pin);
           batch.set(configRef(), { ...res.config, updatedBy: uid, updatedAt: serverTimestamp() }, { merge: true });
           await batch.commit();
+          saveSalt(res.config);
           toast('Kasa yeni PIN ile kuruldu 🔐');
           openWith(res.key);
         } catch (e2) { toast(errorMessage(e2), { type: 'error' }); renderLocked(); }

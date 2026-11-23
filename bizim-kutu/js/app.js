@@ -10,6 +10,7 @@ import { h, clear, createScope, debounce, fill } from './utils/helpers.js';
 import { icons, logoSvg } from './utils/icons.js';
 import { toast } from './utils/ui.js';
 import { startPresence, stopPresence } from './services/presence.js';
+import { startUsage } from './services/usage.js';
 import { subscribeRecent, subscribeReceipts, markReceipt, primeReceipts, unreadCount } from './services/realtime.js';
 import { startNotifications, announce, systemNotify, allowed } from './services/notifications.js';
 import { subscribeInvites, isInviteLive, acceptInvite, cleanupOldGames } from './services/games.js';
@@ -104,6 +105,7 @@ const NAV_ALL = [
   { path: '/movies', label: 'Filmler', icon: 'film', extra: true, feature: 'movies' },
   { path: '/tasks', label: 'Görevler', icon: 'tasks', extra: true, feature: 'tasks' },
   { path: '/vault', label: 'Kasa', icon: 'lock', extra: true, feature: 'vault' },
+  { path: '/stats', label: 'İstatistik', icon: 'chart', extra: true, feature: 'stats' },
   // Oyunlar açıkken mobil menüye sığması için Profil 'Daha' menüsüne geçer
   { path: '/profile', label: 'Profil', icon: 'user', extra: on('games') },
   { path: '/more', label: 'Daha', icon: 'menu', mobileOnly: true },
@@ -164,6 +166,7 @@ function startApp() {
   // Çevrim içi durum
   startPresence(uid);
   scope.add(() => stopPresence());
+  scope.add(startUsage(uid, partnerUid)); // nerede ne kadar zaman geçirdik
 
   const renderPartner = () => {
     const p = getState().presence[partnerUid];

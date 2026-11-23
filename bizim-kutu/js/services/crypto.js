@@ -46,13 +46,14 @@ export async function createVaultConfig(passphrase) {
   return { key, config: { v: 1, salt, iterations: VAULT_ITERATIONS, check } };
 }
 
+/** Anahtar bu kasanın anahtarı mı? (doğrulama bloğunu çözebiliyorsa) */
+export async function keyMatches(key, config) {
+  try { return (await decryptJSON(key, config.check, 'check'))?.check === VAULT_CHECK ? key : null; } catch { return null; }
+}
+
 /** Parola doğruysa anahtarı, yanlışsa null döndürür. */
 export async function unlockVault(passphrase, config) {
-  try {
-    const key = await deriveVaultKey(passphrase, config.salt, config.iterations);
-    const out = await decryptJSON(key, config.check, 'check');
-    return out?.check === VAULT_CHECK ? key : null;
-  } catch { return null; }
+  try { return await keyMatches(await deriveVaultKey(passphrase, config.salt, config.iterations), config); } catch { return null; }
 }
 
 /** Parola gücü: kabaca entropi tahmini (bit). */

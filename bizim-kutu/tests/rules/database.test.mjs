@@ -168,3 +168,17 @@ test('birlikte izle: oda, varlık, geçmiş ve tepkiler', async () => {
   await assertSucceeds(remove(ref(db(B), 'watch/history/dQw4w9WgXcQ')));
   await assertFails(set(ref(db(X), 'watch/room'), null));
 });
+
+test('istatistik: herkes yalnızca kendi süresini artırabilir', async () => {
+  await assertSucceeds(set(ref(db(A), `stats/time/${A}/chat`), 60));
+  await assertSucceeds(set(ref(db(A), `stats/time/${A}/chat`), 120));
+  await assertFails(set(ref(db(A), `stats/time/${A}/chat`), 100), 'süre azaltılamaz');
+  await assertFails(set(ref(db(A), `stats/time/${A}/chat`), 120 + 3601), 'bir seferde en fazla 1 saat');
+  await assertFails(set(ref(db(A), `stats/time/${B}/chat`), 60), 'başkası adına yazılamaz');
+  await assertFails(set(ref(db(A), `stats/time/${A}/hack`), 60), 'bilinmeyen bölüm');
+  await assertSucceeds(set(ref(db(B), `stats/daily/${B}/2026-11-23`), 300));
+  await assertFails(set(ref(db(B), `stats/daily/${B}/dun`), 300));
+  await assertSucceeds(get(ref(db(B), 'stats')));
+  await assertFails(get(ref(db(X), 'stats')), 'yanlış PIN\'li cihaz okuyamaz');
+  await assertFails(set(ref(db(X), `stats/time/${A}/chat`), 200));
+});

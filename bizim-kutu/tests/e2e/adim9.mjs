@@ -554,10 +554,15 @@ try {
 
   await step('15d. Emojiyle anlat: ipucu, doğru tahmin otomatik algılanır', async () => {
     await startGame('Emojiyle Anlat');
-    await cuma.page.locator('.emoji-game input.input').fill('Aslan Kral');
-    for (const e of ['🦁', '👑']) await cuma.page.locator('.emoji-grid__item', { hasText: e }).first().click();
+    await cuma.page.getByPlaceholder(/kendi kelimeni yaz/).fill('Aslan Kral');
+    // Klavyeden emoji yaz: harfler atılır, emojiler kalır; hazır emojiler de eklenebilir
+    const emo = cuma.page.getByLabel('Emojiler', { exact: true });
+    await emo.fill('🦁 aslan 🎞️');
+    assert.equal(await emo.inputValue(), '🦁🎞️');
+    await cuma.page.locator('.emoji-grid__item', { hasText: '👑' }).first().click();
+    assert.equal(await emo.inputValue(), '🦁🎞️👑');
     await cuma.page.getByRole('button', { name: 'İpucunu gönder' }).click();
-    await ilayda.page.locator('.emoji-clue', { hasText: '🦁' }).waitFor({ timeout: 8000 });
+    await ilayda.page.locator('.emoji-clue', { hasText: '🦁🎞️👑' }).waitFor({ timeout: 8000 });
     const fb = JSON.stringify(await (await fetch('http://127.0.0.1:9000/games/sessions.json?ns=jozh-love-default-rtdb', { headers: { Authorization: 'Bearer owner' } })).json());
     assert.ok(!/Aslan Kral/i.test(fb), 'gizli kelime veritabanında düz metin olmamalı');
     await ilayda.page.locator('.answer-form input').fill('aslan kral');
@@ -599,6 +604,27 @@ try {
     await cuma.page.locator('.qa-history__item').first().click();
     await cuma.page.locator('.qa-history__item', { hasText: 'şömine' }).waitFor({ timeout: 10000 });
     await shot(cuma.page, '07-questions');
+  });
+
+  await step('İstatistik: Daha menüsünde Hikâyelerimiz yerine İstatistiklerimiz; süre, mesaj ve oyun sayıları', async () => {
+    await go(cuma.page, '#/more');
+    await cuma.page.locator('.more-item', { hasText: 'İstatistiklerimiz' }).waitFor();
+    assert.equal(await cuma.page.locator('.more-item', { hasText: 'Hikâyelerimiz' }).count(), 0, 'Hikâyelerimiz menüden kalktı');
+    await cuma.page.locator('.more-item', { hasText: 'İstatistiklerimiz' }).click();
+    await cuma.page.locator('.stats-hero__big').waitFor({ timeout: 10000 });
+    // sayaç dakikada bir yazar; sayfadan çıkınca (arka plana alınınca) da yazar
+    await cuma.page.waitForFunction(() => document.querySelectorAll('.stats-bar').length > 0, null, { timeout: 70000 });
+    let raw = {};
+    for (let i = 0; i < 40; i++) {
+      raw = await (await fetch('http://127.0.0.1:9000/stats.json?ns=jozh-love-default-rtdb', { headers: { Authorization: 'Bearer owner' } })).json() || {};
+      if (raw.time?.[A]?.chat > 0 && raw.time?.[A]?.games > 0 && raw.time?.[B]) break;
+      await cuma.page.waitForTimeout(2000);
+    }
+    assert.ok(raw.time?.[A]?.chat > 0 && raw.time?.[A]?.games > 0 && raw.time?.[B], 'iki kişinin sohbet ve oyun süresi sayıldı ' + JSON.stringify(raw));
+    await cuma.page.locator('.stats-tile', { hasText: 'Toplam mesaj' }).locator('b', { hasText: /^[1-9]/ }).waitFor({ timeout: 10000 });
+    await cuma.page.locator('.stats-tile', { hasText: 'Biten oyun' }).locator('b', { hasText: /^[1-9]/ }).waitFor({ timeout: 10000 });
+    await cuma.page.locator('.stats-tile', { hasText: 'Anı' }).first().locator('b', { hasText: /^\d/ }).waitFor({ timeout: 10000 });
+    await shot(cuma.page, '11-stats');
   });
 
   await step('Adım 9: profil kaydı (takma ad) ve çıkış', async () => {

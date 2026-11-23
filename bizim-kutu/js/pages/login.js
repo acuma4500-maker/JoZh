@@ -1,6 +1,6 @@
 // Giriş, PIN kurulumu ve kilit ekranı.
 import { USERS, ALLOWED_UIDS, BUILD } from '../constants.js';
-import { loginWithPin } from '../auth.js';
+import { loginWithPin, prepareLogin } from '../auth.js';
 import { h, clear, vibrate, sleep, fill, add } from '../utils/helpers.js';
 import { icons, logoSvg } from '../utils/icons.js';
 import { errorMessage } from '../utils/ui.js';
@@ -51,7 +51,9 @@ export function renderLogin(root, { onLoggedIn }) {
     try {
       const person = await loginWithPin(v);
       pad.destroy();
-      await celebrate(card);
+      // Kalp animasyonu sürerken uygulama arkada açılmaya başlar (beklemeden)
+      celebrate(card);
+      await sleep(220);
       onLoggedIn(person);
     } catch (e) {
       card.classList.remove('is-busy');
@@ -68,6 +70,8 @@ export function renderLogin(root, { onLoggedIn }) {
         h('span', { class: 'user-card__avatar' }, USERS[uid].emoji), h('span', { class: 'user-card__name' }, USERS[uid].name)))),
     msg, pad.el, h('small', { class: 'auth-version' }, `Sürüm: ${BUILD}`));
   fill(root, h('div', { class: 'auth-screen' }, floatingHearts(), card));
+  // PIN yazılırken bağlantıyı hazırla (4. rakamda beklememek için)
+  if (navigator.onLine) prepareLogin().catch(() => {});
 }
 
 // ---------------- PIN tuş takımı ----------------
@@ -86,7 +90,7 @@ function pinPad({ onComplete, length = 4 }) {
     if (value.length === length) {
       busy = true;
       const v = value;
-      await sleep(120);
+      await sleep(60);
       try { await onComplete(v); } finally { value = ''; paint(); busy = false; }
     }
   };

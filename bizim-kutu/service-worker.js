@@ -18,7 +18,7 @@ const SHELL = [
   './js/games/registry.js', './js/games/common.js', './js/games/xox.js', './js/games/know-me.js', './js/games/truth-dare.js',
   './js/games/emoji.js', './js/games/memory.js', './js/games/story.js', './js/games/story-data.js', './js/games/questions.js',
   './js/utils/helpers.js', './js/utils/dates.js', './js/utils/validation.js', './js/utils/icons.js', './js/utils/ui.js',
-  './js/utils/chat-logic.js', './js/utils/questions-data.js', './js/utils/youtube.js', './js/pages/watch.js',
+  './js/utils/chat-logic.js', './js/utils/questions-data.js', './js/utils/youtube.js', './js/pages/watch.js', './js/pages/stats.js', './js/services/usage.js', './js/utils/stats-logic.js',
   './data/questions.json',
   './assets/icons/icon.svg', './assets/icons/icon-192.png', './assets/icons/icon-512.png', './assets/icons/apple-touch-icon.png', './assets/icons/maskable-512.png',
   './assets/fonts/nunito-latin-wght-normal.woff2', './assets/fonts/nunito-latin-ext-wght-normal.woff2',

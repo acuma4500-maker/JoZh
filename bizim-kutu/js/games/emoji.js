@@ -20,6 +20,16 @@ export const MAX_GUESSES = 5;
 
 export const isCorrect = (guess, word) => normalizeGuess(guess) !== '' && normalizeGuess(guess) === normalizeGuess(word);
 
+const EMOJI_RE = /\p{Extended_Pictographic}|\p{Regional_Indicator}|[0-9#*]\uFE0F?\u20E3/u;
+/** Bir metindeki emojileri (grapheme olarak) ayıklar; harf, rakam ve boşlukları atar. */
+export function extractEmojis(text, max = MAX_EMOJI) {
+  const s = String(text || '');
+  const parts = typeof Intl !== 'undefined' && Intl.Segmenter
+    ? [...new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(s)].map((x) => x.segment)
+    : [...s];
+  return parts.filter((g) => EMOJI_RE.test(g)).slice(0, max);
+}
+
 /** Grapheme bazında emoji sayısı. */
 export function countGraphemes(s) {
   if (typeof Intl !== 'undefined' && Intl.Segmenter) return [...new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(s)].length;
@@ -118,10 +128,28 @@ export default {
       const wordBox = h('div', { class: 'chip-row' });
       const preview = h('div', { class: 'emoji-preview', 'aria-live': 'polite' });
       const custom = h('input', { class: 'input', placeholder: 'ya da kendi kelimeni yaz (örn. ilk buluşmamız)', maxlength: '60', value: composing.category === 'Serbest' ? composing.word : '' });
-      const drawPreview = () => { preview.textContent = composing.emojis.join(' ') || 'Emojilerin burada görünecek'; };
-      const suggest = (cat) => {
-        fill(wordBox, ...shuffle(WORDS[cat]).slice(0, 4).map((w) => h('button', { class: `chip${composing.word === w ? ' chip--primary' : ''}`, type: 'button', onclick: () => { composing.word = w; composing.category = cat; custom.value = ''; renderCompose(st); } }, w)));
+      // Klavyeden istediğin emojiyi yaz (telefonun emoji klavyesi); aşağıdaki hazır emojilere de dokunabilirsin
+      const emojiInput = h('input', { class: 'input emoji-input', type: 'text', inputmode: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false',
+        placeholder: 'Klavyeden emoji yaz 😊🎬🍿', 'aria-label': 'Emojiler', value: composing.emojis.join('') });
+      const counter = h('small', { class: 'muted' });
+      const drawPreview = () => {
+        preview.textContent = composing.emojis.join(' ') || 'Emojilerin burada görünecek';
+        counter.textContent = `${composing.emojis.length}/${MAX_EMOJI}`;
       };
+      const syncInput = () => { emojiInput.value = composing.emojis.join(''); drawPreview(); };
+      let warned = false;
+      emojiInput.addEventListener('input', () => {
+        const raw = emojiInput.value;
+        const list = extractEmojis(raw);
+        const dropped = extractEmojis(raw, 999).length > MAX_EMOJI;
+        const hadText = raw.replace(/\s/g, '') !== extractEmojis(raw, 999).join('');
+        composing.emojis = list;
+        if (hadText || dropped) {
+          emojiInput.value = list.join('');
+          if (!warned) { warned = true; api.toast(dropped ? `En fazla ${MAX_EMOJI} emoji 🙂` : 'Sadece emoji yazabilirsin 🙂'); setTimeout(() => { warned = false; }, 2500); }
+        }
+        drawPreview();
+      });
       custom.addEventListener('input', () => { composing.word = custom.value; composing.category = 'Serbest'; });
       fill(root, 
         h('div', { class: 'round-info' }, `Tur ${st.round}/${st.rounds}`, h('span', { class: 'pill' }, 'Anlatıcı sensin 🎭')),
@@ -131,9 +159,11 @@ export default {
           wordBox, custom,
           composing.word ? h('p', { class: 'small' }, 'Seçilen: ', h('strong', {}, composing.word)) : null,
           h('h4', {}, `2) En fazla ${MAX_EMOJI} emojiyle anlat`), preview,
-          h('div', { class: 'emoji-grid emoji-grid--game' }, EMOJI_PALETTE.map((e) => h('button', { class: 'emoji-grid__item', type: 'button', 'aria-label': e, onclick: () => { if (composing.emojis.length < MAX_EMOJI) { composing.emojis.push(e); drawPreview(); } } }, e))),
+          h('div', { class: 'emoji-input-row' }, emojiInput, counter),
+          h('p', { class: 'muted small' }, 'Telefonunun emoji klavyesinden istediğin emojiyi yazabilir ya da aşağıdakilere dokunabilirsin.'),
+          h('div', { class: 'emoji-grid emoji-grid--game' }, EMOJI_PALETTE.map((e) => h('button', { class: 'emoji-grid__item', type: 'button', 'aria-label': e, onclick: () => { if (composing.emojis.length < MAX_EMOJI) { composing.emojis.push(e); syncInput(); } } }, e))),
           h('div', { class: 'row row--center' },
-            h('button', { class: 'btn btn--ghost btn--sm', type: 'button', onclick: () => { composing.emojis.pop(); drawPreview(); } }, '⌫ Geri al'),
+            h('button', { class: 'btn btn--ghost btn--sm', type: 'button', onclick: () => { composing.emojis.pop(); syncInput(); } }, '⌫ Geri al'),
             h('button', { class: 'btn btn--primary', type: 'button', onclick: sendClue }, 'İpucunu gönder'))));
       if (composing.category && WORDS[composing.category]) suggest(composing.category);
       drawPreview();

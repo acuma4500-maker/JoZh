@@ -305,7 +305,7 @@ try {
 
   await step('15d. Emojiyle anlat: ipucu, doğru tahmin otomatik algılanır', async () => {
     await startGame('Emojiyle Anlat');
-    await cuma.page.locator('.emoji-game input.input').fill('Aslan Kral');
+    await cuma.page.getByPlaceholder(/kendi kelimeni yaz/).fill('Aslan Kral');
     for (const e of ['🦁', '👑']) await cuma.page.locator('.emoji-grid__item', { hasText: e }).first().click();
     await cuma.page.getByRole('button', { name: 'İpucunu gönder' }).click();
     await ilayda.page.locator('.emoji-clue', { hasText: '🦁' }).waitFor({ timeout: 8000 });
